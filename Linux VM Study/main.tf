@@ -3,7 +3,7 @@ provider "azurerm" {
   features {}
 
   # Adicione estas variáveis de autenticação
-  subscription_id = "6cae8e83-11e9-472b-8c43-2b85cb868054"
+  subscription_id = "id da sua subscrição"
 }
 
 resource "azurerm_resource_group" "rg" {
