@@ -3,6 +3,19 @@ node_modules
 .pnp
 .pnp.js
 
+# Python virtualenvs (any name)
+venv
+.venv
+env
+.env-*
+ENV
+__pycache__
+*.py[cod]
+*.egg-info
+.pytest_cache
+.mypy_cache
+.ruff_cache
+
 # Build output
 dist
 dist-ssr
