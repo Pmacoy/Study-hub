@@ -153,4 +153,4 @@ MIT — vai fazer bom uso.
 
 ---
 
-*Feito por engenheiros que aprendem melhor com um terminal e um problema real do que com slides.*
+*Feito por uma pessoa que aprende melhor com um terminal e um problema real do que com slides.*
