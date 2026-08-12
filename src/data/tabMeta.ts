@@ -28,6 +28,11 @@ export const TAB_META: Record<StudyTab, TabMeta> = {
     subtitle: 'Pods, Deployments, Services, RBAC e Networking',
     group: 'Containers',
   },
+  helm: {
+    label: 'Helm',
+    subtitle: 'Charts, templating, releases e rollback',
+    group: 'Containers',
+  },
   cicd: {
     label: 'CI/CD Pipelines',
     subtitle: 'Jenkins, GitHub Actions e GitLab CI',
@@ -38,9 +43,19 @@ export const TAB_META: Record<StudyTab, TabMeta> = {
     subtitle: 'Módulos, state, providers e multi-cloud',
     group: 'Automação',
   },
+  cloudformation: {
+    label: 'CloudFormation',
+    subtitle: 'Templates, stacks, change sets e drift · IaC nativo AWS',
+    group: 'Automação',
+  },
   monitoring: {
     label: 'Monitoring & Observability',
     subtitle: 'Prometheus, Grafana, ELK e alertas',
+    group: 'Operações',
+  },
+  finops: {
+    label: 'FinOps · Custos K8s',
+    subtitle: 'Spot · Karpenter · KEDA · right-sizing · Savings Plans',
     group: 'Operações',
   },
   security: {
@@ -61,6 +76,11 @@ export const TAB_META: Record<StudyTab, TabMeta> = {
   'dora-devex': {
     label: 'DORA & DevEx',
     subtitle: 'DORA 4 · Cognitive load · SPACE · Team Topologies',
+    group: 'Platform Engineering',
+  },
+  mlops: {
+    label: 'MLOps & AI',
+    subtitle: 'MLflow · Kubeflow · DVC · drift · agentic AI · MCP',
     group: 'Platform Engineering',
   },
 };

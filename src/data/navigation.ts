@@ -3,13 +3,17 @@ import {
   Activity,
   BarChart3,
   Blocks,
+  BrainCircuit,
   Box,
+  Boxes,
   Container,
   GaugeCircle,
   GitBranch,
   GraduationCap,
   Layers,
+  PiggyBank,
   LayoutDashboard,
+  Package,
   Route,
   Shield,
   Terminal,
@@ -48,6 +52,7 @@ export const menuGroups: MenuGroup[] = [
     items: [
       { id: 'docker', label: 'Docker', sublabel: 'Imagens e Dockerfile', icon: Box },
       { id: 'kubernetes', label: 'Kubernetes', sublabel: 'Pods, Services e RBAC', icon: Container },
+      { id: 'helm', label: 'Helm', sublabel: 'Charts e releases', icon: Package },
     ],
   },
   {
@@ -55,12 +60,14 @@ export const menuGroups: MenuGroup[] = [
     items: [
       { id: 'cicd', label: 'CI/CD Pipelines', sublabel: 'Jenkins · GH Actions', icon: Layers },
       { id: 'terraform', label: 'Terraform / IaC', sublabel: 'Módulos e multi-cloud', icon: GitBranch },
+      { id: 'cloudformation', label: 'CloudFormation', sublabel: 'Templates e stacks AWS', icon: Boxes },
     ],
   },
   {
     title: 'Operações',
     items: [
       { id: 'monitoring', label: 'Monitoring', sublabel: 'Prometheus · Grafana · ELK', icon: Activity },
+      { id: 'finops', label: 'FinOps · Custos', sublabel: 'Spot · Karpenter · KEDA', icon: PiggyBank },
       { id: 'security', label: 'DevSecOps', sublabel: 'SonarQube · Trivy · OPA', icon: Shield },
     ],
   },
@@ -70,6 +77,7 @@ export const menuGroups: MenuGroup[] = [
       { id: 'idp-backstage', label: 'IDP & Backstage', sublabel: 'Developer portal · Catalog', icon: Blocks },
       { id: 'golden-paths', label: 'Golden Paths', sublabel: 'Paved-road templates', icon: Route },
       { id: 'dora-devex', label: 'DORA & DevEx', sublabel: 'Métricas · Cognitive load', icon: GaugeCircle },
+      { id: 'mlops', label: 'MLOps & AI', sublabel: 'MLflow · drift · agentic AI', icon: BrainCircuit },
     ],
   },
 ];

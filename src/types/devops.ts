@@ -4,13 +4,17 @@ export type StudyTab =
   | 'git'
   | 'docker'
   | 'kubernetes'
+  | 'helm'
   | 'cicd'
   | 'terraform'
+  | 'cloudformation'
   | 'monitoring'
+  | 'finops'
   | 'security'
   | 'idp-backstage'
   | 'golden-paths'
-  | 'dora-devex';
+  | 'dora-devex'
+  | 'mlops';
 
 export type DevOpsTab = 'dashboard' | 'exam' | StudyTab;
 
@@ -20,13 +24,17 @@ export const STUDY_TABS: StudyTab[] = [
   'git',
   'docker',
   'kubernetes',
+  'helm',
   'cicd',
   'terraform',
+  'cloudformation',
   'monitoring',
+  'finops',
   'security',
   'idp-backstage',
   'golden-paths',
   'dora-devex',
+  'mlops',
 ];
 
 export function isDevOpsTab(value: string): value is DevOpsTab {

@@ -1,6 +1,6 @@
 import type { Domain } from './platform';
 
-export type CertStatus = 'active' | 'coming-soon';
+export type CertStatus = 'active' | 'coming-soon' | 'achieved';
 
 export interface CertificationMeta {
   id: string;                   // e.g. "az-104", "az-305", "aws-saa-c03", "gcp-ace"
@@ -11,6 +11,8 @@ export interface CertificationMeta {
   totalQuestions: number;        // total questions in the bank (0 if not yet built)
   moduleCount: number;           // number of study modules
   status: CertStatus;
+  achievedDate?: string;         // e.g. "Jan 2026" — only for status 'achieved'
+  validUntil?: string;           // e.g. "Jan 2029"
 }
 
 // ── AZURE certifications ────────────────────────────────────────────────
@@ -45,9 +47,9 @@ export const AWS_CERTS: CertificationMeta[] = [
     code: 'SAA-C03',
     label: 'AWS Solutions Architect Associate',
     subtitle: 'EC2 · VPC · S3 · RDS · IAM · Well-Architected',
-    totalQuestions: 0,
-    moduleCount: 0,
-    status: 'coming-soon',
+    totalQuestions: 118,
+    moduleCount: 6,
+    status: 'active',
   },
 ];
 
@@ -61,7 +63,9 @@ export const GCP_CERTS: CertificationMeta[] = [
     subtitle: 'GCE · GKE · IAM · Cloud Storage · gcloud CLI · Deployment Manager',
     totalQuestions: 0,
     moduleCount: 0,
-    status: 'coming-soon',
+    status: 'achieved',
+    achievedDate: 'Jan 2026',
+    validUntil: 'Jan 2029',
   },
   {
     id: 'gcp-pca',

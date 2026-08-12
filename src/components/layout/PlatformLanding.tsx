@@ -4,6 +4,7 @@ import type { DailyState, DailyStepId } from '../../types/daily';
 import type { ActivityType, ProgressBreakdown } from '../../types/progress';
 import DailySessionCard from '../shared/DailySessionCard';
 import ProgressIndexCard from '../shared/ProgressIndexCard';
+import { useLang } from '../../i18n/LangContext';
 
 interface Props {
   domains: DomainMeta[];
@@ -15,6 +16,12 @@ interface Props {
   onLogActivity: (type: ActivityType, ratio: number) => void;
   progressBreakdown: ProgressBreakdown;
   onOpenScenarios: () => void;
+  onOpenLearningPath: () => void;
+  onOpenProjects: () => void;
+  onOpenInterview: () => void;
+  onOpenDiagnostic: () => void;
+  onOpenCareer: () => void;
+  onOpenResources: () => void;
 }
 
 const colorMap: Record<string, { bg: string; border: string; text: string; bar: string; btn: string }> = {
@@ -48,7 +55,8 @@ const colorMap: Record<string, { bg: string; border: string; text: string; bar: 
   },
 };
 
-export default function PlatformLanding({ domains, progressByDomain, onSelectDomain, daily, isStepDoneToday, onMarkStep, onLogActivity, progressBreakdown, onOpenScenarios }: Props) {
+export default function PlatformLanding({ domains, progressByDomain, onSelectDomain, daily, isStepDoneToday, onMarkStep, onLogActivity, progressBreakdown, onOpenScenarios, onOpenLearningPath, onOpenProjects, onOpenInterview, onOpenDiagnostic, onOpenCareer, onOpenResources }: Props) {
+  const { t, lang } = useLang();
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 md:px-6">
       {/* Hero */}
@@ -83,28 +91,144 @@ export default function PlatformLanding({ domains, progressByDomain, onSelectDom
         />
       </div>
 
-      {/* Scenarios highlight card */}
+      {/* Feature highlight cards — Learning Path + Scenarios */}
+      {lang === 'en' && (
+        <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-2.5">
+          <p className="text-[11px] text-slate-500">
+            🇵🇹 {t('notice.ptContent')}
+          </p>
+        </div>
+      )}
+
+      {/* Diagnóstico — ponto de entrada */}
       <button
-        onClick={onOpenScenarios}
-        className="w-full mt-6 mb-2 rounded-3xl border border-violet-500/25 bg-gradient-to-br from-violet-500/10 to-slate-950/30 p-6 text-left transition-all hover:border-violet-500/50 hover:from-violet-500/15 group"
+        onClick={onOpenDiagnostic}
+        className="w-full mt-6 rounded-3xl border border-violet-500/30 bg-gradient-to-r from-violet-500/15 via-violet-500/10 to-transparent p-5 text-left transition-all hover:border-violet-500/50 group"
       >
-        <div className="flex items-start gap-4">
+        <div className="flex items-center gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-violet-500/30 bg-violet-500/15">
-            <Target size={20} className="text-violet-300" />
+            <span className="text-xl">🎯</span>
           </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-black text-violet-400 uppercase tracking-widest">Aprender resolvendo</span>
-              <span className="px-1.5 py-0.5 rounded bg-slate-800 text-[9px] font-bold text-slate-400 uppercase">Cenários + terminal</span>
-            </div>
-            <h3 className="text-[15px] font-bold text-white">Cenários guiados & terminal simulado</h3>
-            <p className="mt-1.5 text-[12px] text-slate-400 leading-relaxed max-w-2xl">
-              Aprende debugando problemas reais. Nos cenários escolhes o próximo passo. No terminal escreves os comandos — parser flexível aceita variações, dá pistas se te desviares.
+          <div className="flex-1 min-w-0">
+            <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-0.5">{t('diag.banner.eyebrow')}</div>
+            <h3 className="text-[15px] font-bold text-white">{t('diag.banner.title')}</h3>
+            <p className="mt-0.5 text-[11px] text-slate-400 leading-relaxed">
+              {t('diag.banner.desc')}
             </p>
           </div>
-          <ArrowRight size={16} className="text-violet-400 shrink-0 mt-2 transition-transform group-hover:translate-x-1" />
+          <ArrowRight size={16} className="shrink-0 text-violet-400 transition-transform group-hover:translate-x-1" />
         </div>
       </button>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-3 mb-2">
+        <button
+          onClick={onOpenLearningPath}
+          className="rounded-3xl border border-violet-500/25 bg-gradient-to-br from-violet-500/10 to-slate-950/30 p-5 text-left transition-all hover:border-violet-500/50 hover:from-violet-500/15 group"
+        >
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-violet-500/30 bg-violet-500/15">
+              <span className="text-lg">🗺️</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">{t('card.path.eyebrow')}</div>
+              <h3 className="text-[14px] font-bold text-white">{t('card.path.title')}</h3>
+              <p className="mt-1 text-[11px] text-slate-400 leading-relaxed">
+                {t('card.path.desc')}
+              </p>
+            </div>
+          </div>
+        </button>
+
+        <button
+          onClick={onOpenProjects}
+          className="rounded-3xl border border-orange-500/25 bg-gradient-to-br from-orange-500/10 to-slate-950/30 p-5 text-left transition-all hover:border-orange-500/50 hover:from-orange-500/15 group"
+        >
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-orange-500/30 bg-orange-500/15">
+              <span className="text-lg">🚀</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">{t('card.projects.eyebrow')}</div>
+              <h3 className="text-[14px] font-bold text-white">{t('card.projects.title')}</h3>
+              <p className="mt-1 text-[11px] text-slate-400 leading-relaxed">
+                {t('card.projects.desc')}
+              </p>
+            </div>
+          </div>
+        </button>
+
+        <button
+          onClick={onOpenScenarios}
+          className="rounded-3xl border border-violet-500/25 bg-gradient-to-br from-violet-500/10 to-slate-950/30 p-5 text-left transition-all hover:border-violet-500/50 hover:from-violet-500/15 group"
+        >
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-violet-500/30 bg-violet-500/15">
+              <Target size={18} className="text-violet-300" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">{t('card.scenarios.eyebrow')}</div>
+              <h3 className="text-[14px] font-bold text-white">{t('card.scenarios.title')}</h3>
+              <p className="mt-1 text-[11px] text-slate-400 leading-relaxed">
+                {t('card.scenarios.desc')}
+              </p>
+            </div>
+          </div>
+        </button>
+
+        <button
+          onClick={onOpenInterview}
+          className="rounded-3xl border border-sky-500/25 bg-gradient-to-br from-sky-500/10 to-slate-950/30 p-5 text-left transition-all hover:border-sky-500/50 hover:from-sky-500/15 group"
+        >
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-sky-500/30 bg-sky-500/15">
+              <span className="text-lg">💬</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-1">{t('card.interview.eyebrow')}</div>
+              <h3 className="text-[14px] font-bold text-white">{t('card.interview.title')}</h3>
+              <p className="mt-1 text-[11px] text-slate-400 leading-relaxed">
+                {t('card.interview.desc')}
+              </p>
+            </div>
+          </div>
+        </button>
+
+        <button
+          onClick={onOpenCareer}
+          className="rounded-3xl border border-amber-500/25 bg-gradient-to-br from-amber-500/10 to-slate-950/30 p-5 text-left transition-all hover:border-amber-500/50 hover:from-amber-500/15 group"
+        >
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-amber-500/30 bg-amber-500/15">
+              <span className="text-lg">🧭</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">{t('card.career.eyebrow')}</div>
+              <h3 className="text-[14px] font-bold text-white">{t('card.career.title')}</h3>
+              <p className="mt-1 text-[11px] text-slate-400 leading-relaxed">
+                {t('card.career.desc')}
+              </p>
+            </div>
+          </div>
+        </button>
+
+        <button
+          onClick={onOpenResources}
+          className="rounded-3xl border border-emerald-500/25 bg-gradient-to-br from-emerald-500/10 to-slate-950/30 p-5 text-left transition-all hover:border-emerald-500/50 hover:from-emerald-500/15 group"
+        >
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-emerald-500/30 bg-emerald-500/15">
+              <span className="text-lg">📚</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">{t('card.resources.eyebrow')}</div>
+              <h3 className="text-[14px] font-bold text-white">{t('card.resources.title')}</h3>
+              <p className="mt-1 text-[11px] text-slate-400 leading-relaxed">
+                {t('card.resources.desc')}
+              </p>
+            </div>
+          </div>
+        </button>
+      </div>
 
       {/* Domain cards */}
       <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
@@ -124,7 +248,7 @@ export default function PlatformLanding({ domains, progressByDomain, onSelectDom
                 {d.id === 'azure' ? 'AZ-104' : d.id === 'networking' ? 'Redes' : 'DevOps'}
               </div>
               <h2 className="text-[18px] font-bold text-white leading-tight mb-2">
-                {d.label}
+                {t(`domain.${d.id}.label` as any)}
               </h2>
               <p className="text-[12px] text-slate-500 mb-5 leading-relaxed">
                 {d.subtitle}

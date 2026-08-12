@@ -1,4 +1,4 @@
-import { ArrowRight, Clock, GraduationCap, BookOpen } from 'lucide-react';
+import { ArrowRight, Clock, GraduationCap, BookOpen, Trophy, CheckCircle2 } from 'lucide-react';
 import type { CertificationMeta } from '../../types/certification';
 
 interface Props {
@@ -29,7 +29,7 @@ export default function CertHub({ domainLabel, domainIcon, certs, activeCertId, 
             <p className={`text-[11px] font-black uppercase tracking-widest ${c.text}`}>Domínio Cloud</p>
             <h2 className="mt-1 text-2xl font-bold text-white">{domainLabel}</h2>
             <p className="mt-2 text-[13px] text-slate-400">
-              {certs.filter(x => x.status === 'active').length} de {certs.length} certificações disponíveis · escolhe a que queres estudar hoje
+              {certs.filter(x => x.status === 'active').length} para estudar · {certs.filter(x => x.status === 'achieved').length} conquistada{certs.filter(x => x.status === 'achieved').length !== 1 ? 's' : ''} · escolhe a que queres estudar hoje
             </p>
           </div>
         </div>
@@ -40,24 +40,32 @@ export default function CertHub({ domainLabel, domainIcon, certs, activeCertId, 
         {certs.map(cert => {
           const isActive = activeCertId === cert.id;
           const isComingSoon = cert.status === 'coming-soon';
+          const isAchieved = cert.status === 'achieved';
           return (
             <button
               key={cert.id}
               onClick={() => !isComingSoon && onSelectCert(cert.id)}
               disabled={isComingSoon}
               className={`text-left rounded-3xl border p-5 transition-all ${
-                isActive
-                  ? `${c.border} ${c.bg} ring-2 ring-offset-2 ring-offset-slate-950 ${c.text.replace('text-', 'ring-')}/40`
-                  : isComingSoon
-                    ? 'border-slate-800 bg-slate-900/30 opacity-60 cursor-not-allowed'
-                    : `border-slate-800 bg-slate-900/50 hover:${c.bg} hover:${c.border}`
+                isAchieved
+                  ? 'border-emerald-500/40 bg-emerald-500/10'
+                  : isActive
+                    ? `${c.border} ${c.bg} ring-2 ring-offset-2 ring-offset-slate-950 ${c.text.replace('text-', 'ring-')}/40`
+                    : isComingSoon
+                      ? 'border-slate-800 bg-slate-900/30 opacity-60 cursor-not-allowed'
+                      : `border-slate-800 bg-slate-900/50 hover:${c.bg} hover:${c.border}`
               }`}
             >
               <div className="flex items-start justify-between gap-3 mb-3">
-                <div className={`px-2 py-0.5 rounded-full text-[10px] font-black border ${c.badge}`}>
+                <div className={`px-2 py-0.5 rounded-full text-[10px] font-black border ${isAchieved ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300' : c.badge}`}>
                   {cert.code}
                 </div>
-                {isComingSoon ? (
+                {isAchieved ? (
+                  <div className="flex items-center gap-1 text-[10px] font-black text-emerald-300">
+                    <Trophy size={12} />
+                    <span>CONQUISTADA</span>
+                  </div>
+                ) : isComingSoon ? (
                   <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-500">
                     <Clock size={11} />
                     <span>Em breve</span>
@@ -72,6 +80,16 @@ export default function CertHub({ domainLabel, domainIcon, certs, activeCertId, 
               <h3 className="text-[15px] font-bold text-white leading-tight">{cert.label}</h3>
               <p className="mt-1.5 text-[11px] text-slate-500 leading-relaxed">{cert.subtitle}</p>
 
+              {isAchieved && (
+                <div className="mt-3 flex items-center gap-2 p-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+                  <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+                  <div className="text-[11px]">
+                    <span className="text-emerald-300 font-semibold">Certificado em {cert.achievedDate}</span>
+                    {cert.validUntil && <span className="text-slate-500"> · válido até {cert.validUntil}</span>}
+                  </div>
+                </div>
+              )}
+
               <div className="mt-4 flex items-center gap-3 text-[11px] text-slate-500">
                 {cert.moduleCount > 0 && (
                   <span className="flex items-center gap-1"><BookOpen size={11} /> {cert.moduleCount} módulos</span>
@@ -79,7 +97,10 @@ export default function CertHub({ domainLabel, domainIcon, certs, activeCertId, 
                 {cert.totalQuestions > 0 && (
                   <span className="flex items-center gap-1"><GraduationCap size={11} /> {cert.totalQuestions}Q</span>
                 )}
-                {!isComingSoon && !isActive && (
+                {isAchieved && (
+                  <span className="ml-auto text-[10px] font-black uppercase text-emerald-300">✓ Feito</span>
+                )}
+                {!isComingSoon && !isActive && !isAchieved && (
                   <span className={`ml-auto flex items-center gap-1 font-semibold ${c.text}`}>
                     Abrir <ArrowRight size={11} />
                   </span>

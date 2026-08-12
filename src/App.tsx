@@ -39,13 +39,17 @@ import LinuxSimulator from './components/devops/LinuxSimulator';
 import GitSimulator from './components/devops/GitSimulator';
 import DockerSimulator from './components/devops/DockerSimulator';
 import KubernetesSimulator from './components/devops/KubernetesSimulator';
+import HelmSimulator from './components/devops/HelmSimulator';
 import CiCdSimulator from './components/devops/CiCdSimulator';
 import TerraformSimulator from './components/devops/TerraformSimulator';
+import CloudFormationSimulator from './components/devops/CloudFormationSimulator';
 import MonitoringSimulator from './components/devops/MonitoringSimulator';
+import FinOpsSimulator from './components/devops/FinOpsSimulator';
 import SecuritySimulator from './components/devops/SecuritySimulator';
 import IdpBackstageSimulator from './components/devops/IdpBackstageSimulator';
 import GoldenPathsSimulator from './components/devops/GoldenPathsSimulator';
 import DoraDevexSimulator from './components/devops/DoraDevexSimulator';
+import MlopsSimulator from './components/devops/MlopsSimulator';
 import ExamSimulator from './components/devops/ExamSimulator';
 
 // Azure components
@@ -59,6 +63,10 @@ import AzureMonitorSimulator from './components/azure/AzureMonitorSimulator';
 import AzureContainersSimulator from './components/azure/AzureContainersSimulator';
 import AzureExamSimulator from './components/azure/AzureExamSimulator';
 import AzureKnowledgeBase from './components/azure/AzureKnowledgeBase';
+import OfficialLabsCard from './components/azure/OfficialLabsCard';
+import ModuleQuestionsCard from './components/interview/ModuleQuestionsCard';
+import VideoDemoCard from './components/video/VideoDemoCard';
+import { TOTAL_LABS } from './data/azure/officialLabs';
 
 // Networking components
 import NetworkingSimulator from './components/networking/NetworkingSimulator';
@@ -92,6 +100,39 @@ import { useTerminalAttempts } from './hooks/useTerminalAttempts';
 import { findTerminalSession } from './data/terminal';
 import TerminalPlayer from './components/terminal/TerminalPlayer';
 
+// AWS SAA-C03
+import type { AwsTab, AwsStudyTab } from './types/aws';
+import { ALL_AWS_TABS, AWS_STUDY_TABS, isAwsTab } from './types/aws';
+import { AWS_TAB_META } from './data/aws/tabMeta';
+import { awsMenuGroups } from './data/aws/navigation';
+import AwsExamSimulator from './components/aws/AwsExamSimulator';
+import AwsKnowledgeBase from './components/aws/AwsKnowledgeBase';
+import { ALL_AWS_QUESTIONS, SCENARIO_QUESTIONS } from './data/aws/examQuestions';
+
+// Learning Path
+import LearningPathView from './components/learning/LearningPathView';
+import type { LearningPath, PathNode } from './types/learningPath';
+
+// Projects track
+import ProjectsView from './components/projects/ProjectsView';
+
+// Interview prep
+import InterviewPrepView from './components/interview/InterviewPrepView';
+
+// Career
+import CareerView from './components/career/CareerView';
+
+// Resources
+import ResourcesView from './components/resources/ResourcesView';
+
+// i18n
+import { useLang } from './i18n/LangContext';
+import LangSwitcher from './components/shared/LangSwitcher';
+
+// Diagnostic
+import DiagnosticView from './components/diagnostic/DiagnosticView';
+import type { DiagnosticArea } from './types/diagnostic';
+
 // ── DevOps + Platform Engineering content map ────────────────────────────
 const DEVOPS_CONTENT: Record<DevOpsStudyTab, ReactNode> = {
   'devops-intro': <DevOpsIntroSimulator />,
@@ -99,13 +140,17 @@ const DEVOPS_CONTENT: Record<DevOpsStudyTab, ReactNode> = {
   git: <GitSimulator />,
   docker: <DockerSimulator />,
   kubernetes: <KubernetesSimulator />,
+  helm: <HelmSimulator />,
   cicd: <CiCdSimulator />,
   terraform: <TerraformSimulator />,
+  cloudformation: <CloudFormationSimulator />,
   monitoring: <MonitoringSimulator />,
+  finops: <FinOpsSimulator />,
   security: <SecuritySimulator />,
   'idp-backstage': <IdpBackstageSimulator />,
   'golden-paths': <GoldenPathsSimulator />,
   'dora-devex': <DoraDevexSimulator />,
+  mlops: <MlopsSimulator />,
 };
 
 // ── Azure content map ────────────────────────────────────────────────────
@@ -224,8 +269,10 @@ export default function App() {
   // ── Daily streak / gamification ──────────────────────────────────────
   const { daily, markStepComplete, isStepDoneToday } = useDailyState();
   const { entries: activityEntries, logActivity } = useActivityLog();
-  const { record: recordScenarioAttempt, bestAttemptFor: bestScenarioAttemptFor } = useScenarioAttempts();
-  const { record: recordTerminalAttempt, bestAttemptFor: bestTerminalAttemptFor } = useTerminalAttempts();
+  const { t } = useLang();
+
+  const { record: recordScenarioAttempt, bestAttemptFor: bestScenarioAttemptFor, attempts: allScenarioAttempts } = useScenarioAttempts();
+  const { record: recordTerminalAttempt, bestAttemptFor: bestTerminalAttemptFor, attempts: allTerminalAttempts } = useTerminalAttempts();
 
   // ── Scenarios & terminal state ─────────────────────────────────
   const [scenariosView, setScenariosView] = useState<
@@ -234,6 +281,24 @@ export default function App() {
     | { type: 'scenario'; activeId: string }
     | { type: 'terminal'; activeId: string }
   >(null);
+
+  // ── Learning Path view ───────────────────────────────────────
+  const [showLearningPath, setShowLearningPath] = useState(false);
+
+  // ── Projects track view ──────────────────────────────────────
+  const [showProjects, setShowProjects] = useState(false);
+
+  // ── Interview prep view ──────────────────────────────────────
+  const [showInterview, setShowInterview] = useState(false);
+
+  // ── Diagnostic view ──────────────────────────────────────────
+  const [showDiagnostic, setShowDiagnostic] = useState(false);
+
+  // ── Career view ──────────────────────────────────────────────
+  const [showCareer, setShowCareer] = useState(false);
+
+  // ── Resources view ───────────────────────────────────────────
+  const [showResources, setShowResources] = useState(false);
 
   // ── Per-domain tab state ─────────────────────────────────────────────
   const [devopsTab, setDevopsTab] = useState<DevOpsTab>('dashboard');
@@ -246,6 +311,10 @@ export default function App() {
   const [azureVisited, setAzureVisited] = useState<Set<AzureTab>>(new Set());
   const [networkingVisited, setNetworkingVisited] = useState<Set<NetworkingTab>>(new Set());
   const [pythonVisited, setPythonVisited] = useState<Set<PythonTab>>(new Set());
+
+  // ── AWS SAA-C03 tabs ────────────────────────────────────────────────
+  const [awsTab, setAwsTab] = useState<AwsTab>('dashboard');
+  const [awsVisited, setAwsVisited] = useState<Set<AwsTab>>(new Set());
 
   // ── Active certification per cloud domain (Azure, AWS, GCP) ──────────
   // Default: null = show cert hub; else = show cert study modules
@@ -313,12 +382,19 @@ export default function App() {
       setPythonVisited(p => new Set([...p, tab]));
   };
 
+  const handleAwsTab = (tab: AwsTab) => {
+    setAwsTab(tab);
+    if (AWS_STUDY_TABS.includes(tab as AwsStudyTab))
+      setAwsVisited(p => new Set([...p, tab]));
+  };
+
   // ── Reset ────────────────────────────────────────────────────────────
   const handleReset = () => {
     if (activeDomain === 'devops') { setDevopsVisited(new Set()); setDevopsTab('dashboard'); }
     if (activeDomain === 'azure') { setAzureVisited(new Set()); setAzureTab('dashboard'); }
     if (activeDomain === 'networking') { setNetworkingVisited(new Set()); setNetworkingTab('dashboard'); }
     if (activeDomain === 'python') { setPythonVisited(new Set()); setPythonTab('dashboard'); }
+    if (activeDomain === 'aws') { setAwsVisited(new Set()); setAwsTab('dashboard'); }
     setShowResetModal(false);
   };
 
@@ -327,19 +403,20 @@ export default function App() {
   const azureStudied = AZURE_STUDY_TABS.filter(t => azureVisited.has(t)).length;
   const networkingStudied = NETWORKING_STUDY_TABS.filter(t => networkingVisited.has(t)).length;
   const pythonStudied = PYTHON_STUDY_TABS.filter(t => pythonVisited.has(t)).length;
+  const awsStudied = AWS_STUDY_TABS.filter(t => awsVisited.has(t)).length;
 
   const progressByDomain = {
     devops: { studied: devopsStudied, total: DEVOPS_STUDY_TABS.length },
     azure: { studied: azureStudied, total: AZURE_STUDY_TABS.length },
-    aws: { studied: 0, total: 0 },
+    aws: { studied: awsStudied, total: AWS_STUDY_TABS.length },
     gcp: { studied: 0, total: 0 },
     networking: { studied: networkingStudied, total: NETWORKING_STUDY_TABS.length },
     python: { studied: pythonStudied, total: PYTHON_STUDY_TABS.length },
   };
 
   // ── Platform-wide composite progress (coverage + consistency + engagement) ──
-  const totalStudiedAll = devopsStudied + azureStudied + networkingStudied + pythonStudied;
-  const totalModulesAll = DEVOPS_STUDY_TABS.length + AZURE_STUDY_TABS.length + NETWORKING_STUDY_TABS.length + PYTHON_STUDY_TABS.length;
+  const totalStudiedAll = devopsStudied + azureStudied + networkingStudied + pythonStudied + awsStudied;
+  const totalModulesAll = DEVOPS_STUDY_TABS.length + AZURE_STUDY_TABS.length + NETWORKING_STUDY_TABS.length + PYTHON_STUDY_TABS.length + AWS_STUDY_TABS.length;
   const progressBreakdown = computeProgress(totalStudiedAll, totalModulesAll, daily.streak, activityEntries);
 
   // ── Active domain helpers ────────────────────────────────────────────
@@ -351,6 +428,7 @@ export default function App() {
     if (activeDomain === 'azure') return azureTab === 'dashboard' ? 'Dashboard' : azureTab === 'exam' ? 'Simulado AZ-104' : AZURE_TAB_META[azureTab as AzureStudyTab]?.label ?? '';
     if (activeDomain === 'networking') return networkingTab === 'dashboard' ? 'Dashboard' : networkingTab === 'exam' ? 'Simulado Redes' : NETWORKING_TAB_META[networkingTab as NetworkingStudyTab]?.label ?? '';
     if (activeDomain === 'python') return pythonTab === 'dashboard' ? 'Dashboard' : pythonTab === 'exam' ? 'Simulado Python' : PYTHON_TAB_META[pythonTab as PythonStudyTab]?.label ?? '';
+    if (activeDomain === 'aws' && activeCertId === 'aws-saa-c03') return awsTab === 'dashboard' ? 'Dashboard' : awsTab === 'exam' ? 'Simulado SAA-C03' : AWS_TAB_META[awsTab as AwsStudyTab]?.label ?? '';
     if (activeDomain === 'aws') return 'Amazon Web Services';
     if (activeDomain === 'gcp') return 'Google Cloud';
     return '';
@@ -362,6 +440,7 @@ export default function App() {
     if (activeDomain === 'azure') return azureTab === 'exam' ? 'Simulado AZ-104' : AZURE_TAB_META[azureTab as AzureStudyTab]?.subtitle ?? '';
     if (activeDomain === 'networking') return NETWORKING_TAB_META[networkingTab as NetworkingStudyTab]?.subtitle ?? '';
     if (activeDomain === 'python') return PYTHON_TAB_META[pythonTab as PythonStudyTab]?.subtitle ?? '';
+    if (activeDomain === 'aws' && activeCertId === 'aws-saa-c03') return awsTab === 'exam' ? 'Simulado SAA-C03' : AWS_TAB_META[awsTab as AwsStudyTab]?.subtitle ?? '';
     if (activeDomain === 'aws') return 'Certificações AWS';
     if (activeDomain === 'gcp') return 'Certificações Google Cloud';
     return '';
@@ -371,7 +450,8 @@ export default function App() {
     if (activeDomain === 'devops') return { studied: devopsStudied, total: DEVOPS_STUDY_TABS.length };
     if (activeDomain === 'azure') return { studied: azureStudied, total: AZURE_STUDY_TABS.length };
     if (activeDomain === 'python') return { studied: pythonStudied, total: PYTHON_STUDY_TABS.length };
-    if (activeDomain === 'aws' || activeDomain === 'gcp') return { studied: 0, total: 1 };
+    if (activeDomain === 'aws') return { studied: awsStudied, total: AWS_STUDY_TABS.length };
+    if (activeDomain === 'gcp') return { studied: 0, total: 1 };
     return { studied: networkingStudied, total: NETWORKING_STUDY_TABS.length };
   }
 
@@ -379,6 +459,7 @@ export default function App() {
     if (activeDomain === 'devops') return devopsMenuGroups;
     if (activeDomain === 'azure') return azureMenuGroups;
     if (activeDomain === 'python') return PYTHON_MENU_GROUPS;
+    if (activeDomain === 'aws' && activeCertId === 'aws-saa-c03') return awsMenuGroups;
     if (activeDomain === 'aws' || activeDomain === 'gcp') {
       return [{ title: 'Certificações', items: [] as { id: string; label: string; sublabel: string; icon: any }[] }];
     }
@@ -389,6 +470,7 @@ export default function App() {
     if (activeDomain === 'devops') return devopsTab;
     if (activeDomain === 'azure') return azureTab;
     if (activeDomain === 'python') return pythonTab;
+    if (activeDomain === 'aws' && activeCertId === 'aws-saa-c03') return awsTab;
     if (activeDomain === 'aws' || activeDomain === 'gcp') return activeCertId ?? 'certs';
     return networkingTab;
   }
@@ -397,6 +479,7 @@ export default function App() {
     if (activeDomain === 'devops') return devopsVisited as Set<string>;
     if (activeDomain === 'azure') return azureVisited as Set<string>;
     if (activeDomain === 'python') return pythonVisited as Set<string>;
+    if (activeDomain === 'aws' && activeCertId === 'aws-saa-c03') return awsVisited as Set<string>;
     if (activeDomain === 'aws' || activeDomain === 'gcp') return new Set();
     return networkingVisited as Set<string>;
   }
@@ -405,6 +488,7 @@ export default function App() {
     if (activeDomain === 'devops') handleDevopsTab(tab as DevOpsTab);
     else if (activeDomain === 'azure') handleAzureTab(tab as AzureTab);
     else if (activeDomain === 'python') handlePythonTab(tab as PythonTab);
+    else if (activeDomain === 'aws' && activeCertId === 'aws-saa-c03') handleAwsTab(tab as AwsTab);
     else if (activeDomain === 'aws' || activeDomain === 'gcp') { /* no-op — cert-based */ }
     else handleNetworkingTab(tab as NetworkingTab);
     if (tab !== 'dashboard' && tab !== 'exam') markStepComplete('study');
@@ -428,7 +512,13 @@ export default function App() {
         );
       }
       if (devopsTab === 'exam') return <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6"><ExamSimulator /></div>;
-      return <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">{DEVOPS_CONTENT[devopsTab as DevOpsStudyTab]}</div>;
+      return (
+        <div className="space-y-6">
+          <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">{DEVOPS_CONTENT[devopsTab as DevOpsStudyTab]}</div>
+          <VideoDemoCard domain="devops" tab={devopsTab} />
+            <ModuleQuestionsCard domain="devops" tab={devopsTab} />
+        </div>
+      );
     }
 
     // ── Azure ────────────────────────────────────────────────────────
@@ -462,7 +552,7 @@ export default function App() {
                     ← Escolher outra certificação
                   </button>
                 </div>
-                <p className="mt-2 text-slate-400 text-[14px]">{azureStudied}/{AZURE_STUDY_TABS.length} módulos concluídos · {Math.round((azureStudied / AZURE_STUDY_TABS.length) * 100)}% progresso</p>
+                <p className="mt-2 text-slate-400 text-[14px]">{azureStudied}/{AZURE_STUDY_TABS.length} módulos concluídos · {Math.round((azureStudied / AZURE_STUDY_TABS.length) * 100)}% progresso · {TOTAL_LABS} labs oficiais</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {AZURE_STUDY_TABS.map(t => (
                     <button key={t} onClick={() => handleAzureTab(t)}
@@ -493,7 +583,10 @@ export default function App() {
             <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
               {AZURE_CONTENT[azureTab as AzureStudyTab]}
             </div>
+            {isStudyTab && <OfficialLabsCard tab={azureTab as AzureStudyTab} />}
             {isStudyTab && <AzureKnowledgeBase activeTab={azureTab} />}
+            {isStudyTab && <VideoDemoCard domain="azure" tab={azureTab} />}
+            {isStudyTab && <ModuleQuestionsCard domain="azure" tab={azureTab} />}
           </div>
         );
       }
@@ -522,6 +615,70 @@ export default function App() {
           />
         );
       }
+
+      // AWS SAA-C03 has real content
+      if (activeCertId === 'aws-saa-c03') {
+        if (awsTab === 'dashboard') {
+          return (
+            <div className="space-y-6">
+              <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-6">
+                <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-widest text-orange-400">Dashboard SAA-C03</p>
+                    <h3 className="mt-1 text-2xl font-bold text-white">AWS Solutions Architect Associate</h3>
+                  </div>
+                  <button onClick={() => setActiveCertId(null)}
+                    className="text-[11px] text-slate-500 hover:text-slate-300 underline">
+                    ← Escolher outra certificação
+                  </button>
+                </div>
+                <p className="mt-2 text-slate-400 text-[14px]">
+                  {awsStudied}/{AWS_STUDY_TABS.length} módulos concluídos · {Math.round((awsStudied / AWS_STUDY_TABS.length) * 100)}% progresso · {ALL_AWS_QUESTIONS.length} questões ({SCENARIO_QUESTIONS.length} em cenário)
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {AWS_STUDY_TABS.map(t => (
+                    <button key={t} onClick={() => handleAwsTab(t)}
+                      className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-all border ${awsVisited.has(t) ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300' : 'border-slate-800 text-slate-500 hover:border-slate-700 hover:text-slate-300'}`}>
+                      {awsVisited.has(t) ? '✓ ' : ''}{AWS_TAB_META[t]?.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-5 flex gap-3 flex-wrap">
+                  <button onClick={() => { const next = AWS_STUDY_TABS.find(t => !awsVisited.has(t)); if (next) handleAwsTab(next); }}
+                    className="px-4 py-2.5 rounded-2xl border border-orange-500/30 bg-orange-500/10 text-orange-200 text-[13px] font-semibold hover:bg-orange-500/15 transition-all">
+                    Continuar estudo
+                  </button>
+                  <button onClick={() => handleAwsTab('exam')}
+                    className="px-4 py-2.5 rounded-2xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-[13px] font-semibold hover:bg-amber-500/15 transition-all">
+                    <GraduationCap size={13} className="inline mr-1" />Simulado SAA-C03
+                  </button>
+                </div>
+              </section>
+            </div>
+          );
+        }
+        if (awsTab === 'exam') return <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6"><AwsExamSimulator /></div>;
+
+        // Study module: show knowledge base
+        return (
+          <div className="space-y-6">
+            <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-2xl">{AWS_TAB_META[awsTab as AwsStudyTab]?.emoji}</span>
+                <div>
+                  <h2 className="text-[18px] font-bold text-white">{AWS_TAB_META[awsTab as AwsStudyTab]?.label}</h2>
+                  <p className="text-[12px] text-slate-500">{AWS_TAB_META[awsTab as AwsStudyTab]?.subtitle}</p>
+                </div>
+              </div>
+              <AwsKnowledgeBase activeTab={awsTab} />
+            </div>
+            <VideoDemoCard domain="aws" tab={awsTab} />
+            <ModuleQuestionsCard domain="aws" tab={awsTab} />
+          </div>
+        );
+      }
+
+      // Other AWS certs (not yet built)
       return (
         <ComingSoonCert
           certId={activeCertId}
@@ -584,8 +741,12 @@ export default function App() {
         );
       }
       return (
-        <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
-          <NetworkingSimulator tab={networkingTab as NetworkingStudyTab} />
+        <div className="space-y-6">
+          <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+            <NetworkingSimulator tab={networkingTab as NetworkingStudyTab} />
+          </div>
+          <VideoDemoCard domain="networking" tab={networkingTab} />
+            <ModuleQuestionsCard domain="networking" tab={networkingTab} />
         </div>
       );
     }
@@ -621,8 +782,12 @@ export default function App() {
       }
       if (pythonTab === 'exam') return <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6"><PythonExamSimulator /></div>;
       return (
-        <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
-          <PythonSimulator tab={pythonTab as PythonStudyTab} />
+        <div className="space-y-6">
+          <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+            <PythonSimulator tab={pythonTab as PythonStudyTab} />
+          </div>
+          <VideoDemoCard domain="python" tab={pythonTab} />
+            <ModuleQuestionsCard domain="python" tab={pythonTab} />
         </div>
       );
     }
@@ -632,39 +797,152 @@ export default function App() {
 
   // ── Landing page ─────────────────────────────────────────────────────
   if (!activeDomain) {
+    // Handler that opens a specific module from a learning path
+    // Handler that opens the module a diagnostic area points to
+    const openDiagnosticArea = (area: DiagnosticArea) => {
+      setShowDiagnostic(false);
+      const { domain, tab } = area.target;
+      setActiveDomain(domain);
+      if (domain === 'aws') {
+        setActiveCertId('aws-saa-c03');
+        if (tab) { setAwsTab(tab as AwsTab); setAwsVisited(p => new Set([...p, tab as AwsTab])); }
+      } else if (domain === 'azure') {
+        setActiveCertId('az-104');
+        if (tab) { setAzureTab(tab as AzureTab); setAzureVisited(p => new Set([...p, tab as AzureTab])); }
+      } else if (domain === 'devops' && tab) {
+        setDevopsTab(tab as DevOpsTab); setDevopsVisited(p => new Set([...p, tab as DevOpsTab]));
+      } else if (domain === 'networking' && tab) {
+        setNetworkingTab(tab as NetworkingTab); setNetworkingVisited(p => new Set([...p, tab as NetworkingTab]));
+      } else if (domain === 'python' && tab) {
+        setPythonTab(tab as PythonTab); setPythonVisited(p => new Set([...p, tab as PythonTab]));
+      }
+    };
+
+    const openPathNode = (path: LearningPath, node: PathNode) => {
+      setShowLearningPath(false);
+      setActiveDomain(path.domain);
+      if (path.domain === 'aws') {
+        setActiveCertId('aws-saa-c03');
+        setAwsTab(node.id as AwsTab);
+        setAwsVisited(p => new Set([...p, node.id as AwsTab]));
+      } else if (path.domain === 'azure') {
+        setActiveCertId('az-104');
+        setAzureTab(node.id as AzureTab);
+        setAzureVisited(p => new Set([...p, node.id as AzureTab]));
+      } else if (path.domain === 'devops') {
+        setDevopsTab(node.id as DevOpsTab);
+        setDevopsVisited(p => new Set([...p, node.id as DevOpsTab]));
+      } else if (path.domain === 'networking') {
+        setNetworkingTab(node.id as NetworkingTab);
+        setNetworkingVisited(p => new Set([...p, node.id as NetworkingTab]));
+      } else if (path.domain === 'python') {
+        setPythonTab(node.id as PythonTab);
+        setPythonVisited(p => new Set([...p, node.id as PythonTab]));
+      }
+    };
+
+    const visitedByDomain = {
+      devops: devopsVisited as Set<string>,
+      azure: azureVisited as Set<string>,
+      aws: awsVisited as Set<string>,
+      networking: networkingVisited as Set<string>,
+      python: pythonVisited as Set<string>,
+    };
+
     return (
       <main className="min-h-screen bg-slate-950 text-slate-200">
         <header className="border-b border-slate-800 bg-slate-950/90 backdrop-blur-sm">
           <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 md:px-6">
             <button
-              onClick={() => setScenariosView(null)}
+              onClick={() => { setScenariosView(null); setShowLearningPath(false); }}
               className="flex items-center gap-2.5"
             >
               <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet-500/20 border border-violet-500/30">
                 <Terminal size={15} className="text-violet-400" />
               </div>
               <div className="text-left">
-                <div className="text-[13px] font-black text-white">Study Hub</div>
-                <div className="text-[9px] font-semibold uppercase tracking-widest text-slate-500">Plataforma de Estudos</div>
+                <div className="text-[13px] font-black text-white">{t('app.name')}</div>
+                <div className="text-[9px] font-semibold uppercase tracking-widest text-slate-500">{t('app.tagline')}</div>
               </div>
             </button>
             <div className="ml-auto flex items-center gap-3">
-              {scenariosView === null && (
-                <button
-                  onClick={() => setScenariosView('hub')}
-                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-200 text-[11px] font-semibold hover:bg-violet-500/20"
-                >
-                  🎯 Cenários guiados
-                </button>
+              {scenariosView === null && !showLearningPath && !showProjects && !showInterview && !showDiagnostic && !showCareer && !showResources && (
+                <>
+                  <button
+                    onClick={() => setShowLearningPath(true)}
+                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-200 text-[11px] font-semibold hover:bg-violet-500/20"
+                  >
+                    {t('nav.learningPath')}
+                  </button>
+                  <button
+                    onClick={() => setShowProjects(true)}
+                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-orange-500/30 bg-orange-500/10 text-orange-200 text-[11px] font-semibold hover:bg-orange-500/20"
+                  >
+                    {t('nav.projects')}
+                  </button>
+                  <button
+                    onClick={() => setShowInterview(true)}
+                    className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-200 text-[11px] font-semibold hover:bg-violet-500/20"
+                  >
+                    {t('nav.interview')}
+                  </button>
+                  <button
+                    onClick={() => setScenariosView('hub')}
+                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-200 text-[11px] font-semibold hover:bg-violet-500/20"
+                  >
+                    {t('nav.scenarios')}
+                  </button>
+                </>
               )}
+              <LangSwitcher />
               <StreakBadge streak={daily.streak} />
             </div>
           </div>
         </header>
 
         <div className="mx-auto max-w-5xl px-4 py-8 md:px-6">
+          {/* Resources view */}
+          {showResources && (
+            <ResourcesView onExit={() => setShowResources(false)} />
+          )}
+
+          {/* Career view */}
+          {!showResources && showCareer && (
+            <CareerView onExit={() => setShowCareer(false)} />
+          )}
+
+          {/* Diagnostic view */}
+          {!showResources && !showCareer && showDiagnostic && (
+            <DiagnosticView
+              onExit={() => setShowDiagnostic(false)}
+              onOpenArea={openDiagnosticArea}
+            />
+          )}
+
+          {/* Interview prep view */}
+          {!showResources && !showCareer && !showDiagnostic && showInterview && (
+            <InterviewPrepView onExit={() => setShowInterview(false)} />
+          )}
+
+          {/* Projects track view */}
+          {!showResources && !showCareer && !showDiagnostic && !showInterview && showProjects && (
+            <ProjectsView onExit={() => setShowProjects(false)} />
+          )}
+
+          {/* Learning Path view */}
+          {!showResources && !showCareer && !showDiagnostic && !showInterview && !showProjects && showLearningPath && (
+            <LearningPathView
+              visitedByDomain={visitedByDomain}
+              scenarioAttempts={allScenarioAttempts}
+              terminalAttempts={allTerminalAttempts}
+              streak={daily.streak}
+              onOpenNode={openPathNode}
+              onExit={() => setShowLearningPath(false)}
+            />
+          )}
+
           {/* Scenario player takes over */}
-          {scenariosView !== null && typeof scenariosView === 'object' && scenariosView.type === 'scenario' && (() => {
+          {!showResources && !showCareer && !showDiagnostic && !showInterview && !showProjects && !showLearningPath && scenariosView !== null && typeof scenariosView === 'object' && scenariosView.type === 'scenario' && (() => {
             const s = findScenario(scenariosView.activeId);
             if (!s) { setScenariosView('hub'); return null; }
             return (
@@ -677,7 +955,7 @@ export default function App() {
           })()}
 
           {/* Terminal player takes over */}
-          {scenariosView !== null && typeof scenariosView === 'object' && scenariosView.type === 'terminal' && (() => {
+          {!showResources && !showCareer && !showDiagnostic && !showInterview && !showProjects && !showLearningPath && scenariosView !== null && typeof scenariosView === 'object' && scenariosView.type === 'terminal' && (() => {
             const s = findTerminalSession(scenariosView.activeId);
             if (!s) { setScenariosView('hub'); return null; }
             return (
@@ -690,7 +968,7 @@ export default function App() {
           })()}
 
           {/* Scenarios hub */}
-          {scenariosView === 'hub' && (
+          {!showResources && !showCareer && !showDiagnostic && !showInterview && !showProjects && !showLearningPath && scenariosView === 'hub' && (
             <ScenariosHub
               onOpenScenario={(id) => setScenariosView({ type: 'scenario', activeId: id })}
               onOpenTerminal={(id) => setScenariosView({ type: 'terminal', activeId: id })}
@@ -702,7 +980,7 @@ export default function App() {
         </div>
 
         {/* Default: landing */}
-        {scenariosView === null && (
+        {!showResources && !showCareer && !showDiagnostic && !showInterview && !showProjects && !showLearningPath && scenariosView === null && (
           <PlatformLanding
             domains={DOMAINS}
             progressByDomain={progressByDomain}
@@ -713,6 +991,12 @@ export default function App() {
             onLogActivity={logActivity}
             progressBreakdown={progressBreakdown}
             onOpenScenarios={() => setScenariosView('hub')}
+            onOpenLearningPath={() => setShowLearningPath(true)}
+            onOpenProjects={() => setShowProjects(true)}
+            onOpenInterview={() => setShowInterview(true)}
+            onOpenDiagnostic={() => setShowDiagnostic(true)}
+            onOpenCareer={() => setShowCareer(true)}
+            onOpenResources={() => setShowResources(true)}
           />
         )}
       </main>

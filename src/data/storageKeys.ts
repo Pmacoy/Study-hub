@@ -23,6 +23,15 @@ export const PYTHON_STORAGE_KEYS = {
   visitedTabs: 'python_visited_tabs',
 } as const;
 
+export const AWS_STORAGE_KEYS = {
+  activeTab: 'aws_saa_active_tab',
+  visitedTabs: 'aws_saa_visited_tabs',
+} as const;
+
+export const PROJECT_PROGRESS_STORAGE_KEY = 'project_progress_v1';
+
+export const DIAGNOSTIC_STORAGE_KEY = 'diagnostic_results_v1';
+
 export const SCENARIO_ATTEMPTS_STORAGE_KEY = 'platform_scenario_attempts';
 
 export const TERMINAL_ATTEMPTS_STORAGE_KEY = 'platform_terminal_attempts';
