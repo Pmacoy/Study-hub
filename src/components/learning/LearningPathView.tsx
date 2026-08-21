@@ -5,6 +5,7 @@ import type { ScenarioAttempt } from '../../types/scenario';
 import type { TerminalAttempt } from '../../types/terminal';
 import { ALL_LEARNING_PATHS } from '../../data/learningPaths';
 import { computeNodeStatus, computePathProgress } from '../../utils/pathProgress';
+import { useLang } from '../../i18n/LangContext';
 
 interface Props {
   visitedByDomain: Record<string, Set<string>>;   // { 'devops': Set(['linux', 'docker']), ... }
@@ -26,6 +27,7 @@ const ACCENT_MAP: Record<string, { text: string; border: string; bg: string; str
 export default function LearningPathView({
   visitedByDomain, scenarioAttempts, terminalAttempts, streak, onOpenNode, onExit,
 }: Props) {
+  const { t } = useLang();
   const [selectedPathId, setSelectedPathId] = useState<string>(ALL_LEARNING_PATHS[0].id);
 
   const selectedPath = useMemo(
@@ -70,10 +72,10 @@ export default function LearningPathView({
         <div className="flex items-start gap-4">
           <div className="text-4xl">🎯</div>
           <div className="flex-1">
-            <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">Learning Path</div>
-            <h1 className="text-2xl font-bold text-white">O teu percurso de aprendizagem</h1>
+            <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">{t('path.eyebrow')}</div>
+            <h1 className="text-2xl font-bold text-white">{t('path.title')}</h1>
             <p className="mt-1.5 text-[13px] text-slate-400 leading-relaxed max-w-2xl">
-              Escolhe um path para veres onde estás, o que já dominas, e qual é o próximo passo recomendado.
+              {t('path.intro')}
             </p>
           </div>
         </div>
@@ -81,24 +83,24 @@ export default function LearningPathView({
         <div className="mt-5 grid grid-cols-3 gap-3">
           <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
             <div className="text-2xl font-black text-white">{globalStats.doneNodes}/{globalStats.totalNodes}</div>
-            <div className="text-[9px] text-slate-500 uppercase mt-1">Módulos concluídos</div>
+            <div className="text-[9px] text-slate-500 uppercase mt-1">{t('path.modulesDone')}</div>
           </div>
           <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
             <div className="text-2xl font-black text-white">{globalStats.pct}%</div>
-            <div className="text-[9px] text-slate-500 uppercase mt-1">Total geral</div>
+            <div className="text-[9px] text-slate-500 uppercase mt-1">{t('path.overall')}</div>
           </div>
           <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
             <div className="text-2xl font-black text-white flex items-center gap-1">
               🔥 {streak}
             </div>
-            <div className="text-[9px] text-slate-500 uppercase mt-1">Dias de streak</div>
+            <div className="text-[9px] text-slate-500 uppercase mt-1">{t('path.streakDays')}</div>
           </div>
         </div>
       </section>
 
       {/* Path selector */}
       <section>
-        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Escolhe um percurso</div>
+        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">{t('path.pickPath')}</div>
         <div className="flex flex-wrap gap-2">
           {ALL_LEARNING_PATHS.map(p => {
             const a = ACCENT_MAP[p.colorAccent] ?? ACCENT_MAP['violet'];
@@ -137,16 +139,16 @@ export default function LearningPathView({
         {/* Progress bar */}
         <div className="mt-4 space-y-2">
           <div className="flex items-center justify-between text-[11px]">
-            <span className={`font-semibold ${accent.text}`}>{progress.doneNodes} de {progress.totalNodes} módulos</span>
+            <span className={`font-semibold ${accent.text}`}>{progress.doneNodes} {t('path.ofModules')} {progress.totalNodes} {t('path.modules')}</span>
             <span className="text-slate-400">{progress.percentage}%</span>
           </div>
           <div className="h-2 rounded-full bg-slate-900 overflow-hidden">
             <div className={`h-full ${accent.strong} transition-all duration-500`} style={{ width: `${progress.percentage}%` }} />
           </div>
           <div className="flex items-center gap-3 text-[10px] text-slate-500">
-            <span>✓ {progress.doneNodes} feito</span>
-            <span>◐ {progress.inProgressNodes} em curso</span>
-            <span>○ {progress.todoNodes} por fazer</span>
+            <span>✓ {progress.doneNodes} {t('path.doneLabel')}</span>
+            <span>◐ {progress.inProgressNodes} {t('path.inProgressLabel')}</span>
+            <span>○ {progress.todoNodes} {t('path.todoLabel')}</span>
           </div>
         </div>
 
@@ -158,7 +160,7 @@ export default function LearningPathView({
           >
             <Zap size={18} className={accent.text} />
             <div className="flex-1 text-left">
-              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Próximo passo</div>
+              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t('path.nextStep')}</div>
               <div className="text-[13px] font-semibold text-white mt-0.5">
                 {progress.nextRecommendedNode.emoji} {progress.nextRecommendedNode.label}
               </div>
@@ -173,7 +175,7 @@ export default function LearningPathView({
 
       {/* Timeline of nodes */}
       <section>
-        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Percurso completo</div>
+        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">{t('path.fullPath')}</div>
         <div className="space-y-2">
           {selectedPath.nodes.map((node, i) => {
             const status = computeNodeStatus(node, ctx);
@@ -210,20 +212,20 @@ export default function LearningPathView({
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[10px] font-black text-slate-500 uppercase">Passo {i+1}</span>
-                      {isNext && <span className={`text-[9px] font-black ${accent.text} uppercase px-1.5 py-0.5 rounded ${accent.bg}`}>Próximo</span>}
-                      {status === 'done' && <span className="text-[9px] font-black text-emerald-300 uppercase">✓ Concluído</span>}
-                      {status === 'in-progress' && <span className="text-[9px] font-black text-amber-300 uppercase">◐ Em curso</span>}
+                      <span className="text-[10px] font-black text-slate-500 uppercase">{t('path.step')} {i+1}</span>
+                      {isNext && <span className={`text-[9px] font-black ${accent.text} uppercase px-1.5 py-0.5 rounded ${accent.bg}`}>{t('path.next')}</span>}
+                      {status === 'done' && <span className="text-[9px] font-black text-emerald-300 uppercase">{t('path.completed')}</span>}
+                      {status === 'in-progress' && <span className="text-[9px] font-black text-amber-300 uppercase">{t('path.inProgress')}</span>}
                     </div>
                     <h3 className="text-[14px] font-bold text-white mt-1">{node.emoji} {node.label}</h3>
                     <p className="text-[11px] text-slate-500 mt-0.5">{node.subtitle}</p>
                     <div className="mt-2 flex items-center gap-3 text-[10px] text-slate-500">
                       <span className="flex items-center gap-1"><Clock size={10} /> ~{Math.round(node.estimatedMin / 60)}h</span>
                       {node.scenarioIds && node.scenarioIds.length > 0 && (
-                        <span>🎯 {node.scenarioIds.length} cenário</span>
+                        <span>🎯 {node.scenarioIds.length} {t('path.scenario')}</span>
                       )}
                       {node.terminalSessionIds && node.terminalSessionIds.length > 0 && (
-                        <span>🖥️ {node.terminalSessionIds.length} terminal</span>
+                        <span>🖥️ {node.terminalSessionIds.length} {t('path.terminal')}</span>
                       )}
                     </div>
                   </div>

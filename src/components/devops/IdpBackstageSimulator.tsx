@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useLang } from '../../i18n/LangContext';
+import { PLATFORM_EN, tr } from '../../i18n/modulesEn';
 import { Copy, Check, Blocks, Users, Package, FileText, GitBranch, Search } from 'lucide-react';
 
 function Code({ code, lang = 'yaml' }: { code: string; lang?: string }) {
@@ -22,6 +24,7 @@ function Code({ code, lang = 'yaml' }: { code: string; lang?: string }) {
 }
 
 export default function IdpBackstageModule() {
+  const { lang } = useLang();
   const [section, setSection] = useState<'what' | 'components' | 'backstage' | 'catalog'>('what');
   const [openBenefit, setOpenBenefit] = useState<string | null>(null);
 
@@ -38,7 +41,7 @@ export default function IdpBackstageModule() {
         {views.map(v => (
           <button key={v.id} onClick={() => setSection(v.id)}
             className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${section === v.id ? 'bg-violet-500/20 border border-violet-500/40 text-violet-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
-            {v.label}
+            {tr(PLATFORM_EN.views, v.label, lang)}
           </button>
         ))}
       </div>
@@ -127,7 +130,7 @@ export default function IdpBackstageModule() {
               </div>
               <div>
                 <div className="text-[13px] font-bold text-white">{c.title}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">{c.desc}</div>
+                <div className="text-[11px] text-slate-500 mt-0.5">{tr(PLATFORM_EN.descs, c.desc, lang)}</div>
               </div>
             </div>
           ))}

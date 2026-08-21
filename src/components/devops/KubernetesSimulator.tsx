@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useLang } from '../../i18n/LangContext';
+import { K8S_EN, tr } from '../../i18n/modulesEn';
 import { Copy, Check } from 'lucide-react';
 
 type View = 'architecture' | 'resources' | 'commands' | 'rbac';
@@ -157,6 +159,7 @@ roleRef:
 # Verificar: kubectl auth can-i get pods -n prod --as joao@example.com`;
 
 export default function KubernetesSimulator() {
+  const { lang } = useLang();
   const [view, setView] = useState<View>('architecture');
   const [resource, setResource] = useState(0);
   const [cmdGroup, setCmdGroup] = useState('Diagnóstico');
@@ -192,7 +195,7 @@ export default function KubernetesSimulator() {
               ].map(x => (
                 <div key={x.c} className="flex items-start gap-3 py-2 border-b border-slate-800/50 last:border-0">
                   <code className="font-mono text-[11px] text-violet-300 shrink-0 w-36">{x.c}</code>
-                  <span className="text-[11px] text-slate-400">{x.d}</span>
+                  <span className="text-[11px] text-slate-400">{tr({...K8S_EN.controlPlane, ...K8S_EN.rbac}, x.d, lang)}</span>
                 </div>
               ))}
             </div>
@@ -206,7 +209,7 @@ export default function KubernetesSimulator() {
               ].map(x => (
                 <div key={x.c} className="flex items-start gap-3 py-2 border-b border-slate-800/50 last:border-0">
                   <code className="font-mono text-[11px] text-sky-300 shrink-0 w-36">{x.c}</code>
-                  <span className="text-[11px] text-slate-400">{x.d}</span>
+                  <span className="text-[11px] text-slate-400">{tr({...K8S_EN.controlPlane, ...K8S_EN.rbac}, x.d, lang)}</span>
                 </div>
               ))}
             </div>
@@ -218,8 +221,8 @@ export default function KubernetesSimulator() {
               { t: 'Scheduling', items: ['Requests/Limits CPU+Mem', 'NodeSelector', 'Affinity/Anti-affinity', 'Taints & Tolerations'], c: 'rose' },
               { t: 'Observabilidade', items: ['Liveness Probe', 'Readiness Probe', 'Startup Probe', 'kubectl top / metrics-server'], c: 'emerald' },
             ].map(g => (
-              <div key={g.t} className={`p-4 rounded-2xl border ${g.c === 'amber' ? 'border-amber-500/30 bg-amber-500/8' : g.c === 'teal' ? 'border-teal-500/30 bg-teal-500/8' : g.c === 'rose' ? 'border-rose-500/30 bg-rose-500/8' : 'border-emerald-500/30 bg-emerald-500/8'}`}>
-                <div className={`text-[10px] font-black uppercase mb-2 ${g.c === 'amber' ? 'text-amber-400' : g.c === 'teal' ? 'text-teal-400' : g.c === 'rose' ? 'text-rose-400' : 'text-emerald-400'}`}>{g.t}</div>
+              <div key={tr(K8S_EN.groups, g.t, lang)} className={`p-4 rounded-2xl border ${g.c === 'amber' ? 'border-amber-500/30 bg-amber-500/8' : g.c === 'teal' ? 'border-teal-500/30 bg-teal-500/8' : g.c === 'rose' ? 'border-rose-500/30 bg-rose-500/8' : 'border-emerald-500/30 bg-emerald-500/8'}`}>
+                <div className={`text-[10px] font-black uppercase mb-2 ${g.c === 'amber' ? 'text-amber-400' : g.c === 'teal' ? 'text-teal-400' : g.c === 'rose' ? 'text-rose-400' : 'text-emerald-400'}`}>{tr(K8S_EN.groups, g.t, lang)}</div>
                 {g.items.map(i => <div key={i} className="text-[10px] text-slate-500 py-0.5">{i}</div>)}
               </div>
             ))}
@@ -262,7 +265,7 @@ export default function KubernetesSimulator() {
             {KUBECTL_CMDS[cmdGroup].map((c, i) => (
               <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-slate-900 border border-slate-800">
                 <code className="text-[11px] font-mono text-violet-300 flex-1">{c.cmd}</code>
-                <span className="text-[11px] text-slate-500 shrink-0 text-right max-w-[200px]">{c.desc}</span>
+                <span className="text-[11px] text-slate-500 shrink-0 text-right max-w-[200px]">{tr(K8S_EN.cmdDescs, c.desc, lang)}</span>
               </div>
             ))}
           </div>
@@ -279,7 +282,7 @@ export default function KubernetesSimulator() {
             ].map(x => (
               <div key={x.t} className={`p-3 rounded-xl border text-center ${x.c === 'sky' ? 'border-sky-500/30 bg-sky-500/8' : x.c === 'violet' ? 'border-violet-500/30 bg-violet-500/8' : 'border-amber-500/30 bg-amber-500/8'}`}>
                 <div className={`text-[11px] font-black ${x.c === 'sky' ? 'text-sky-400' : x.c === 'violet' ? 'text-violet-400' : 'text-amber-400'}`}>{x.t}</div>
-                <div className="text-[10px] text-slate-500 mt-1">{x.d}</div>
+                <div className="text-[10px] text-slate-500 mt-1">{tr({...K8S_EN.controlPlane, ...K8S_EN.rbac}, x.d, lang)}</div>
               </div>
             ))}
           </div>

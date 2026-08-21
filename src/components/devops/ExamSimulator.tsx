@@ -1,7 +1,9 @@
 import { useState, useCallback } from 'react';
 import { CheckCircle2, XCircle, RotateCcw, Trophy } from 'lucide-react';
+import { useLang } from '../../i18n/LangContext';
+import { EXAM_QUESTIONS_EN, EXAM_UI_EN } from '../../i18n/examQuestionsEn';
 
-const QUESTIONS = [
+const QUESTIONS_PT = [
   { q: 'Qual é a diferença entre Continuous Delivery e Continuous Deployment?', opts: ['São a mesma coisa, apenas nomes diferentes', 'Continuous Delivery faz deploy automático; Deployment requer aprovação', 'Continuous Delivery requer aprovação manual para produção; Deployment faz deploy automático', 'Continuous Deployment é para staging; Delivery é para produção'], a: 2, exp: 'Continuous Delivery garante que o código está sempre em estado deployável, mas o deploy para produção é manual. Continuous Deployment vai um passo além e faz deploy automático em cada commit aprovado.', mod: 'DevOps Intro' },
   { q: 'No Git, qual o comando para re-aplicar commits de uma branch sobre outra sem criar merge commits?', opts: ['git merge --no-ff', 'git rebase', 'git cherry-pick', 'git reset --hard'], a: 1, exp: 'git rebase re-aplica os commits da branch actual sobre a branch de destino, criando um histórico linear sem merge commits. Nunca fazer rebase em branches partilhadas com outros developers.', mod: 'Git' },
   { q: 'O que significa o princípio "shift-left" em DevSecOps?', opts: ['Mover a equipa de operações para a esquerda no organograma', 'Integrar controlos de segurança no início do SDLC, não só no final', 'Usar Git flow em vez de trunk-based development', 'Deslocar os servidores para datacenters mais à esquerda geograficamente'], a: 1, exp: 'Shift-left significa antecipar os controlos de segurança para as fases iniciais do ciclo de vida (planeamento, código, build) em vez de os deixar apenas para o final. Encontrar vulnerabilidades mais cedo é muito mais barato.', mod: 'DevSecOps' },
@@ -25,6 +27,8 @@ const QUESTIONS = [
 ];
 
 export default function ExamSimulator() {
+  const { lang } = useLang();
+  const QUESTIONS = lang === 'en' ? EXAM_QUESTIONS_EN : QUESTIONS_PT;
   const [started, setStarted] = useState(false);
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(new Array(QUESTIONS.length).fill(null));
@@ -60,9 +64,9 @@ export default function ExamSimulator() {
     <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-8 text-center space-y-4">
       <div className="text-4xl">🎯</div>
       <h3 className="text-2xl font-bold text-white">Simulado DevOps</h3>
-      <p className="text-slate-400 max-w-md mx-auto">{QUESTIONS.length} questões cobrindo os módulos: DevOps, Git, Docker, Kubernetes, Terraform, CI/CD, Monitoring e Security.</p>
+      <p className="text-slate-400 max-w-md mx-auto">{QUESTIONS.length} {lang === 'en' ? 'questions covering DevOps, Git, Docker, Kubernetes, Terraform, CI/CD, Monitoring and Security.' : 'questões cobrindo os módulos: DevOps, Git, Docker, Kubernetes, Terraform, CI/CD, Monitoring e Security.'}</p>
       <div className="grid grid-cols-3 gap-3 max-w-xs mx-auto pt-2">
-        {[['20', 'Questões'], ['60%', 'Aprovação'], ['18', 'Módulos'], ].map(([v, l]) => (
+        {[['20', lang === 'en' ? 'Questions' : 'Questões'], ['60%', lang === 'en' ? 'Pass mark' : 'Aprovação'], ['18', lang === 'en' ? 'Modules' : 'Módulos'], ].map(([v, l]) => (
           <div key={l} className="p-3 rounded-xl bg-slate-900 border border-slate-800">
             <div className="text-xl font-black text-violet-300">{v}</div>
             <div className="text-[10px] text-slate-500">{l}</div>
@@ -141,7 +145,7 @@ export default function ExamSimulator() {
           </div>
           <p className="text-[12px] text-slate-300 leading-relaxed">{q.exp}</p>
           <button onClick={handleNext} className="mt-3 px-5 py-2 rounded-xl bg-violet-500/20 border border-violet-500/40 text-violet-300 font-semibold text-[12px] hover:bg-violet-500/30 transition-all">
-            {current < QUESTIONS.length - 1 ? 'Próxima questão →' : 'Ver resultados →'}
+            {current < QUESTIONS.length - 1 ? (lang === 'en' ? EXAM_UI_EN.next + ' →' : 'Próxima questão →') : (lang === 'en' ? EXAM_UI_EN.seeResult + ' →' : 'Ver resultados →')}
           </button>
         </div>
       )}

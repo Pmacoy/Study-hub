@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useLang } from '../../i18n/LangContext';
+import { CICD_EN, tr } from '../../i18n/modulesEn';
 import { Copy, Check, ChevronRight } from 'lucide-react';
 
 type View = 'concepts' | 'github-actions' | 'jenkins' | 'stages';
@@ -197,6 +199,7 @@ const PIPELINE_STAGES = [
 ];
 
 export default function CiCdSimulator() {
+  const { lang } = useLang();
   const [view, setView] = useState<View>('stages');
   const [tool, setTool] = useState<'github-actions' | 'jenkins'>('github-actions');
 
@@ -233,7 +236,7 @@ export default function CiCdSimulator() {
           {PIPELINE_STAGES.map((s, i) => (
             <div key={i} className={`p-4 rounded-2xl border ${colorMap[s.color]}`}>
               <div className="text-xl mb-2">{s.icon}</div>
-              <div className={`text-[11px] font-black uppercase mb-2 ${colorMap[s.color].split(' ')[2]}`}>{s.stage}</div>
+              <div className={`text-[11px] font-black uppercase mb-2 ${colorMap[s.color].split(' ')[2]}`}>{tr(CICD_EN.stages, s.stage, lang)}</div>
               {s.items.map(item => (
                 <div key={item} className="flex items-start gap-1.5 text-[10px] text-slate-500 py-0.5">
                   <ChevronRight size={9} className={`${colorMap[s.color].split(' ')[2]} mt-0.5 shrink-0`} />{item}

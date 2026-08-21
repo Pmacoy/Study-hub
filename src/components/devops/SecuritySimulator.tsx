@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useLang } from '../../i18n/LangContext';
+import { MISC_EN, tr } from '../../i18n/modulesEn';
 import { Copy, Check, Shield } from 'lucide-react';
 
 type View = 'overview' | 'sast' | 'container' | 'opa';
@@ -110,6 +112,7 @@ sonar.coverage.exclusions=**/*.test.ts,**/*.spec.ts
 #   uses: sonarsource/sonarqube-quality-gate-action@master`;
 
 export default function SecuritySimulator() {
+  const { lang } = useLang();
   const [view, setView] = useState<View>('overview');
 
   const views = [
@@ -125,7 +128,7 @@ export default function SecuritySimulator() {
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
             className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${view === v.id ? 'bg-rose-500/20 border border-rose-500/40 text-rose-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
-            {v.label}
+            {tr(MISC_EN.views, v.label, lang)}
           </button>
         ))}
       </div>
@@ -148,7 +151,7 @@ export default function SecuritySimulator() {
             ].map(s => (
               <div key={s.t} className={`p-4 rounded-2xl border ${s.color === 'sky' ? 'border-sky-500/30 bg-sky-500/8' : s.color === 'violet' ? 'border-violet-500/30 bg-violet-500/8' : s.color === 'amber' ? 'border-amber-500/30 bg-amber-500/8' : 'border-rose-500/30 bg-rose-500/8'}`}>
                 <div className={`text-[13px] font-black mb-1 ${s.color === 'sky' ? 'text-sky-400' : s.color === 'violet' ? 'text-violet-400' : s.color === 'amber' ? 'text-amber-400' : 'text-rose-400'}`}>{s.t}</div>
-                <div className="text-[10px] text-slate-400 mb-2">{s.desc}</div>
+                <div className="text-[10px] text-slate-400 mb-2">{tr(MISC_EN.descs, s.desc, lang)}</div>
                 <div className="text-[9px] font-mono text-slate-500">{s.tools}</div>
                 <div className={`mt-2 text-[9px] font-bold ${s.color === 'sky' ? 'text-sky-500' : s.color === 'violet' ? 'text-violet-500' : s.color === 'amber' ? 'text-amber-500' : 'text-rose-500'}`}>Stage: {s.when}</div>
               </div>

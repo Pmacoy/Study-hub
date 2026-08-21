@@ -1,11 +1,13 @@
 export type StudyTab =
   | 'devops-intro'
   | 'linux'
+  | 'shell-scripting'
   | 'git'
   | 'docker'
   | 'kubernetes'
   | 'helm'
   | 'cicd'
+  | 'gitops'
   | 'terraform'
   | 'cloudformation'
   | 'monitoring'
@@ -21,11 +23,13 @@ export type DevOpsTab = 'dashboard' | 'exam' | StudyTab;
 export const STUDY_TABS: StudyTab[] = [
   'devops-intro',
   'linux',
+  'shell-scripting',
   'git',
   'docker',
   'kubernetes',
   'helm',
   'cicd',
+  'gitops',
   'terraform',
   'cloudformation',
   'monitoring',

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useLang } from '../../i18n/LangContext';
+import { PLATFORM_EN, tr } from '../../i18n/modulesEn';
 import { Copy, Check, Gauge, Brain, Users, TrendingUp } from 'lucide-react';
 
 function Code({ code, lang = 'yaml' }: { code: string; lang?: string }) {
@@ -65,6 +67,7 @@ const DORA_METRICS = [
 ];
 
 export default function DoraDevexSimulator() {
+  const { lang } = useLang();
   const [view, setView] = useState<'dora' | 'devex' | 'topologies' | 'space'>('dora');
   const [selectedMetric, setSelectedMetric] = useState<number>(0);
 
@@ -81,7 +84,7 @@ export default function DoraDevexSimulator() {
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-[11px] font-semibold transition-all border ${view === v.id ? 'border-violet-500/40 bg-violet-500/15 text-violet-300' : 'border-slate-800 text-slate-500 hover:text-slate-300'}`}>
-            <v.icon size={12} />{v.label}
+            <v.icon size={12} />{tr(PLATFORM_EN.views, v.label, lang)}
           </button>
         ))}
       </div>
@@ -200,7 +203,7 @@ avg(incident_resolved_ts - incident_created_ts)`} />
                   c.color === 'rose' ? 'text-rose-400' :
                   'text-emerald-400'
                 }`}>{c.type}</div>
-                <div className="text-[11px] text-slate-300 leading-relaxed">{c.desc}</div>
+                <div className="text-[11px] text-slate-300 leading-relaxed">{tr(PLATFORM_EN.descs, c.desc, lang)}</div>
                 <div className="mt-3 pt-3 border-t border-slate-800 text-[10px] text-slate-400 italic">{c.action}</div>
               </div>
             ))}
@@ -244,7 +247,7 @@ avg(incident_resolved_ts - incident_created_ts)`} />
               <div key={s.letter} className="p-3 rounded-xl bg-slate-900 border border-slate-800">
                 <div className="text-2xl font-black text-violet-400">{s.letter}</div>
                 <div className="text-[11px] font-bold text-slate-200 mt-1">{s.name}</div>
-                <div className="text-[10px] text-slate-500 mt-1 leading-relaxed">{s.desc}</div>
+                <div className="text-[10px] text-slate-500 mt-1 leading-relaxed">{tr(PLATFORM_EN.descs, s.desc, lang)}</div>
                 <div className="text-[10px] text-emerald-400 mt-2 italic">{s.ex}</div>
               </div>
             ))}

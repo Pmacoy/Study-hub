@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { ExternalLink, Compass, Users, AlertTriangle, CalendarCheck, Award } from 'lucide-react';
+import { useLang } from '../../i18n/LangContext';
+import { CAREER_EN } from '../../i18n/careerEn';
 
 interface Props {
   onExit: () => void;
@@ -90,14 +92,20 @@ const PLAN_90: { window: string; items: string[] }[] = [
 ];
 
 export default function CareerView({ onExit }: Props) {
+  const { lang, t } = useLang();
   const [view, setView] = useState<View>('what');
+  const L = lang === 'en' ? CAREER_EN : null;
+  const roles = L?.roles ?? ROLES;
+  const skills = L?.skills ?? SOFT_SKILLS;
+  const mistakes = L?.mistakes ?? MISTAKES;
+  const plan = L?.plan ?? PLAN_90;
 
   const tabs: { id: View; label: string }[] = [
-    { id: 'what',     label: 'O que é ser especialista' },
-    { id: 'skills',   label: 'As 5 competências' },
-    { id: 'mistakes', label: 'Erros comuns' },
-    { id: 'plan',     label: 'Plano de 90 dias' },
-    { id: 'certs',    label: 'Certificações' },
+    { id: 'what',     label: L?.tabs.what     ?? 'O que é ser especialista' },
+    { id: 'skills',   label: L?.tabs.skills   ?? 'As 5 competências' },
+    { id: 'mistakes', label: L?.tabs.mistakes ?? 'Erros comuns' },
+    { id: 'plan',     label: L?.tabs.plan     ?? 'Plano de 90 dias' },
+    { id: 'certs',    label: L?.tabs.certs    ?? 'Certificações' },
   ];
 
   return (
@@ -111,12 +119,10 @@ export default function CareerView({ onExit }: Props) {
         <div className="flex items-start gap-4">
           <div className="text-4xl">🧭</div>
           <div className="flex-1">
-            <div className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">Carreira</div>
-            <h1 className="text-2xl font-bold text-white">Como se constrói um especialista</h1>
+            <div className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">{L?.eyebrow ?? 'Carreira'}</div>
+            <h1 className="text-2xl font-bold text-white">{L?.title ?? 'Como se constrói um especialista'}</h1>
             <p className="mt-1.5 text-[13px] text-slate-400 leading-relaxed max-w-2xl">
-              O diagnóstico mede o que sabes fazer. Isto trata do resto — profundidade, julgamento,
-              comunicação e as decisões de carreira que separam quem executa de quem é chamado quando
-              o problema é difícil.
+              {L?.intro ?? 'O diagnóstico mede o que sabes fazer. Isto trata do resto.'}
             </p>
           </div>
         </div>
@@ -142,55 +148,44 @@ export default function CareerView({ onExit }: Props) {
           <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
             <div className="flex items-center gap-2 mb-3">
               <Compass size={15} className="text-amber-400" />
-              <h3 className="text-[14px] font-bold text-white">A definição que interessa</h3>
+              <h3 className="text-[14px] font-bold text-white">{L?.definitionTitle ?? 'A definição que interessa'}</h3>
             </div>
             <p className="text-[13px] text-slate-400 leading-relaxed">
-              Um especialista é quem desenvolveu conhecimento profundo numa área e usa essa experiência
-              para resolver problemas complexos, orientar decisões técnicas e reduzir risco.
-              Não precisa de saber tudo — precisa de dominar um campo, perceber como ele se relaciona
-              com o resto, e transformar isso em resultado.
+              {L?.definition1 ?? ''}
             </p>
             <p className="mt-3 text-[13px] text-slate-400 leading-relaxed">
-              Na prática, é a pessoa que costuma ser chamada quando aparece uma falha difícil,
-              uma decisão de arquitectura, um incidente crítico ou uma tecnologia que a equipa ainda não domina.
+              {L?.definition2 ?? ''}
             </p>
           </section>
 
           <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
-            <h3 className="text-[14px] font-bold text-white mb-3">Generalista vs especialista</h3>
+            <h3 className="text-[14px] font-bold text-white mb-3">{L?.vsTitle ?? 'Generalista vs especialista'}</h3>
             <div className="grid md:grid-cols-2 gap-3">
               <div className="p-4 rounded-2xl border border-sky-500/20 bg-sky-500/5">
-                <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-2">Generalista</div>
+                <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-2">{L?.generalist ?? 'Generalista'}</div>
                 <ul className="space-y-1.5 text-[12px] text-slate-400">
-                  <li>· Conhece várias áreas</li>
-                  <li>· Liga tecnologias e equipas</li>
-                  <li>· Adapta-se a funções diferentes</li>
-                  <li>· Visão abrangente</li>
+                  {(L?.generalistPoints ?? ['Conhece várias áreas','Liga tecnologias e equipas','Adapta-se a funções diferentes','Visão abrangente']).map(x => <li key={x}>· {x}</li>)}
                 </ul>
               </div>
               <div className="p-4 rounded-2xl border border-amber-500/20 bg-amber-500/5">
-                <div className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-2">Especialista</div>
+                <div className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-2">{L?.specialist ?? 'Especialista'}</div>
                 <ul className="space-y-1.5 text-[12px] text-slate-400">
-                  <li>· Aprofunda-se numa área</li>
-                  <li>· Resolve problemas complexos do domínio</li>
-                  <li>· Torna-se referência num assunto</li>
-                  <li>· Maior profundidade técnica</li>
+                  {(L?.specialistPoints ?? ['Aprofunda-se numa área','Resolve problemas complexos do domínio','Torna-se referência num assunto','Maior profundidade técnica']).map(x => <li key={x}>· {x}</li>)}
                 </ul>
               </div>
             </div>
             <p className="mt-3 text-[12px] text-slate-500 leading-relaxed">
-              Nenhum é melhor que o outro — e a maioria das pessoas alterna entre os dois ao longo da carreira.
-              Os melhores especialistas costumam ter uma base generalista sólida por baixo.
+              {L?.vsNote ?? ''}
             </p>
           </section>
 
           <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
             <div className="flex items-center gap-2 mb-3">
               <Users size={15} className="text-amber-400" />
-              <h3 className="text-[14px] font-bold text-white">Os papéis não são sinónimos</h3>
+              <h3 className="text-[14px] font-bold text-white">{L?.rolesTitle ?? 'Os papéis não são sinónimos'}</h3>
             </div>
             <div className="space-y-1.5">
-              {ROLES.map(([role, focus]) => (
+              {roles.map(([role, focus]) => (
                 <div key={role} className="flex gap-3 p-2.5 rounded-xl bg-slate-900">
                   <span className="shrink-0 text-[12px] font-bold text-amber-300 w-40">{role}</span>
                   <span className="text-[12px] text-slate-400">{focus}</span>
@@ -198,26 +193,21 @@ export default function CareerView({ onExit }: Props) {
               ))}
             </div>
             <p className="mt-3 text-[12px] text-slate-500 leading-relaxed">
-              "Especialista" não substitui o nome da profissão — indica o grau de profundidade dentro dela.
+              {L?.rolesNote ?? ''}
             </p>
           </section>
 
           <div className="rounded-2xl border border-sky-500/25 bg-sky-500/5 p-4">
-            <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-1">Ao avaliar uma vaga</div>
+            <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-1">{L?.vacancyTitle ?? 'Ao avaliar uma vaga'}</div>
             <p className="text-[12px] text-sky-100 leading-relaxed">
-              Um título bonito não garante autonomia nem capacidade de decisão. Olha antes para a
-              complexidade dos problemas, o nível de autonomia, as decisões que vais poder tomar,
-              se há liderança técnica, e o impacto de uma decisão errada.
+              {L?.vacancyBody ?? ''}
             </p>
           </div>
 
           <div className="rounded-2xl border border-violet-500/25 bg-violet-500/5 p-4">
-            <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">Especialista precisa de virar gestor?</div>
+            <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">{L?.managerTitle ?? 'Especialista precisa de virar gestor?'}</div>
             <p className="text-[12px] text-violet-100 leading-relaxed">
-              Não. Muitas empresas mantêm trilhas paralelas: gestão de um lado; especialista, staff engineer,
-              principal engineer e arquitecto do outro. A pergunta honesta é: queres continuar a resolver
-              problemas técnicos complexos, ou queres desenvolver pessoas e responder pelos resultados de uma equipa?
-              São trabalhos diferentes, não níveis diferentes.
+              {L?.managerBody ?? ''}
             </p>
           </div>
         </div>
@@ -227,10 +217,9 @@ export default function CareerView({ onExit }: Props) {
       {view === 'skills' && (
         <div className="space-y-4">
           <p className="text-[12px] text-slate-400 leading-relaxed">
-            O diagnóstico do hub mede competências técnicas por área. Estas cinco são transversais —
-            e são normalmente o que separa um sénior de um especialista.
+            {L?.skillsIntro ?? ''}
           </p>
-          {SOFT_SKILLS.map(s => (
+          {skills.map(s => (
             <section key={s.title} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg">{s.icon}</span>
@@ -238,7 +227,7 @@ export default function CareerView({ onExit }: Props) {
               </div>
               <p className="text-[12px] text-slate-400 leading-relaxed">{s.body}</p>
               <div className="mt-3 p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
-                <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Sinal de domínio</div>
+                <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">{t('diag.masterySignal')}</div>
                 <p className="text-[12px] text-emerald-100/80 leading-relaxed italic">{s.check}</p>
               </div>
             </section>
@@ -251,9 +240,9 @@ export default function CareerView({ onExit }: Props) {
         <div className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
             <AlertTriangle size={15} className="text-rose-400" />
-            <h3 className="text-[14px] font-bold text-white">O que trava a maioria das carreiras</h3>
+            <h3 className="text-[14px] font-bold text-white">{L?.mistakesTitle ?? 'O que trava a maioria das carreiras'}</h3>
           </div>
-          {MISTAKES.map(([mistake, why]) => (
+          {mistakes.map(([mistake, why]) => (
             <div key={mistake} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
               <div className="text-[13px] font-semibold text-rose-300">{mistake}</div>
               <p className="text-[12px] text-slate-400 mt-1.5 leading-relaxed">{why}</p>
@@ -261,11 +250,9 @@ export default function CareerView({ onExit }: Props) {
           ))}
 
           <div className="rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 mt-4">
-            <div className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">O princípio por trás de todos</div>
+            <div className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">{L?.mistakesPrincipleTitle ?? 'O princípio por trás de todos'}</div>
             <p className="text-[12px] text-amber-100 leading-relaxed">
-              Especializa-te num <strong>problema</strong>, não numa ferramenta. É melhor dominar segurança
-              de aplicações do que depender de um scanner específico; melhor perceber engenharia de dados
-              do que construir a carreira à volta de uma plataforma. As ferramentas mudam — os problemas ficam.
+              {L?.mistakesPrinciple ?? ''}
             </p>
           </div>
         </div>
@@ -276,14 +263,13 @@ export default function CareerView({ onExit }: Props) {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <CalendarCheck size={15} className="text-amber-400" />
-            <h3 className="text-[14px] font-bold text-white">Plano prático de 90 dias</h3>
+            <h3 className="text-[14px] font-bold text-white">{L?.planTitle ?? 'Plano prático de 90 dias'}</h3>
           </div>
           <p className="text-[12px] text-slate-400 leading-relaxed">
-            Noventa dias não transformam ninguém em especialista. Mas criam uma trajectória concreta —
-            o que já é bastante melhor do que trocar o título no perfil.
+            {L?.planIntro ?? ''}
           </p>
 
-          {PLAN_90.map((phase, i) => (
+          {plan.map((phase, i) => (
             <section key={phase.window} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-6 h-6 rounded-full bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-[10px] font-black text-amber-300">
@@ -303,11 +289,9 @@ export default function CareerView({ onExit }: Props) {
           ))}
 
           <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-4">
-            <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Como o hub encaixa</div>
+            <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">{L?.planHubTitle ?? 'Como o hub encaixa'}</div>
             <p className="text-[12px] text-emerald-100 leading-relaxed">
-              O diagnóstico dá-te as lacunas dos primeiros 30 dias. Os 50 projectos dão-te o que construir
-              entre os 30 e os 60. Os cenários e o terminal treinam a capacidade de diagnóstico que
-              nenhum curso ensina. E o banco de perguntas prepara a conversa no fim.
+              {L?.planHubBody ?? ''}
             </p>
           </div>
         </div>
@@ -318,23 +302,22 @@ export default function CareerView({ onExit }: Props) {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Award size={15} className="text-amber-400" />
-            <h3 className="text-[14px] font-bold text-white">Quando uma certificação vale a pena</h3>
+            <h3 className="text-[14px] font-bold text-white">{L?.certsTitle ?? 'Quando uma certificação vale a pena'}</h3>
           </div>
           <p className="text-[12px] text-slate-400 leading-relaxed">
-            Ajudam quando correspondem à área e ao momento da carreira. A melhor certificação não é a
-            mais famosa — é a que valida conhecimento útil para o trabalho que queres fazer.
+            {L?.certsIntro ?? ''}
           </p>
 
           <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
             <div className="space-y-1.5">
-              {[
+              {(L?.certsRows ?? [
                 ['Fundamentos de redes', 'CCNA'],
                 ['Entrar em segurança', 'Security+ ou SSCP'],
                 ['Segurança avançada', 'CISSP (exige 5 anos de experiência)'],
                 ['Trabalhar com cloud', 'Certificação associate da plataforma que usas'],
                 ['Arquitectura cloud', 'Certificação professional, depois de experiência'],
                 ['Gestão de serviços', 'ITIL'],
-              ].map(([goal, cert]) => (
+              ]).map(([goal, cert]) => (
                 <div key={goal} className="flex gap-3 p-2.5 rounded-xl bg-slate-900">
                   <span className="flex-1 text-[12px] text-slate-400">{goal}</span>
                   <span className="text-[12px] font-semibold text-amber-300">{cert}</span>
@@ -345,20 +328,17 @@ export default function CareerView({ onExit }: Props) {
 
           <div className="rounded-2xl border border-rose-500/25 bg-rose-500/5 p-4">
             <p className="text-[13px] text-rose-100 leading-relaxed font-semibold">
-              Certificado sem experiência ainda é só um PDF caro.
+              {L?.certsWarningTitle ?? 'Certificado sem experiência ainda é só um PDF caro.'}
             </p>
             <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
-              A certificação valida conhecimento e organiza o estudo. Não prova sozinha que resolves
-              problemas reais — é para isso que serve o portfolio.
+              {L?.certsWarningBody ?? ''}
             </p>
           </div>
 
           <div className="rounded-2xl border border-violet-500/25 bg-violet-500/5 p-4">
-            <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">Autoridade constrói-se com evidências</div>
+            <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">{L?.authorityTitle ?? 'Autoridade constrói-se com evidências'}</div>
             <p className="text-[12px] text-violet-100 leading-relaxed">
-              Não nasce de escrever "especialista" no LinkedIn. Vem de projectos concluídos, problemas
-              resolvidos, documentação, artigos, código, estudos de caso e capacidade de explicar decisões.
-              O objectivo não é parecer que sabes tudo — é demonstrar, de forma verificável, o que sabes fazer.
+              {L?.authorityBody ?? ''}
             </p>
           </div>
         </div>
@@ -366,7 +346,7 @@ export default function CareerView({ onExit }: Props) {
 
       {/* Fonte */}
       <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
-        <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1.5">Baseado em</div>
+        <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1.5">{L?.basedOn ?? 'Baseado em'}</div>
         <a
           href="https://www.tiespecialistas.com.br/especialista-em-ti/"
           target="_blank"

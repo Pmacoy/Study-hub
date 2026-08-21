@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useLang } from '../../i18n/LangContext';
+import { PLATFORM_EN, tr } from '../../i18n/modulesEn';
 import { Copy, Check, Route, Zap, ShieldOff, Rocket } from 'lucide-react';
 
 function Code({ code, lang = 'yaml' }: { code: string; lang?: string }) {
@@ -95,6 +97,7 @@ function InteractiveScaffolder() {
 }
 
 export default function GoldenPathsModule() {
+  const { lang } = useLang();
   const [section, setSection] = useState<'what' | 'paved' | 'template' | 'escape'>('what');
 
   const views = [
@@ -110,7 +113,7 @@ export default function GoldenPathsModule() {
         {views.map(v => (
           <button key={v.id} onClick={() => setSection(v.id)}
             className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${section === v.id ? 'bg-violet-500/20 border border-violet-500/40 text-violet-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
-            {v.label}
+            {tr(PLATFORM_EN.views, v.label, lang)}
           </button>
         ))}
       </div>

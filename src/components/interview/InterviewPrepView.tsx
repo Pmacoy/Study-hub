@@ -4,6 +4,7 @@ import { INTERVIEW_SECTIONS, TOTAL_INTERVIEW_QUESTIONS } from '../../data/interv
 import type { InterviewQuestion } from '../../data/interviewQuestions';
 import { ADVANCED_MODULES, TOTAL_ADVANCED_QUESTIONS } from '../../data/advancedInterview';
 import InterviewTechniqueView from './InterviewTechniqueView';
+import { useLang } from '../../i18n/LangContext';
 
 interface Props {
   onExit: () => void;
@@ -34,6 +35,7 @@ function QACard({ item, sectionEmoji }: { item: InterviewQuestion; sectionEmoji:
 
 export default function InterviewPrepView({ onExit }: Props) {
   const [mode, setMode] = useState<Mode>('study');
+  const { t } = useLang();
   const [tab, setTab] = useState<Tab>('questions');
   const [level, setLevel] = useState<Level>('quick');
   const [activeSection, setActiveSection] = useState<string>('all');
@@ -108,24 +110,24 @@ export default function InterviewPrepView({ onExit }: Props) {
           </button>
           <section className="rounded-3xl border border-emerald-500/25 bg-emerald-500/5 p-6 text-center">
             <div className="text-4xl mb-2">🎯</div>
-            <h2 className="text-xl font-bold text-white">Sessão terminada</h2>
+            <h2 className="text-xl font-bold text-white">{t('int.sessionDone')}</h2>
             <div className="mt-5 grid grid-cols-3 gap-3">
               <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
                 <div className="text-2xl font-black text-emerald-300">{known}</div>
-                <div className="text-[9px] text-slate-500 uppercase mt-1">Sabia</div>
+                <div className="text-[9px] text-slate-500 uppercase mt-1">{t('int.knew')}</div>
               </div>
               <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
                 <div className="text-2xl font-black text-amber-300">{review}</div>
-                <div className="text-[9px] text-slate-500 uppercase mt-1">Rever</div>
+                <div className="text-[9px] text-slate-500 uppercase mt-1">{t('int.review')}</div>
               </div>
               <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
                 <div className="text-2xl font-black text-white">{pct}%</div>
-                <div className="text-[9px] text-slate-500 uppercase mt-1">Domínio</div>
+                <div className="text-[9px] text-slate-500 uppercase mt-1">{t('int.mastery')}</div>
               </div>
             </div>
             {review > 0 && (
               <p className="mt-4 text-[12px] text-slate-400">
-                Marcaste {review} para rever. Volta ao modo de estudo e foca-te nessas.
+                
               </p>
             )}
           </section>
@@ -150,7 +152,7 @@ export default function InterviewPrepView({ onExit }: Props) {
         </button>
 
         <div className="flex items-center justify-between text-[11px]">
-          <span className="text-slate-500">{drillIndex + 1} de {drillDeck.length}</span>
+          <span className="text-slate-500">{drillIndex + 1} / {drillDeck.length}</span>
           <div className="flex gap-3">
             <span className="text-emerald-300">✓ {known}</span>
             <span className="text-amber-300">↻ {review}</span>
@@ -168,7 +170,7 @@ export default function InterviewPrepView({ onExit }: Props) {
 
           {showAnswer ? (
             <div className="mt-5 p-4 rounded-2xl border border-sky-500/25 bg-sky-500/5 flex-1">
-              <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-1.5">Resposta</div>
+              <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-1.5">{t('int.answer')}</div>
               <p className="text-[13px] text-sky-100 leading-relaxed">{card.q.a}</p>
             </div>
           ) : (
@@ -195,7 +197,7 @@ export default function InterviewPrepView({ onExit }: Props) {
         </section>
 
         <p className="text-center text-[11px] text-slate-600">
-          Responde mentalmente antes de revelar. É assim que se treina para uma entrevista.
+          {t('int.answerFirst')}
         </p>
       </div>
     );
@@ -218,12 +220,12 @@ export default function InterviewPrepView({ onExit }: Props) {
         <div className="flex items-start gap-4">
           <div className="text-4xl">💬</div>
           <div className="flex-1">
-            <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">Preparação para entrevista</div>
-            <h1 className="text-2xl font-bold text-white">{bankTotal} perguntas de DevOps</h1>
+            <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">{t('int.eyebrow')}</div>
+            <h1 className="text-2xl font-bold text-white">{bankTotal} {t('int.questionsOf')}</h1>
             <p className="mt-1.5 text-[13px] text-slate-400 leading-relaxed max-w-2xl">
               {level === 'quick'
-                ? 'Revisão rápida — respostas de uma ou duas linhas, para aquecer antes de uma entrevista.'
-                : 'Preparação a sério — respostas em profundidade, no tom de quem responde numa entrevista real.'}
+                ? t('int.quickDesc')
+                : t('int.deepDesc')}
             </p>
           </div>
         </div>
@@ -242,13 +244,13 @@ export default function InterviewPrepView({ onExit }: Props) {
         <div className="mt-4 grid grid-cols-2 gap-2">
           <button onClick={() => { setLevel('quick'); setActiveSection('all'); }}
             className={`p-3 rounded-2xl border text-left transition-all ${level === 'quick' ? 'border-violet-500/40 bg-violet-500/10' : 'border-slate-800 bg-slate-900 hover:border-slate-700'}`}>
-            <div className="text-[12px] font-bold text-white">Revisão rápida</div>
-            <div className="text-[10px] text-slate-500 mt-0.5">{TOTAL_INTERVIEW_QUESTIONS} perguntas · 10 secções</div>
+            <div className="text-[12px] font-bold text-white">{t('int.quickLevel')}</div>
+            <div className="text-[10px] text-slate-500 mt-0.5">{TOTAL_INTERVIEW_QUESTIONS} {t('common.questions')} · 10 {t('int.sections')}</div>
           </button>
           <button onClick={() => { setLevel('deep'); setActiveSection('all'); }}
             className={`p-3 rounded-2xl border text-left transition-all ${level === 'deep' ? 'border-violet-500/40 bg-violet-500/10' : 'border-slate-800 bg-slate-900 hover:border-slate-700'}`}>
-            <div className="text-[12px] font-bold text-white">Preparação a sério</div>
-            <div className="text-[10px] text-slate-500 mt-0.5">{TOTAL_ADVANCED_QUESTIONS} perguntas · 27 módulos</div>
+            <div className="text-[12px] font-bold text-white">{t('int.deepLevel')}</div>
+            <div className="text-[10px] text-slate-500 mt-0.5">{TOTAL_ADVANCED_QUESTIONS} {t('common.questions')} · 27 {t('int.modules')}</div>
           </button>
         </div>
 
@@ -270,7 +272,7 @@ export default function InterviewPrepView({ onExit }: Props) {
         <input
           value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Procurar por palavra-chave (ex: probe, state, RBAC)..."
+          placeholder={t('int.searchPlaceholder')}
           className="w-full pl-9 pr-3 py-2.5 rounded-2xl bg-slate-900 border border-slate-800 text-[12px] text-slate-200 placeholder-slate-600 focus:border-violet-500/40 focus:outline-none"
         />
       </div>
@@ -279,7 +281,7 @@ export default function InterviewPrepView({ onExit }: Props) {
       <div className="flex flex-wrap gap-2">
         <button onClick={() => setActiveSection('all')}
           className={`px-3 py-1.5 rounded-2xl border text-[12px] font-semibold transition-all ${activeSection === 'all' ? 'border-violet-500/40 bg-violet-500/10 text-violet-300' : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'}`}>
-          Todas ({bankTotal})
+          {t('common.all')} ({bankTotal})
         </button>
         {bank.map(s => (
           <button key={s.id} onClick={() => setActiveSection(s.id)}
@@ -292,7 +294,7 @@ export default function InterviewPrepView({ onExit }: Props) {
       {/* Sections */}
       {visibleSections.length === 0 ? (
         <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-8 text-center">
-          <p className="text-[13px] text-slate-500">Nenhuma pergunta corresponde a "{search}".</p>
+          <p className="text-[13px] text-slate-500">{t('int.noMatch')} "{search}".</p>
         </div>
       ) : (
         visibleSections.map(section => (

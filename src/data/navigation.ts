@@ -44,6 +44,7 @@ export const menuGroups: MenuGroup[] = [
     items: [
       { id: 'devops-intro', label: 'DevOps & DevSecOps', sublabel: 'Cultura e ciclo de vida', icon: LayoutDashboard },
       { id: 'linux', label: 'Linux & Shell', sublabel: 'Comandos e scripting', icon: Terminal },
+      { id: 'shell-scripting', label: 'Shell Scripting', sublabel: 'Bash de produção', icon: Terminal },
       { id: 'git', label: 'Git & Versionamento', sublabel: 'Branches e workflows', icon: GitBranch },
     ],
   },
@@ -59,6 +60,7 @@ export const menuGroups: MenuGroup[] = [
     title: 'Automação',
     items: [
       { id: 'cicd', label: 'CI/CD Pipelines', sublabel: 'Jenkins · GH Actions', icon: Layers },
+      { id: 'gitops', label: 'GitOps', sublabel: 'ArgoCD · Flux', icon: GitBranch },
       { id: 'terraform', label: 'Terraform / IaC', sublabel: 'Módulos e multi-cloud', icon: GitBranch },
       { id: 'cloudformation', label: 'CloudFormation', sublabel: 'Templates e stacks AWS', icon: Boxes },
     ],

@@ -36,11 +36,13 @@ import ComingSoonCert from './components/shared/ComingSoonCert';
 // DevOps components
 import DevOpsIntroSimulator from './components/devops/DevOpsIntroSimulator';
 import LinuxSimulator from './components/devops/LinuxSimulator';
+import ShellScriptingModule from './components/devops/ShellScriptingModule';
 import GitSimulator from './components/devops/GitSimulator';
 import DockerSimulator from './components/devops/DockerSimulator';
 import KubernetesSimulator from './components/devops/KubernetesSimulator';
 import HelmSimulator from './components/devops/HelmSimulator';
 import CiCdSimulator from './components/devops/CiCdSimulator';
+import GitOpsModule from './components/devops/GitOpsModule';
 import TerraformSimulator from './components/devops/TerraformSimulator';
 import CloudFormationSimulator from './components/devops/CloudFormationSimulator';
 import MonitoringSimulator from './components/devops/MonitoringSimulator';
@@ -60,6 +62,7 @@ import AzureNetworkingSimulator from './components/azure/AzureNetworkingSimulato
 import AzureStorageSimulator from './components/azure/AzureStorageSimulator';
 import AzureComputeSimulator from './components/azure/AzureComputeSimulator';
 import AzureMonitorSimulator from './components/azure/AzureMonitorSimulator';
+import AzureArchitectureModule from './components/azure/AzureArchitectureModule';
 import AzureContainersSimulator from './components/azure/AzureContainersSimulator';
 import AzureExamSimulator from './components/azure/AzureExamSimulator';
 import AzureKnowledgeBase from './components/azure/AzureKnowledgeBase';
@@ -70,6 +73,7 @@ import { TOTAL_LABS } from './data/azure/officialLabs';
 
 // Networking components
 import NetworkingSimulator from './components/networking/NetworkingSimulator';
+import NetworkingReferenceModule from './components/networking/NetworkingReferenceModule';
 
 // Python components
 import PythonSimulator from './components/python/PythonSimulator';
@@ -128,6 +132,7 @@ import ResourcesView from './components/resources/ResourcesView';
 // i18n
 import { useLang } from './i18n/LangContext';
 import LangSwitcher from './components/shared/LangSwitcher';
+import { localizeModuleMeta } from './i18n/devopsModulesEn';
 
 // Diagnostic
 import DiagnosticView from './components/diagnostic/DiagnosticView';
@@ -137,11 +142,13 @@ import type { DiagnosticArea } from './types/diagnostic';
 const DEVOPS_CONTENT: Record<DevOpsStudyTab, ReactNode> = {
   'devops-intro': <DevOpsIntroSimulator />,
   linux: <LinuxSimulator />,
+  'shell-scripting': <ShellScriptingModule />,
   git: <GitSimulator />,
   docker: <DockerSimulator />,
   kubernetes: <KubernetesSimulator />,
   helm: <HelmSimulator />,
   cicd: <CiCdSimulator />,
+  gitops: <GitOpsModule />,
   terraform: <TerraformSimulator />,
   cloudformation: <CloudFormationSimulator />,
   monitoring: <MonitoringSimulator />,
@@ -162,6 +169,7 @@ const AZURE_CONTENT: Record<AzureStudyTab, ReactNode> = {
   storage: <AzureStorageSimulator />,
   compute: <AzureComputeSimulator />,
   monitor: <AzureMonitorSimulator />,
+  architecture: <AzureArchitectureModule />,
   containers: <AzureContainersSimulator />,
 };
 
@@ -192,10 +200,11 @@ const NETWORKING_TAB_META: Record<NetworkingStudyTab, { label: string; subtitle:
   'application':   { label: 'Camada Aplicação', subtitle: 'DNS lookup + verbos e status HTTP/REST' },
   'routing':       { label: 'Roteamento L3', subtitle: 'Longest Prefix Match e tabela de rotas' },
   'security-net':  { label: 'Segurança & Diagnóstico', subtitle: 'ARP, TLS Handshake e Traceroute' },
+  'net-reference': { label: 'Referência de Rede', subtitle: 'OSI, TCP/UDP, DNS, SSH & SCP' },
 };
 
 // ── Networking navigation ────────────────────────────────────────────────
-import { Activity, BarChart3, Globe2, GraduationCap as Grad, Shield, Network, Server, Wifi } from 'lucide-react';
+import { Activity, BarChart3, Globe2, GraduationCap as Grad, Shield, Layers, Network, Server, Wifi } from 'lucide-react';
 
 const NETWORKING_MENU_GROUPS = [
   {
@@ -219,6 +228,7 @@ const NETWORKING_MENU_GROUPS = [
       { id: 'application' as NetworkingTab,  label: 'Camada Aplicação', sublabel: 'DNS · HTTP · REST',        icon: Wifi },
       { id: 'routing' as NetworkingTab,      label: 'Roteamento L3',    sublabel: 'Longest Prefix Match',     icon: Activity },
       { id: 'security-net' as NetworkingTab, label: 'Segurança & Diag', sublabel: 'ARP · TLS · Traceroute',  icon: Shield },
+      { id: 'net-reference' as NetworkingTab, label: 'Referência', sublabel: 'OSI · TCP/UDP · DNS · SSH', icon: Layers },
     ],
   },
 ];
@@ -269,7 +279,7 @@ export default function App() {
   // ── Daily streak / gamification ──────────────────────────────────────
   const { daily, markStepComplete, isStepDoneToday } = useDailyState();
   const { entries: activityEntries, logActivity } = useActivityLog();
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   const { record: recordScenarioAttempt, bestAttemptFor: bestScenarioAttemptFor, attempts: allScenarioAttempts } = useScenarioAttempts();
   const { record: recordTerminalAttempt, bestAttemptFor: bestTerminalAttemptFor, attempts: allTerminalAttempts } = useTerminalAttempts();
@@ -424,7 +434,7 @@ export default function App() {
 
   function getActiveLabel(): string {
     if (!activeDomain) return '';
-    if (activeDomain === 'devops') return devopsTab === 'dashboard' ? 'Dashboard' : devopsTab === 'exam' ? 'Simulado DevOps' : DEVOPS_TAB_META[devopsTab as DevOpsStudyTab]?.label ?? '';
+    if (activeDomain === 'devops') return devopsTab === 'dashboard' ? 'Dashboard' : devopsTab === 'exam' ? 'Simulado DevOps' : localizeModuleMeta(devopsTab as DevOpsStudyTab, DEVOPS_TAB_META[devopsTab as DevOpsStudyTab], lang)?.label ?? '';
     if (activeDomain === 'azure') return azureTab === 'dashboard' ? 'Dashboard' : azureTab === 'exam' ? 'Simulado AZ-104' : AZURE_TAB_META[azureTab as AzureStudyTab]?.label ?? '';
     if (activeDomain === 'networking') return networkingTab === 'dashboard' ? 'Dashboard' : networkingTab === 'exam' ? 'Simulado Redes' : NETWORKING_TAB_META[networkingTab as NetworkingStudyTab]?.label ?? '';
     if (activeDomain === 'python') return pythonTab === 'dashboard' ? 'Dashboard' : pythonTab === 'exam' ? 'Simulado Python' : PYTHON_TAB_META[pythonTab as PythonStudyTab]?.label ?? '';
@@ -436,7 +446,7 @@ export default function App() {
 
   function getActiveSubtitle(): string {
     if (!activeDomain) return '';
-    if (activeDomain === 'devops') return devopsTab === 'exam' ? '20 questões DevOps' : DEVOPS_TAB_META[devopsTab as DevOpsStudyTab]?.subtitle ?? '';
+    if (activeDomain === 'devops') return devopsTab === 'exam' ? '20 questões DevOps' : localizeModuleMeta(devopsTab as DevOpsStudyTab, DEVOPS_TAB_META[devopsTab as DevOpsStudyTab], lang)?.subtitle ?? '';
     if (activeDomain === 'azure') return azureTab === 'exam' ? 'Simulado AZ-104' : AZURE_TAB_META[azureTab as AzureStudyTab]?.subtitle ?? '';
     if (activeDomain === 'networking') return NETWORKING_TAB_META[networkingTab as NetworkingStudyTab]?.subtitle ?? '';
     if (activeDomain === 'python') return PYTHON_TAB_META[pythonTab as PythonStudyTab]?.subtitle ?? '';
@@ -743,7 +753,9 @@ export default function App() {
       return (
         <div className="space-y-6">
           <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
-            <NetworkingSimulator tab={networkingTab as NetworkingStudyTab} />
+            {networkingTab === 'net-reference'
+              ? <NetworkingReferenceModule />
+              : <NetworkingSimulator tab={networkingTab as NetworkingStudyTab} />}
           </div>
           <VideoDemoCard domain="networking" tab={networkingTab} />
             <ModuleQuestionsCard domain="networking" tab={networkingTab} />

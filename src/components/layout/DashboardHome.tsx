@@ -1,4 +1,6 @@
 import { BookOpen, GraduationCap, Rocket, Zap } from 'lucide-react';
+import { useLang } from '../../i18n/LangContext';
+import { localizeModuleMeta } from '../../i18n/devopsModulesEn';
 import type { DevOpsTab, StudyTab } from '../../types/devops';
 import { TAB_META } from '../../data/tabMeta';
 import QuickStat from '../shared/QuickStat';
@@ -12,10 +14,11 @@ export default function DashboardHome({
   nextRecommendedTab: DevOpsTab;
   onOpenTab: (tab: DevOpsTab) => void;
 }) {
+  const { lang } = useLang();
   const nextLabel =
     nextRecommendedTab === 'exam'
       ? 'Simulado'
-      : TAB_META[nextRecommendedTab as StudyTab]?.label ?? 'Módulo';
+      : localizeModuleMeta(nextRecommendedTab as StudyTab, TAB_META[nextRecommendedTab as StudyTab], lang)?.label ?? 'Module';
 
   const modules = [
     { id: 'devops-intro' as StudyTab, color: 'sky', emoji: '🚀' },
@@ -79,7 +82,7 @@ export default function DashboardHome({
         </h3>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {modules.map((m) => {
-            const meta = TAB_META[m.id];
+            const meta = localizeModuleMeta(m.id, TAB_META[m.id], lang);
             const done = completedTabs.includes(m.id);
             return (
               <button

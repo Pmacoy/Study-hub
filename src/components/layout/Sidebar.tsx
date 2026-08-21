@@ -1,4 +1,6 @@
 import { ChevronRight, Target, Trophy } from 'lucide-react';
+import { useLang } from '../../i18n/LangContext';
+import { localizeNavGroup, localizeNavSublabel, MODULE_META_EN } from '../../i18n/devopsModulesEn';
 import type { LucideIcon } from 'lucide-react';
 
 interface MenuItem { id: string; label: string; sublabel: string; icon: LucideIcon; }
@@ -22,6 +24,7 @@ const ACCENT: Record<string, { active: string; icon: string; dot: string; bar: s
 };
 
 export default function Sidebar({ activeTab, visitedTabs, progressPct, studiedCount, totalTabs, menuGroups, accentColor, onOpenTab }: Props) {
+  const { lang } = useLang();
   const a = ACCENT[accentColor] ?? ACCENT['violet'];
 
   return (
@@ -30,7 +33,7 @@ export default function Sidebar({ activeTab, visitedTabs, progressPct, studiedCo
         {menuGroups.map((group) => (
           <div key={group.title} className="mt-6 first:mt-0">
             <p className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              {group.title}
+              {localizeNavGroup(group.title, lang)}
             </p>
             <div className="space-y-1.5">
               {group.items.map((item) => {
@@ -44,8 +47,8 @@ export default function Sidebar({ activeTab, visitedTabs, progressPct, studiedCo
                       <Icon size={15} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className={`text-[13px] font-medium leading-none ${isActive ? 'text-white' : ''}`}>{item.label}</div>
-                      <div className="mt-1 truncate text-[11px] text-slate-500">{item.sublabel}</div>
+                      <div className={`text-[13px] font-medium leading-none ${isActive ? 'text-white' : ''}`}>{(lang === 'en' && (MODULE_META_EN as any)[item.id]?.label) || item.label}</div>
+                      <div className="mt-1 truncate text-[11px] text-slate-500">{localizeNavSublabel(item.sublabel, lang)}</div>
                     </div>
                     <div className="shrink-0">
                       {isActive ? (

@@ -8,6 +8,7 @@ import { k8sRbacForbiddenScenario } from './k8sRbacForbidden';
 import { k8sLivenessProbeScenario } from './k8sLivenessProbe';
 import { k8sNodeDiskPressureScenario } from './k8sNodeDiskPressure';
 import { k8sIncidentAuthDownScenario } from './k8sIncidentAuthDown';
+import { awsVpcDesignScenario } from './awsVpcDesign';
 import { azureVpnBgpScenario } from './azureVpnBgp';
 import { networkingDnsScenario } from './networkingDns';
 import { pythonSubprocessScenario } from './pythonSubprocess';
@@ -22,6 +23,8 @@ export const ALL_SCENARIOS: Scenario[] = [
   k8sLivenessProbeScenario,
   k8sNodeDiskPressureScenario,
   k8sIncidentAuthDownScenario,
+  // AWS
+  awsVpcDesignScenario,
   // Outros domínios
   azureVpnBgpScenario,
   networkingDnsScenario,

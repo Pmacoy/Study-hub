@@ -4,19 +4,21 @@ import type { ProjectItem, ProjectStatus } from '../../types/project';
 import { ALL_PROJECTS, projectsBySection } from '../../data/projects';
 import { PROJECT_SECTIONS } from '../../data/projectSections';
 import { useProjectProgress } from '../../hooks/useProjectProgress';
+import { useLang } from '../../i18n/LangContext';
 
 interface Props {
   onExit: () => void;
 }
 
 const DIFF_META: Record<string, { label: string; cls: string }> = {
-  foundations:  { label: 'Fundamentos',  cls: 'text-emerald-300 bg-emerald-500/10 border-emerald-500/25' },
+  foundations:  { label: 'Foundations',  cls: 'text-emerald-300 bg-emerald-500/10 border-emerald-500/25' },
   intermediate: { label: 'Intermédio',   cls: 'text-sky-300 bg-sky-500/10 border-sky-500/25' },
   advanced:     { label: 'Avançado',     cls: 'text-amber-300 bg-amber-500/10 border-amber-500/25' },
   expert:       { label: 'Expert',       cls: 'text-rose-300 bg-rose-500/10 border-rose-500/25' },
 };
 
 export default function ProjectsView({ onExit }: Props) {
+  const { t } = useLang();
   const { setStatus, setRepoUrl, getEntry, stats } = useProjectProgress();
   const [activeSectionId, setActiveSectionId] = useState<string>('all');
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
@@ -52,8 +54,8 @@ export default function ProjectsView({ onExit }: Props) {
         <div className="flex items-start gap-4">
           <div className="text-4xl">🚀</div>
           <div className="flex-1">
-            <div className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">Trilha de Projectos</div>
-            <h1 className="text-2xl font-bold text-white">50 projectos para o teu portfolio</h1>
+            <div className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">{t('proj.eyebrow')}</div>
+            <h1 className="text-2xl font-bold text-white">{t('proj.title')}</h1>
             <p className="mt-1.5 text-[13px] text-slate-400 leading-relaxed max-w-2xl">
               "Don't just watch. Build projects. Break things and fix them." Projectos reais, production-grade,
               organizados dos fundamentos ao DevSecOps com AI. Marca o teu progresso e guarda o link do repo.
@@ -64,15 +66,15 @@ export default function ProjectsView({ onExit }: Props) {
         <div className="mt-5 grid grid-cols-3 gap-3">
           <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
             <div className="text-2xl font-black text-white">{s.done}/50</div>
-            <div className="text-[9px] text-slate-500 uppercase mt-1">Concluídos</div>
+            <div className="text-[9px] text-slate-500 uppercase mt-1">{t('proj.completed')}</div>
           </div>
           <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
             <div className="text-2xl font-black text-white">{s.inProgress}</div>
-            <div className="text-[9px] text-slate-500 uppercase mt-1">Em curso</div>
+            <div className="text-[9px] text-slate-500 uppercase mt-1">{t('common.inProgress')}</div>
           </div>
           <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
             <div className="text-2xl font-black text-white">{Math.round((s.done / 50) * 100)}%</div>
-            <div className="text-[9px] text-slate-500 uppercase mt-1">Portfolio</div>
+            <div className="text-[9px] text-slate-500 uppercase mt-1">{t('proj.portfolio')}</div>
           </div>
         </div>
       </section>
@@ -81,12 +83,12 @@ export default function ProjectsView({ onExit }: Props) {
       <section>
         <div className="flex items-center gap-2 mb-3">
           <Filter size={12} className="text-slate-500" />
-          <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Filtrar por secção</div>
+          <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t('proj.filterSection')}</div>
         </div>
         <div className="flex flex-wrap gap-2">
           <button onClick={() => setActiveSectionId('all')}
             className={`px-3 py-1.5 rounded-2xl border text-[12px] font-semibold transition-all ${activeSectionId === 'all' ? 'border-orange-500/40 bg-orange-500/10 text-orange-300' : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'}`}>
-            Todos (50)
+            {t('common.all')} (50)
           </button>
           {PROJECT_SECTIONS.map(sec => (
             <button key={sec.id} onClick={() => setActiveSectionId(sec.id)}
@@ -105,7 +107,7 @@ export default function ProjectsView({ onExit }: Props) {
           <div className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4">
             <div className="text-[13px] font-bold text-white mb-1">{sec.emoji} {sec.title}</div>
             <p className="text-[11px] text-slate-400 leading-relaxed">
-              <span className="text-slate-500 font-semibold">Depois destes projectos: </span>{sec.outcome}
+              <span className="text-slate-500 font-semibold">{t('proj.afterThese')} </span>{sec.outcome}
             </p>
           </div>
         );
@@ -135,7 +137,7 @@ export default function ProjectsView({ onExit }: Props) {
                   <button onClick={() => openProject(p)} className="text-left w-full">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-[10px] font-black text-slate-500">#{p.number}</span>
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${diff.cls}`}>{diff.label}</span>
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${diff.cls}`}>{t(`proj.difficulty.${p.difficulty}` as any)}</span>
                     </div>
                     <h3 className="text-[13px] font-bold text-white mt-1 leading-snug">{p.title}</h3>
                     <p className="text-[11px] text-slate-500 mt-1 line-clamp-2">{p.whatYouBuild}</p>
@@ -169,7 +171,7 @@ export default function ProjectsView({ onExit }: Props) {
                 <div className="flex items-center gap-2">
                   <span className="text-[11px] font-black text-slate-500">Projecto #{selectedProject.number}</span>
                   <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${DIFF_META[selectedProject.difficulty].cls}`}>
-                    {DIFF_META[selectedProject.difficulty].label}
+                    {t(`proj.difficulty.${selectedProject.difficulty}` as any)}
                   </span>
                 </div>
                 <h2 className="text-lg font-bold text-white mt-1">{selectedProject.title}</h2>
@@ -181,12 +183,12 @@ export default function ProjectsView({ onExit }: Props) {
 
             <div className="space-y-4">
               <div>
-                <div className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">O que constróis</div>
+                <div className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">{t('proj.whatYouBuild')}</div>
                 <p className="text-[13px] text-slate-300 leading-relaxed">{selectedProject.whatYouBuild}</p>
               </div>
 
               <div>
-                <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-2">Conceitos cobertos</div>
+                <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-2">{t('proj.concepts')}</div>
                 <div className="flex flex-wrap gap-1.5">
                   {selectedProject.concepts.map(c => (
                     <span key={c} className="text-[11px] px-2 py-1 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-200">{c}</span>
@@ -195,7 +197,7 @@ export default function ProjectsView({ onExit }: Props) {
               </div>
 
               <div>
-                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Stack</div>
+                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{t('proj.stack')}</div>
                 <div className="flex flex-wrap gap-1.5">
                   {selectedProject.stack.map(t => (
                     <span key={t} className="text-[11px] px-2 py-1 rounded-lg bg-slate-800 text-slate-300 font-mono">{t}</span>
@@ -204,13 +206,13 @@ export default function ProjectsView({ onExit }: Props) {
               </div>
 
               <div className="p-3 rounded-2xl bg-violet-500/5 border border-violet-500/20">
-                <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">Porque importa</div>
+                <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">{t('proj.whyMatters')}</div>
                 <p className="text-[12px] text-violet-100 leading-relaxed italic">{selectedProject.whyItMatters}</p>
               </div>
 
               {/* Status control */}
               <div>
-                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Estado</div>
+                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{t('proj.status')}</div>
                 <div className="grid grid-cols-3 gap-2">
                   {(['not-started', 'in-progress', 'done'] as ProjectStatus[]).map(st => {
                     const cur = getEntry(selectedProject.id)?.status ?? 'not-started';
@@ -233,7 +235,7 @@ export default function ProjectsView({ onExit }: Props) {
 
               {/* Repo URL */}
               <div>
-                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Link do repositório</div>
+                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{t('proj.repoLink')}</div>
                 <div className="flex gap-2">
                   <input
                     value={repoInput}
@@ -249,7 +251,7 @@ export default function ProjectsView({ onExit }: Props) {
                 {getEntry(selectedProject.id)?.repoUrl && (
                   <a href={getEntry(selectedProject.id)!.repoUrl} target="_blank" rel="noopener noreferrer"
                     className="mt-2 inline-flex items-center gap-1 text-[11px] text-orange-300 hover:text-orange-200">
-                    <Github size={12} /> Abrir repositório <ExternalLink size={10} />
+                    <Github size={12} /> {t('proj.openRepo')} <ExternalLink size={10} />
                   </a>
                 )}
               </div>
@@ -262,8 +264,8 @@ export default function ProjectsView({ onExit }: Props) {
       {s.done === 50 && (
         <div className="rounded-3xl border border-emerald-500/40 bg-emerald-500/10 p-6 text-center">
           <Trophy size={32} className="text-emerald-400 mx-auto mb-2" />
-          <h3 className="text-lg font-bold text-emerald-300">50 projectos concluídos!</h3>
-          <p className="text-[12px] text-slate-400 mt-1">Já não estás a aprender DevOps — estás a praticá-lo.</p>
+          <h3 className="text-lg font-bold text-emerald-300">{t('proj.allDone')}</h3>
+          <p className="text-[12px] text-slate-400 mt-1">{t('proj.allDoneDesc')}</p>
         </div>
       )}
     </div>

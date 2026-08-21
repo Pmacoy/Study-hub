@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useLang } from '../../i18n/LangContext';
+import { MISC_EN, tr } from '../../i18n/modulesEn';
 import { Copy, Check, GitBranch, ArrowRight } from 'lucide-react';
 
 type View = 'basics' | 'branching' | 'workflows' | 'advanced';
@@ -106,6 +108,7 @@ const COMMIT_TYPES = [
 ];
 
 export default function GitSimulator() {
+  const { lang } = useLang();
   const [view, setView] = useState<View>('basics');
   const [activeCmd, setActiveCmd] = useState('Setup Inicial');
   const [selectedStrategy, setSelectedStrategy] = useState(0);
@@ -123,7 +126,7 @@ export default function GitSimulator() {
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
             className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${view === v.id ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
-            {v.label}
+            {tr(MISC_EN.views, v.label, lang)}
           </button>
         ))}
       </div>
@@ -220,7 +223,7 @@ export default function GitSimulator() {
               <div key={c.type} className="flex items-start gap-3 p-3 rounded-xl bg-slate-900 border border-slate-800">
                 <code className="font-mono text-[12px] font-black text-amber-300 shrink-0 w-16">{c.type}</code>
                 <div>
-                  <div className="text-[11px] text-slate-400">{c.desc}</div>
+                  <div className="text-[11px] text-slate-400">{tr(MISC_EN.descs, c.desc, lang)}</div>
                   <div className="text-[10px] font-mono text-slate-600 mt-0.5">{c.example}</div>
                 </div>
               </div>

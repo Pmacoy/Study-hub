@@ -4,6 +4,8 @@ import { DIAGNOSTIC_AREAS } from '../../data/diagnosticAreas';
 import { SKILL_LEVELS } from '../../types/diagnostic';
 import type { SkillLevel, DiagnosticArea } from '../../types/diagnostic';
 import { useDiagnostic } from '../../hooks/useDiagnostic';
+import { useLang } from '../../i18n/LangContext';
+import { localizeArea } from '../../i18n/diagnosticAreasEn';
 
 interface Props {
   onExit: () => void;
@@ -70,6 +72,7 @@ function SkillRadar({ levels }: { levels: Record<string, SkillLevel> }) {
 }
 
 export default function DiagnosticView({ onExit, onOpenArea }: Props) {
+  const { t, lang } = useLang();
   const { levels, completedAt, setLevel, markCompleted, reset } = useDiagnostic();
   const [step, setStep] = useState<'intro' | 'quiz' | 'results'>(
     completedAt ? 'results' : 'intro'
@@ -77,10 +80,10 @@ export default function DiagnosticView({ onExit, onOpenArea }: Props) {
   const [current, setCurrent] = useState(0);
 
   const answered = Object.keys(levels).length;
-  const area = DIAGNOSTIC_AREAS[current];
+  const area = localizeArea(DIAGNOSTIC_AREAS[current], lang);
 
   const { gaps, strengths, avg } = useMemo(() => {
-    const scored = DIAGNOSTIC_AREAS.map(a => ({ area: a, level: levels[a.id] ?? 0 }));
+    const scored = DIAGNOSTIC_AREAS.map(a => ({ area: localizeArea(a, lang), level: levels[a.id] ?? 0 }));
     const sorted = [...scored].sort((a, b) => a.level - b.level);
     const total = scored.reduce((s, x) => s + x.level, 0);
     return {
@@ -88,7 +91,7 @@ export default function DiagnosticView({ onExit, onOpenArea }: Props) {
       strengths: [...scored].sort((a, b) => b.level - a.level).filter(x => x.level >= 2).slice(0, 3),
       avg: scored.length > 0 ? total / scored.length : 0,
     };
-  }, [levels]);
+  }, [levels, lang]);
 
   const answer = (level: SkillLevel) => {
     setLevel(area.id, level);
@@ -112,21 +115,19 @@ export default function DiagnosticView({ onExit, onOpenArea }: Props) {
           <div className="flex items-start gap-4">
             <div className="text-4xl">🎯</div>
             <div className="flex-1">
-              <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">Diagnóstico</div>
-              <h1 className="text-2xl font-bold text-white">Onde estão as tuas lacunas reais?</h1>
+              <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">{t('diag.eyebrow')}</div>
+              <h1 className="text-2xl font-bold text-white">{t('diag.title')}</h1>
               <p className="mt-2 text-[13px] text-slate-400 leading-relaxed">
-                {DIAGNOSTIC_AREAS.length} perguntas de auto-avaliação sobre as competências que sustentam
-                um perfil de Platform Engineer. No fim vês um mapa do teu perfil e por onde começar.
+                {DIAGNOSTIC_AREAS.length} {t('diag.intro')}
               </p>
             </div>
           </div>
         </section>
 
         <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
-          <h3 className="text-[13px] font-bold text-white mb-3">Como responder</h3>
+          <h3 className="text-[13px] font-bold text-white mb-3">{t('diag.howTo')}</h3>
           <p className="text-[12px] text-slate-400 leading-relaxed mb-4">
-            Sê honesto — o diagnóstico só é útil se for verdadeiro. Ninguém vê isto além de ti,
-            e sobrestimar leva-te a saltar exactamente o que precisavas de praticar.
+            {t('diag.honest')}
           </p>
           <div className="grid grid-cols-2 gap-2">
             {SKILL_LEVELS.map(l => (
@@ -183,7 +184,7 @@ export default function DiagnosticView({ onExit, onOpenArea }: Props) {
                     ? LEVEL_COLOR[l.value]
                     : 'border-slate-800 bg-slate-900 text-slate-300 hover:border-slate-700'
                 }`}>
-                <span className="text-[13px] font-semibold">{l.label}</span>
+                <span className="text-[13px] font-semibold">{t(`diag.level.${l.value}` as any)}</span>
               </button>
             ))}
           </div>
@@ -201,10 +202,10 @@ export default function DiagnosticView({ onExit, onOpenArea }: Props) {
 
   // ── Results ────────────────────────────────────────────────────
   const profile =
-    avg >= 2.5 ? { label: 'Perfil sénior', tone: 'text-emerald-300', desc: 'Base sólida em quase tudo. Foca-te em profundidade e nas áreas de arquitectura.' } :
-    avg >= 1.5 ? { label: 'Perfil intermédio', tone: 'text-sky-300', desc: 'Já operas com autonomia. As lacunas abaixo são o que te separa de sénior.' } :
-    avg >= 0.8 ? { label: 'Perfil em construção', tone: 'text-amber-300', desc: 'Tens os fundamentos. Agora é praticar até conseguires resolver sem receita.' } :
-                 { label: 'A começar', tone: 'text-rose-300', desc: 'Começa pelos fundamentos — Linux e redes sustentam tudo o resto.' };
+    avg >= 2.5 ? { label: t('diag.profile.senior'), tone: 'text-emerald-300', desc: t('diag.profile.senior.desc') } :
+    avg >= 1.5 ? { label: t('diag.profile.mid'), tone: 'text-sky-300', desc: t('diag.profile.mid.desc') } :
+    avg >= 0.8 ? { label: t('diag.profile.building'), tone: 'text-amber-300', desc: t('diag.profile.building.desc') } :
+                 { label: t('diag.profile.starting'), tone: 'text-rose-300', desc: t('diag.profile.starting.desc') };
 
   return (
     <div className="space-y-6">
@@ -214,30 +215,30 @@ export default function DiagnosticView({ onExit, onOpenArea }: Props) {
 
       {/* Perfil */}
       <section className="rounded-3xl border border-violet-500/25 bg-gradient-to-br from-violet-500/10 to-slate-950/30 p-6">
-        <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">O teu perfil</div>
+        <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">{t('diag.yourProfile')}</div>
         <h1 className={`text-2xl font-bold ${profile.tone}`}>{profile.label}</h1>
         <p className="mt-2 text-[13px] text-slate-400 leading-relaxed">{profile.desc}</p>
         <div className="mt-4 flex items-center gap-4 text-[11px] text-slate-500">
-          <span>Média: {avg.toFixed(1)} / 3</span>
+          <span>{t('diag.average')}: {avg.toFixed(1)} / 3</span>
           {completedAt && <span>· {new Date(completedAt).toLocaleDateString('pt-PT')}</span>}
         </div>
       </section>
 
       {/* Radar */}
       <section className="rounded-3xl border border-slate-800 bg-slate-950/60 p-5">
-        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Mapa de competências</div>
+        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">{t('diag.skillMap')}</div>
         <SkillRadar levels={levels} />
         <div className="mt-3 grid grid-cols-2 gap-1.5">
           {DIAGNOSTIC_AREAS.map(a => (
             <div key={a.id} className="flex items-center gap-2 text-[11px]">
               <span>{a.emoji}</span>
-              <span className="flex-1 text-slate-400 truncate">{a.label}</span>
+              <span className="flex-1 text-slate-400 truncate">{localizeArea(a, lang).label}</span>
               <span className={`font-semibold ${
                 (levels[a.id] ?? 0) === 0 ? 'text-rose-300' :
                 (levels[a.id] ?? 0) === 1 ? 'text-amber-300' :
                 (levels[a.id] ?? 0) === 2 ? 'text-sky-300' : 'text-emerald-300'
               }`}>
-                {SKILL_LEVELS[levels[a.id] ?? 0].short}
+                {t(`diag.level.${levels[a.id] ?? 0}.short` as any)}
               </span>
             </div>
           ))}
@@ -249,7 +250,7 @@ export default function DiagnosticView({ onExit, onOpenArea }: Props) {
         <section className="rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-4">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles size={14} className="text-emerald-400" />
-            <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Onde já estás bem</div>
+            <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">{t('diag.strengths')}</div>
           </div>
           <div className="flex flex-wrap gap-2">
             {strengths.map(({ area: a }) => (
@@ -266,8 +267,8 @@ export default function DiagnosticView({ onExit, onOpenArea }: Props) {
         <section className="space-y-3">
           <div className="flex items-center gap-2">
             <Target size={14} className="text-violet-400" />
-            <h2 className="text-[13px] font-bold text-white">Por onde começar</h2>
-            <span className="text-[11px] text-slate-600">· prioridade mais alta primeiro</span>
+            <h2 className="text-[13px] font-bold text-white">{t('diag.whereToStart')}</h2>
+            <span className="text-[11px] text-slate-600">{t('diag.priorityFirst')}</span>
           </div>
 
           {gaps.map(({ area: a, level }, i) => (
@@ -280,7 +281,7 @@ export default function DiagnosticView({ onExit, onOpenArea }: Props) {
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="text-[14px] font-bold text-white">{a.emoji} {a.label}</h3>
                     <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded border ${LEVEL_COLOR[level]}`}>
-                      {SKILL_LEVELS[level].label}
+                      {t(`diag.level.${level}` as any)}
                     </span>
                   </div>
                 </div>
@@ -288,21 +289,21 @@ export default function DiagnosticView({ onExit, onOpenArea }: Props) {
 
               <div className="space-y-3 pl-9">
                 <div>
-                  <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Porque importa</div>
+                  <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{t('diag.whyMatters')}</div>
                   <p className="text-[12px] text-slate-400 leading-relaxed">{a.whyItMatters}</p>
                 </div>
                 <div>
-                  <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-1">O que praticar</div>
+                  <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-1">{t('diag.whatPractise')}</div>
                   <p className="text-[12px] text-sky-100/80 leading-relaxed">{a.whatToPractise}</p>
                 </div>
                 <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
-                  <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Sinal de domínio</div>
+                  <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">{t('diag.masterySignal')}</div>
                   <p className="text-[12px] text-emerald-100/80 leading-relaxed italic">{a.masterySignal}</p>
                 </div>
 
                 <button onClick={() => onOpenArea(a)}
                   className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-violet-500/30 bg-violet-500/10 text-violet-200 text-[12px] font-semibold hover:bg-violet-500/20 transition-all">
-                  Abrir no hub <ArrowRight size={13} />
+                  {t('diag.openInHub')} <ArrowRight size={13} />
                 </button>
               </div>
             </div>
@@ -311,9 +312,9 @@ export default function DiagnosticView({ onExit, onOpenArea }: Props) {
       ) : (
         <section className="rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-6 text-center">
           <TrendingUp size={28} className="text-emerald-400 mx-auto mb-2" />
-          <h3 className="text-[15px] font-bold text-emerald-300">Sem lacunas críticas</h3>
+          <h3 className="text-[15px] font-bold text-emerald-300">{t('diag.noGaps')}</h3>
           <p className="text-[12px] text-slate-400 mt-1">
-            Nenhuma área abaixo de "uso no dia-a-dia". Foca-te em profundidade — cenários sénior e arquitectura.
+            {t('diag.noGapsDesc')}
           </p>
         </section>
       )}

@@ -13,6 +13,11 @@ export const TAB_META: Record<StudyTab, TabMeta> = {
     subtitle: 'Comandos essenciais, permissões e scripting',
     group: 'Fundamentos',
   },
+  'shell-scripting': {
+    label: 'Shell Scripting',
+    subtitle: 'Bash de produção · strict mode, trap, getopts, ShellCheck',
+    group: 'Fundamentos',
+  },
   git: {
     label: 'Git & Versionamento',
     subtitle: 'Branches, merge, rebase e workflows',
@@ -36,6 +41,11 @@ export const TAB_META: Record<StudyTab, TabMeta> = {
   cicd: {
     label: 'CI/CD Pipelines',
     subtitle: 'Jenkins, GitHub Actions e GitLab CI',
+    group: 'Automação',
+  },
+  gitops: {
+    label: 'GitOps',
+    subtitle: 'ArgoCD · Flux · reconciliação contínua a partir do Git',
     group: 'Automação',
   },
   terraform: {

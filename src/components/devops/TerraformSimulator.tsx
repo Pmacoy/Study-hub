@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useLang } from '../../i18n/LangContext';
+import { MISC_EN, tr } from '../../i18n/modulesEn';
 import { Copy, Check } from 'lucide-react';
 
 type View = 'concepts' | 'structure' | 'cpe' | 'commands';
@@ -117,6 +119,7 @@ const TF_COMMANDS = [
 ];
 
 export default function TerraformSimulator() {
+  const { lang } = useLang();
   const [view, setView] = useState<View>('concepts');
   const [snippet, setSnippet] = useState<'main' | 'haproxy'>('main');
 
@@ -133,7 +136,7 @@ export default function TerraformSimulator() {
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
             className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${view === v.id ? 'bg-violet-500/20 border border-violet-500/40 text-violet-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
-            {v.label}
+            {tr(MISC_EN.views, v.label, lang)}
           </button>
         ))}
       </div>
@@ -207,7 +210,7 @@ export default function TerraformSimulator() {
           {TF_COMMANDS.map((c, i) => (
             <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-slate-900 border border-slate-800">
               <code className="text-[11px] font-mono text-violet-300 flex-1">{c.cmd}</code>
-              <span className="text-[11px] text-slate-500 shrink-0 text-right max-w-[250px]">{c.desc}</span>
+              <span className="text-[11px] text-slate-500 shrink-0 text-right max-w-[250px]">{tr(MISC_EN.descs, c.desc, lang)}</span>
             </div>
           ))}
         </div>

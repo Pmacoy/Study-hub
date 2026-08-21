@@ -18,6 +18,7 @@ export const AZ104_PATH: LearningPath = {
     { id: 'containers', label: 'Containers',                 subtitle: 'AKS, ACI, ACR',              emoji: '🐳', estimatedMin: 240 },
     { id: 'vnet',       label: 'VNet & Networking',         subtitle: 'NSGs, VPN, Peering',         emoji: '🌐', estimatedMin: 300 },
     { id: 'monitor',    label: 'Monitor',                    subtitle: 'Metrics, alerts, logs',      emoji: '📊', estimatedMin: 180 },
+    { id: 'architecture', label: 'Arquitectura',             subtitle: 'Como os serviços se ligam',  emoji: '🏛️', estimatedMin: 180 },
   ],
 };
 
@@ -52,11 +53,13 @@ export const DEVOPS_PATH: LearningPath = {
   nodes: [
     { id: 'devops-intro',    label: 'DevOps & DevSecOps',    subtitle: 'Cultura e ciclo de vida',   emoji: '🚀', estimatedMin: 180 },
     { id: 'linux',           label: 'Linux & Shell',         subtitle: 'Comandos e scripting',      emoji: '🐧', estimatedMin: 300, terminalSessionIds: ['bash-disk-full', 'bash-oom-memory', 'bash-disk-io', 'bash-port-not-listening', 'bash-dns-fail', 'bash-high-cpu'] },
+    { id: 'shell-scripting', label: 'Shell Scripting',       subtitle: 'Bash de produção',          emoji: '📜', estimatedMin: 240 },
     { id: 'git',             label: 'Git & Versionamento',   subtitle: 'Branches e workflows',      emoji: '🌿', estimatedMin: 180 },
     { id: 'docker',          label: 'Docker',                 subtitle: 'Imagens e Dockerfile',      emoji: '🐳', estimatedMin: 240 },
     { id: 'kubernetes',      label: 'Kubernetes',             subtitle: 'Pods, Services, RBAC',      emoji: '☸️', estimatedMin: 360, scenarioIds: ['k8s-crashloop-oom', 'k8s-imagepull-secret', 'k8s-pvc-pending-storageclass', 'k8s-ingress-502', 'k8s-rbac-forbidden', 'k8s-liveness-probe-loop', 'k8s-node-disk-pressure', 'k8s-incident-auth-down'], terminalSessionIds: ['kubectl-crashloop'] },
     { id: 'helm',            label: 'Helm',                   subtitle: 'Charts, releases, rollback',  emoji: '⎈', estimatedMin: 240 },
     { id: 'cicd',            label: 'CI/CD Pipelines',        subtitle: 'Jenkins, GH Actions',        emoji: '⚙️', estimatedMin: 240 },
+    { id: 'gitops',          label: 'GitOps',                 subtitle: 'ArgoCD, Flux, reconciliação', emoji: '🔄', estimatedMin: 240 },
     { id: 'terraform',       label: 'Terraform / IaC',       subtitle: 'Módulos e multi-cloud',     emoji: '🏗️', estimatedMin: 300 },
     { id: 'cloudformation',  label: 'CloudFormation',        subtitle: 'IaC nativo AWS',            emoji: '📦', estimatedMin: 240 },
     { id: 'monitoring',      label: 'Monitoring',             subtitle: 'Prometheus, Grafana, ELK', emoji: '📊', estimatedMin: 240 },

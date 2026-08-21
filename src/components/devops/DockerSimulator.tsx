@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useLang } from '../../i18n/LangContext';
+import { DOCKER_EN, tr } from '../../i18n/modulesEn';
 import { Copy, Check } from 'lucide-react';
 
 type View = 'concepts' | 'dockerfile' | 'commands' | 'compose';
@@ -140,6 +142,7 @@ const CMD_GROUPS: Record<string, { cmd: string; desc: string }[]> = {
 };
 
 export default function DockerSimulator() {
+  const { lang } = useLang();
   const [view, setView] = useState<View>('concepts');
   const [dfMode, setDfMode] = useState<'good' | 'bad'>('good');
   const [cmdGroup, setCmdGroup] = useState('Imagens');
@@ -157,7 +160,7 @@ export default function DockerSimulator() {
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
             className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${view === v.id ? 'bg-sky-500/20 border border-sky-500/40 text-sky-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
-            {v.label}
+            {tr(DOCKER_EN.views, v.label, lang)}
           </button>
         ))}
       </div>
@@ -240,7 +243,7 @@ export default function DockerSimulator() {
             {CMD_GROUPS[cmdGroup].map((c, i) => (
               <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-slate-900 border border-slate-800">
                 <code className="text-[12px] font-mono text-sky-300 flex-1">{c.cmd}</code>
-                <span className="text-[11px] text-slate-500 shrink-0">{c.desc}</span>
+                <span className="text-[11px] text-slate-500 shrink-0">{tr(DOCKER_EN.cmdDescs, c.desc, lang)}</span>
               </div>
             ))}
           </div>

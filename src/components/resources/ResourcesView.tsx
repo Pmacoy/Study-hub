@@ -1,12 +1,14 @@
 import { useState, useMemo } from 'react';
 import { ExternalLink, Github, Search, Library } from 'lucide-react';
 import { REPO_CATEGORIES, TOTAL_REPOS } from '../../data/curatedRepos';
+import { useLang } from '../../i18n/LangContext';
 
 interface Props {
   onExit: () => void;
 }
 
 export default function ResourcesView({ onExit }: Props) {
+  const { t } = useLang();
   const [activeCat, setActiveCat] = useState<string>('all');
   const [search, setSearch] = useState('');
 
@@ -38,12 +40,10 @@ export default function ResourcesView({ onExit }: Props) {
         <div className="flex items-start gap-4">
           <div className="text-4xl">📚</div>
           <div className="flex-1">
-            <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Biblioteca</div>
-            <h1 className="text-2xl font-bold text-white">{TOTAL_REPOS} repositórios que valem o teu tempo</h1>
+            <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">{t('lib.eyebrow')}</div>
+            <h1 className="text-2xl font-bold text-white">{TOTAL_REPOS} {t('lib.title')}</h1>
             <p className="mt-1.5 text-[13px] text-slate-400 leading-relaxed max-w-2xl">
-              DevOps não se aprende só com teoria — aprende-se a ler pipelines reais, manifests reais
-              e scripts escritos por quem opera produção. Estes são os repositórios que consistentemente
-              ajudam a fazer essa passagem.
+              {t('lib.intro')}
             </p>
           </div>
         </div>
@@ -55,7 +55,7 @@ export default function ResourcesView({ onExit }: Props) {
         <input
           value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Procurar por nome ou tema (ex: kubernetes, interview, terraform)..."
+          placeholder={t('lib.searchPlaceholder')}
           className="w-full pl-9 pr-3 py-2.5 rounded-2xl bg-slate-900 border border-slate-800 text-[12px] text-slate-200 placeholder-slate-600 focus:border-emerald-500/40 focus:outline-none"
         />
       </div>
@@ -64,7 +64,7 @@ export default function ResourcesView({ onExit }: Props) {
       <div className="flex flex-wrap gap-2">
         <button onClick={() => setActiveCat('all')}
           className={`px-3 py-1.5 rounded-2xl border text-[12px] font-semibold transition-all ${activeCat === 'all' ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300' : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'}`}>
-          Todos ({TOTAL_REPOS})
+          {t('common.all')} ({TOTAL_REPOS})
         </button>
         {REPO_CATEGORIES.map(c => (
           <button key={c.id} onClick={() => setActiveCat(c.id)}
@@ -77,7 +77,7 @@ export default function ResourcesView({ onExit }: Props) {
       {/* Categories */}
       {visible.length === 0 ? (
         <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-8 text-center">
-          <p className="text-[13px] text-slate-500">Nenhum repositório corresponde a "{search}".</p>
+          <p className="text-[13px] text-slate-500">{t('lib.noResults')} "{search}".</p>
         </div>
       ) : (
         visible.map(cat => (
@@ -104,14 +104,14 @@ export default function ResourcesView({ onExit }: Props) {
 
                   {r.why && (
                     <div className="mt-2.5 p-2.5 rounded-xl bg-sky-500/5 border border-sky-500/20">
-                      <div className="text-[9px] font-black text-sky-400 uppercase tracking-widest mb-1">Porque importa</div>
+                      <div className="text-[9px] font-black text-sky-400 uppercase tracking-widest mb-1">{t('lib.whyMatters')}</div>
                       <p className="text-[11px] text-sky-100/80 leading-relaxed">{r.why}</p>
                     </div>
                   )}
 
                   {r.bestFor && (
                     <div className="mt-2 flex items-start gap-1.5">
-                      <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest shrink-0 mt-0.5">Ideal para</span>
+                      <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest shrink-0 mt-0.5">{t('lib.bestFor')}</span>
                       <span className="text-[11px] text-slate-500 leading-relaxed">{r.bestFor}</span>
                     </div>
                   )}
@@ -126,18 +126,16 @@ export default function ResourcesView({ onExit }: Props) {
       <section className="rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-5">
         <div className="flex items-center gap-2 mb-2">
           <Library size={15} className="text-emerald-400" />
-          <h3 className="text-[13px] font-bold text-white">Como usar isto</h3>
+          <h3 className="text-[13px] font-bold text-white">{t('lib.howToUse')}</h3>
         </div>
         <p className="text-[12px] text-emerald-100/80 leading-relaxed">
-          Trata isto como currículo, não como lista de favoritos. Escolhe uma categoria,
-          clona os repositórios relevantes, e constrói até teres confiança. Ler código
-          real de produção ensina padrões que nenhum tutorial ensina.
+          {t('lib.howToUseDesc')}
         </p>
       </section>
 
       {/* Fonte */}
       <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
-        <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1.5">Baseado em</div>
+        <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1.5">{t('lib.basedOn')}</div>
         <span className="text-[12px] text-slate-400">
           «Best GitHub Repositories to Prepare for DevOps» — DevOps Shack, edição de Junho 2026
         </span>

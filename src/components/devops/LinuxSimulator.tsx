@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useLang } from '../../i18n/LangContext';
+import { LINUX_EN, tr } from '../../i18n/modulesEn';
 import { Copy, Check, Terminal } from 'lucide-react';
 
 type View = 'commands' | 'permissions' | 'scripting' | 'processes';
@@ -129,6 +131,7 @@ echo "Deploy de $IMAGE concluído com sucesso!"` },
 ];
 
 export default function LinuxSimulator() {
+  const { lang } = useLang();
   const [view, setView] = useState<View>('commands');
   const [activeGroup, setActiveGroup] = useState('Ficheiros & Dirs');
   const [perm, setPerm] = useState({ owner: [true, true, true], group: [true, false, true], other: [false, false, true] });
@@ -202,7 +205,7 @@ export default function LinuxSimulator() {
             <table className="w-full text-[11px]">
               <thead><tr className="border-b border-slate-800">{['Octal', 'Símbolo', 'Nome', 'Descrição'].map(h => <th key={h} className="text-left text-slate-500 pb-2 pr-3">{h}</th>)}</tr></thead>
               <tbody className="divide-y divide-slate-800/50">
-                {PERM_TABLE.map(p => <tr key={p.num}><td className="py-2 pr-3 font-mono text-amber-300">{p.num}</td><td className="py-2 pr-3 font-mono text-emerald-300">{p.sym}</td><td className="py-2 pr-3 text-slate-300">{p.name}</td><td className="py-2 text-slate-500">{p.desc}</td></tr>)}
+                {PERM_TABLE.map(p => <tr key={p.num}><td className="py-2 pr-3 font-mono text-amber-300">{p.num}</td><td className="py-2 pr-3 font-mono text-emerald-300">{p.sym}</td><td className="py-2 pr-3 text-slate-300">{p.name}</td><td className="py-2 text-slate-500">{tr(LINUX_EN.cmdDescs, p.desc, lang)}</td></tr>)}
               </tbody>
             </table>
             <div className="mt-3 space-y-2">
@@ -224,7 +227,7 @@ export default function LinuxSimulator() {
             {SHELL_SCRIPTS.map((s, i) => (
               <button key={i} onClick={() => setActiveScript(i)}
                 className={`w-full text-left p-3 rounded-xl text-[12px] font-medium transition-all ${activeScript === i ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300 hover:bg-slate-900'}`}>
-                <Terminal size={11} className="inline mr-1.5" />{s.title}
+                <Terminal size={11} className="inline mr-1.5" />{tr(LINUX_EN.titles, s.title, lang)}
               </button>
             ))}
           </div>
