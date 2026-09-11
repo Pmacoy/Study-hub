@@ -53,3 +53,10 @@ coverage
 .cache
 .parcel-cache
 .turbo
+
+# Repowise (MCP de "codebase intelligence") — cache/estado local, regenerável,
+# inclui .db/.pkl de vários MB; nunca deve ir para o repo
+.repowise
+
+# Claude Code — definições pessoais (mantém .claude/CLAUDE.md, que é partilhado)
+.claude/settings.local.json
