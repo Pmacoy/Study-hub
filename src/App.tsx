@@ -64,6 +64,8 @@ import ServiceMeshSimulator from './components/devops/ServiceMeshSimulator';
 import GitOpsSimulator from './components/devops/GitOpsSimulator';
 import SreSimulator from './components/devops/SreSimulator';
 import ExamSimulator from './components/devops/ExamSimulator';
+import TerraformAssociateExamSimulator from './components/devops/TerraformAssociateExamSimulator';
+import CkaExamSimulator from './components/devops/CkaExamSimulator';
 import SystemDesignSimulator from './components/systemDesign/SystemDesignSimulator';
 import DistributedSystemsSimulator from './components/distributedSystems/DistributedSystemsSimulator';
 import AlgorithmsSimulator from './components/algorithms/AlgorithmsSimulator';
@@ -91,6 +93,7 @@ import PythonExamSimulator from './components/python/PythonExamSimulator';
 import Sidebar from './components/layout/Sidebar';
 import TerminalTitleBar from './components/layout/TerminalTitleBar';
 import DashboardHome from './components/layout/DashboardHome';
+import DomainDashboard from './components/shared/DomainDashboard';
 import PlatformLanding from './components/layout/PlatformLanding';
 import QuickStat from './components/shared/QuickStat';
 import ResetProgressModal from './components/layout/ResetProgressModal';
@@ -532,7 +535,7 @@ export default function App() {
 
   function getActiveLabel(): string {
     if (!activeDomain) return '';
-    if (activeDomain === 'devops') return devopsTab === 'dashboard' ? 'Dashboard' : devopsTab === 'exam' ? 'Simulado DevOps' : DEVOPS_TAB_META[devopsTab as DevOpsStudyTab]?.label ?? '';
+    if (activeDomain === 'devops') return devopsTab === 'dashboard' ? 'Dashboard' : devopsTab === 'exam' ? 'Simulado DevOps' : devopsTab === 'terraform-exam' ? 'Simulado Terraform Associate' : devopsTab === 'cka-exam' ? 'Simulado CKA' : DEVOPS_TAB_META[devopsTab as DevOpsStudyTab]?.label ?? '';
     if (activeDomain === 'azure') {
       if (activeCertId === 'az-400') return azureTab === 'dashboard' ? 'Dashboard' : azureTab === 'exam' ? 'Simulado AZ-400' : 'Azure DevOps';
       return azureTab === 'dashboard' ? 'Dashboard' : azureTab === 'exam' ? 'Simulado AZ-104' : AZURE_TAB_META[azureTab as AzureStudyTab]?.label ?? '';
@@ -549,7 +552,7 @@ export default function App() {
 
   function getActiveSubtitle(): string {
     if (!activeDomain) return '';
-    if (activeDomain === 'devops') return devopsTab === 'exam' ? '20 questões DevOps' : DEVOPS_TAB_META[devopsTab as DevOpsStudyTab]?.subtitle ?? '';
+    if (activeDomain === 'devops') return devopsTab === 'exam' ? '20 questões DevOps' : devopsTab === 'terraform-exam' ? '25 questões · HashiCorp (003)' : devopsTab === 'cka-exam' ? '30 questões · CNCF' :DEVOPS_TAB_META[devopsTab as DevOpsStudyTab]?.subtitle ?? '';
     if (activeDomain === 'azure') {
       if (activeCertId === 'az-400') return azureTab === 'exam' ? 'Simulado AZ-400' : '';
       return azureTab === 'exam' ? 'Simulado AZ-104' : AZURE_TAB_META[azureTab as AzureStudyTab]?.subtitle ?? '';
@@ -644,6 +647,8 @@ export default function App() {
         );
       }
       if (devopsTab === 'exam') return <div className="border card-glass card-glass-hover p-5 md:p-6"><ExamSimulator /></div>;
+      if (devopsTab === 'terraform-exam') return <div className="border card-glass card-glass-hover p-5 md:p-6"><TerraformAssociateExamSimulator /></div>;
+      if (devopsTab === 'cka-exam') return <div className="border card-glass card-glass-hover p-5 md:p-6"><CkaExamSimulator /></div>;
       return <div className="border card-glass card-glass-hover p-5 md:p-6">{DEVOPS_CONTENT[devopsTab as DevOpsStudyTab]}</div>;
     }
 
@@ -665,40 +670,25 @@ export default function App() {
       // AZ-104 uses the existing full module set (identity/rbac/storage/...)
       if (activeCertId === 'az-104') {
         if (azureTab === 'dashboard') {
+          const nextAzureTab = AZURE_STUDY_TABS.find(t => !azureVisited.has(t));
           return (
-            <div className="space-y-6">
-              <section className="border card-glass card-glass-hover card-glass-violet p-6 relative overflow-hidden">
-                <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-widest text-sky-400">Dashboard AZ-104</p>
-                    <h3 className="mt-1 text-2xl font-bold text-white font-display">Azure Administrator Associate</h3>
-                  </div>
-                  <button onClick={() => setActiveCertId(null)}
-                    className="text-[11px] text-slate-400 hover:text-slate-300 underline">
-                    ← Escolher outra certificação
-                  </button>
-                </div>
-                <p className="mt-2 text-slate-400 text-[14px]">{azureStudied}/{AZURE_STUDY_TABS.length} módulos concluídos · {Math.round((azureStudied / AZURE_STUDY_TABS.length) * 100)}% progresso</p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {AZURE_STUDY_TABS.map(t => (
-                    <button key={t} onClick={() => handleAzureTab(t)}
-                      className={`px-3 py-1.5 text-[11px] font-medium transition-all border ${azureVisited.has(t) ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300' : 'border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'}`}>
-                      {azureVisited.has(t) ? '✓ ' : ''}{AZURE_TAB_META[t]?.label}
-                    </button>
-                  ))}
-                </div>
-                <div className="mt-5 flex gap-3">
-                  <button onClick={() => { const next = AZURE_STUDY_TABS.find(t => !azureVisited.has(t)); if (next) handleAzureTab(next); }}
-                    className="px-4 py-2.5 border border-sky-500/30 bg-sky-500/10 text-sky-200 text-[13px] font-semibold hover:bg-sky-500/15 transition-all">
-                    Continuar estudo
-                  </button>
-                  <button onClick={() => handleAzureTab('exam')}
-                    className="px-4 py-2.5 border border-amber-500/30 bg-amber-500/10 text-amber-200 text-[13px] font-semibold hover:bg-amber-500/15 transition-all">
-                    <GraduationCap size={13} className="inline mr-1" />Simulado AZ-104
-                  </button>
-                </div>
-              </section>
-            </div>
+            <DomainDashboard
+              eyebrow="Dashboard AZ-104"
+              title="Azure Administrator Associate"
+              description={`Identidade, governança, storage, compute, redes e monitorização no Azure. ${AZURE_STUDY_TABS.length} módulos alinhados com o exame AZ-104.`}
+              accent="sky"
+              progressPct={Math.round((azureStudied / AZURE_STUDY_TABS.length) * 100)}
+              studiedCount={azureStudied}
+              totalCount={AZURE_STUDY_TABS.length}
+              menuGroups={azureMenuGroups as SidebarMenuGroup[]}
+              visited={azureVisited as Set<string>}
+              onOpenTab={(id) => handleAzureTab(id as AzureTab)}
+              nextTabId={nextAzureTab ?? 'exam'}
+              nextTabLabel={nextAzureTab ? AZURE_TAB_META[nextAzureTab]?.label : undefined}
+              examTabId="exam"
+              examLabel="Simulado AZ-104"
+              onBack={() => setActiveCertId(null)}
+            />
           );
         }
         if (azureTab === 'exam') return <div className="border card-glass card-glass-hover p-5 md:p-6"><AzureExamSimulator /></div>;
@@ -725,27 +715,21 @@ export default function App() {
       if (activeCertId === 'az-400') {
         if (azureTab === 'dashboard') {
           return (
-            <div className="space-y-6">
-              <section className="border card-glass card-glass-hover card-glass-amber p-6 relative overflow-hidden">
-                <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-widest text-amber-400">Dashboard AZ-400</p>
-                    <h3 className="mt-1 text-2xl font-bold text-white font-display">Azure DevOps Engineer Expert</h3>
-                  </div>
-                  <button onClick={() => setActiveCertId(null)}
-                    className="text-[11px] text-slate-400 hover:text-slate-300 underline">
-                    ← Escolher outra certificação
-                  </button>
-                </div>
-                <p className="mt-2 text-slate-400 text-[14px]">35 questões · 6 tópicos · Pipelines, Repositórios, Boards, Segurança, Artefatos, Ambientes</p>
-                <div className="mt-5 flex gap-3">
-                  <button onClick={() => handleAzureTab('exam')}
-                    className="px-4 py-2.5 border border-amber-500/30 bg-amber-500/10 text-amber-200 text-[13px] font-semibold hover:bg-amber-500/15 transition-all">
-                    <GraduationCap size={13} className="inline mr-1" />Simulado AZ-400
-                  </button>
-                </div>
-              </section>
-            </div>
+            <DomainDashboard
+              eyebrow="Dashboard AZ-400"
+              title="Azure DevOps Engineer Expert"
+              description="35 questões · 6 tópicos · Pipelines, Repositórios, Boards, Segurança, Artefatos, Ambientes."
+              accent="amber"
+              progressPct={0}
+              studiedCount={0}
+              totalCount={0}
+              menuGroups={[]}
+              visited={new Set()}
+              onOpenTab={(id) => handleAzureTab(id as AzureTab)}
+              examTabId="exam"
+              examLabel="Simulado AZ-400"
+              onBack={() => setActiveCertId(null)}
+            />
           );
         }
         if (azureTab === 'exam') return <div className="border card-glass card-glass-hover p-5 md:p-6"><AzureDevOpsExamSimulator /></div>;
@@ -786,42 +770,25 @@ export default function App() {
       // AWS SAA-C03 has real content
       if (activeCertId === 'aws-saa-c03') {
         if (awsTab === 'dashboard') {
+          const nextAwsTab = AWS_STUDY_TABS.find(t => !awsVisited.has(t));
           return (
-            <div className="space-y-6">
-              <section className="border card-glass card-glass-hover card-glass-violet p-6 relative overflow-hidden">
-                <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-widest text-orange-400">Dashboard SAA-C03</p>
-                    <h3 className="mt-1 text-2xl font-bold text-white font-display">AWS Solutions Architect Associate</h3>
-                  </div>
-                  <button onClick={() => setActiveCertId(null)}
-                    className="text-[11px] text-slate-400 hover:text-slate-300 underline">
-                    ← Escolher outra certificação
-                  </button>
-                </div>
-                <p className="mt-2 text-slate-400 text-[14px]">
-                  {awsStudied}/{AWS_STUDY_TABS.length} módulos concluídos · {Math.round((awsStudied / AWS_STUDY_TABS.length) * 100)}% progresso · 98 questões disponíveis
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {AWS_STUDY_TABS.map(t => (
-                    <button key={t} onClick={() => handleAwsTab(t)}
-                      className={`px-3 py-1.5 text-[11px] font-medium transition-all border ${awsVisited.has(t) ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300' : 'border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'}`}>
-                      {awsVisited.has(t) ? '✓ ' : ''}{AWS_TAB_META[t]?.label}
-                    </button>
-                  ))}
-                </div>
-                <div className="mt-5 flex gap-3 flex-wrap">
-                  <button onClick={() => { const next = AWS_STUDY_TABS.find(t => !awsVisited.has(t)); if (next) handleAwsTab(next); }}
-                    className="px-4 py-2.5 border border-orange-500/30 bg-orange-500/10 text-orange-200 text-[13px] font-semibold hover:bg-orange-500/15 transition-all">
-                    Continuar estudo
-                  </button>
-                  <button onClick={() => handleAwsTab('exam')}
-                    className="px-4 py-2.5 border border-amber-500/30 bg-amber-500/10 text-amber-200 text-[13px] font-semibold hover:bg-amber-500/15 transition-all">
-                    <GraduationCap size={13} className="inline mr-1" />Simulado SAA-C03
-                  </button>
-                </div>
-              </section>
-            </div>
+            <DomainDashboard
+              eyebrow="Dashboard SAA-C03"
+              title="AWS Solutions Architect Associate"
+              description={`Compute, storage, redes, bases de dados e bem arquitetado na AWS. ${AWS_STUDY_TABS.length} módulos · 98 questões disponíveis.`}
+              accent="orange"
+              progressPct={Math.round((awsStudied / AWS_STUDY_TABS.length) * 100)}
+              studiedCount={awsStudied}
+              totalCount={AWS_STUDY_TABS.length}
+              menuGroups={awsMenuGroups as SidebarMenuGroup[]}
+              visited={awsVisited as Set<string>}
+              onOpenTab={(id) => handleAwsTab(id as AwsTab)}
+              nextTabId={nextAwsTab ?? 'exam'}
+              nextTabLabel={nextAwsTab ? AWS_TAB_META[nextAwsTab]?.label : undefined}
+              examTabId="exam"
+              examLabel="Simulado SAA-C03"
+              onBack={() => setActiveCertId(null)}
+            />
           );
         }
         if (awsTab === 'exam') return <div className="border card-glass card-glass-hover p-5 md:p-6"><AwsExamSimulator /></div>;
@@ -862,20 +829,24 @@ export default function App() {
     // ── Networking ───────────────────────────────────────────────────
     if (activeDomain === 'networking') {
       if (networkingTab === 'dashboard') {
+        const nextNetworkingTab = NETWORKING_STUDY_TABS.find(t => !networkingVisited.has(t));
         return (
-          <section className="border card-glass card-glass-hover p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-emerald-400">Dashboard · Redes</p>
-            <h3 className="mt-2 text-2xl font-bold text-white font-display">Redes & Cloud Networking</h3>
-            <p className="mt-2 text-slate-400 text-[14px]">{networkingStudied}/{NETWORKING_STUDY_TABS.length} módulos concluídos</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {NETWORKING_STUDY_TABS.map(t => (
-                <button key={t} onClick={() => handleNetworkingTab(t)}
-                  className={`px-3 py-1.5 text-[11px] font-medium transition-all border ${networkingVisited.has(t) ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300' : 'border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'}`}>
-                  {networkingVisited.has(t) ? '✓ ' : ''}{NETWORKING_TAB_META[t]?.label}
-                </button>
-              ))}
-            </div>
-          </section>
+          <DomainDashboard
+            eyebrow="Dashboard · Redes"
+            title="Redes & Cloud Networking"
+            description={`Endereçamento IP, TCP/UDP, roteamento e segurança de rede. ${NETWORKING_STUDY_TABS.length} módulos práticos.`}
+            accent="emerald"
+            progressPct={Math.round((networkingStudied / NETWORKING_STUDY_TABS.length) * 100)}
+            studiedCount={networkingStudied}
+            totalCount={NETWORKING_STUDY_TABS.length}
+            menuGroups={NETWORKING_MENU_GROUPS as SidebarMenuGroup[]}
+            visited={networkingVisited as Set<string>}
+            onOpenTab={(id) => handleNetworkingTab(id as NetworkingTab)}
+            nextTabId={nextNetworkingTab ?? 'exam'}
+            nextTabLabel={nextNetworkingTab ? NETWORKING_TAB_META[nextNetworkingTab]?.label : undefined}
+            examTabId="exam"
+            examLabel="Simulado Redes"
+          />
         );
       }
       if (networkingTab === 'exam') {
@@ -891,30 +862,24 @@ export default function App() {
     // ── Python ───────────────────────────────────────────────────────
     if (activeDomain === 'python') {
       if (pythonTab === 'dashboard') {
+        const nextPythonTab = PYTHON_STUDY_TABS.find(t => !pythonVisited.has(t));
         return (
-          <section className="border card-glass card-glass-hover p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-amber-400">Dashboard · Python</p>
-            <h3 className="mt-2 text-2xl font-bold text-white font-display">Python para DevOps</h3>
-            <p className="mt-2 text-slate-400 text-[14px]">{pythonStudied}/{PYTHON_STUDY_TABS.length} módulos concluídos</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {PYTHON_STUDY_TABS.map(t => (
-                <button key={t} onClick={() => handlePythonTab(t)}
-                  className={`px-3 py-1.5 text-[11px] font-medium transition-all border ${pythonVisited.has(t) ? 'border-amber-500/30 bg-amber-500/10 text-amber-300' : 'border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'}`}>
-                  {pythonVisited.has(t) ? '✓ ' : ''}{PYTHON_TAB_META[t]?.label}
-                </button>
-              ))}
-            </div>
-            <div className="mt-5 flex gap-3">
-              <button onClick={() => { const next = PYTHON_STUDY_TABS.find(t => !pythonVisited.has(t)); if (next) handlePythonTab(next); }}
-                className="px-4 py-2.5 border border-amber-500/30 bg-amber-500/10 text-amber-200 text-[13px] font-semibold hover:bg-amber-500/15 transition-all">
-                Continuar estudo
-              </button>
-              <button onClick={() => handlePythonTab('exam')}
-                className="px-4 py-2.5 border border-violet-500/30 bg-violet-500/10 text-violet-200 text-[13px] font-semibold hover:bg-violet-500/15 transition-all">
-                <GraduationCap size={13} className="inline mr-1" />Simulado Python
-              </button>
-            </div>
-          </section>
+          <DomainDashboard
+            eyebrow="Dashboard · Python"
+            title="Python para DevOps"
+            description={`Fundamentos, estruturas de dados, OOP e automação com Python. ${PYTHON_STUDY_TABS.length} módulos práticos.`}
+            accent="amber"
+            progressPct={Math.round((pythonStudied / PYTHON_STUDY_TABS.length) * 100)}
+            studiedCount={pythonStudied}
+            totalCount={PYTHON_STUDY_TABS.length}
+            menuGroups={PYTHON_MENU_GROUPS as SidebarMenuGroup[]}
+            visited={pythonVisited as Set<string>}
+            onOpenTab={(id) => handlePythonTab(id as PythonTab)}
+            nextTabId={nextPythonTab ?? 'exam'}
+            nextTabLabel={nextPythonTab ? PYTHON_TAB_META[nextPythonTab]?.label : undefined}
+            examTabId="exam"
+            examLabel="Simulado Python"
+          />
         );
       }
       if (pythonTab === 'exam') return <div className="border card-glass card-glass-hover p-5 md:p-6"><PythonExamSimulator /></div>;
@@ -928,26 +893,22 @@ export default function App() {
     // ── System Design ──────────────────────────────────────────────
     if (activeDomain === 'system-design') {
       if (systemDesignTab === 'dashboard') {
+        const nextSystemDesignTab = SYSTEM_DESIGN_STUDY_TABS.find(t => !systemDesignVisited.has(t));
         return (
-          <section className="border card-glass card-glass-hover p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-rose-400">Dashboard · System Design</p>
-            <h3 className="mt-2 text-2xl font-bold text-white font-display">System Design</h3>
-            <p className="mt-2 text-slate-400 text-[14px]">{systemDesignStudied}/{SYSTEM_DESIGN_STUDY_TABS.length} módulos concluídos</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {SYSTEM_DESIGN_STUDY_TABS.map(t => (
-                <button key={t} onClick={() => handleSystemDesignTab(t)}
-                  className={`px-3 py-1.5 text-[11px] font-medium transition-all border ${systemDesignVisited.has(t) ? 'border-rose-500/30 bg-rose-500/10 text-rose-300' : 'border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'}`}>
-                  {systemDesignVisited.has(t) ? '✓ ' : ''}{SYSTEM_DESIGN_TAB_META[t]?.label}
-                </button>
-              ))}
-            </div>
-            <div className="mt-5 flex gap-3">
-              <button onClick={() => { const next = SYSTEM_DESIGN_STUDY_TABS.find(t => !systemDesignVisited.has(t)); if (next) handleSystemDesignTab(next); }}
-                className="px-4 py-2.5 border border-rose-500/30 bg-rose-500/10 text-rose-200 text-[13px] font-semibold hover:bg-rose-500/15 transition-all">
-                Continuar estudo
-              </button>
-            </div>
-          </section>
+          <DomainDashboard
+            eyebrow="Dashboard · System Design"
+            title="System Design"
+            description={`Caching, sharding, mensageria, CAP theorem e estimativas de capacidade. ${SYSTEM_DESIGN_STUDY_TABS.length} módulos práticos.`}
+            accent="rose"
+            progressPct={Math.round((systemDesignStudied / SYSTEM_DESIGN_STUDY_TABS.length) * 100)}
+            studiedCount={systemDesignStudied}
+            totalCount={SYSTEM_DESIGN_STUDY_TABS.length}
+            menuGroups={systemDesignMenuGroups as SidebarMenuGroup[]}
+            visited={systemDesignVisited as Set<string>}
+            onOpenTab={(id) => handleSystemDesignTab(id as import('./types/systemDesign').SystemDesignTab)}
+            nextTabId={nextSystemDesignTab}
+            nextTabLabel={nextSystemDesignTab ? SYSTEM_DESIGN_TAB_META[nextSystemDesignTab]?.label : undefined}
+          />
         );
       }
       return (
@@ -960,26 +921,22 @@ export default function App() {
     // ── Distributed Systems ──────────────────────────────────────
     if (activeDomain === 'distributed-systems') {
       if (distributedSystemsTab === 'dashboard') {
+        const nextDistributedSystemsTab = DISTRIBUTED_SYSTEMS_STUDY_TABS.find(t => !distributedSystemsVisited.has(t));
         return (
-          <section className="border card-glass card-glass-hover p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-teal-400">Dashboard · Sistemas Distribuídos</p>
-            <h3 className="mt-2 text-2xl font-bold text-white font-display">Sistemas Distribuídos</h3>
-            <p className="mt-2 text-slate-400 text-[14px]">{distributedSystemsStudied}/{DISTRIBUTED_SYSTEMS_STUDY_TABS.length} módulos concluídos</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {DISTRIBUTED_SYSTEMS_STUDY_TABS.map(t => (
-                <button key={t} onClick={() => handleDistributedSystemsTab(t)}
-                  className={`px-3 py-1.5 text-[11px] font-medium transition-all border ${distributedSystemsVisited.has(t) ? 'border-teal-500/30 bg-teal-500/10 text-teal-300' : 'border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'}`}>
-                  {distributedSystemsVisited.has(t) ? '✓ ' : ''}{DISTRIBUTED_SYSTEMS_TAB_META[t]?.label}
-                </button>
-              ))}
-            </div>
-            <div className="mt-5 flex gap-3">
-              <button onClick={() => { const next = DISTRIBUTED_SYSTEMS_STUDY_TABS.find(t => !distributedSystemsVisited.has(t)); if (next) handleDistributedSystemsTab(next); }}
-                className="px-4 py-2.5 border border-teal-500/30 bg-teal-500/10 text-teal-200 text-[13px] font-semibold hover:bg-teal-500/15 transition-all">
-                Continuar estudo
-              </button>
-            </div>
-          </section>
+          <DomainDashboard
+            eyebrow="Dashboard · Sistemas Distribuídos"
+            title="Sistemas Distribuídos"
+            description={`Consenso, tolerância a falhas, consistência e transações distribuídas. ${DISTRIBUTED_SYSTEMS_STUDY_TABS.length} módulos práticos.`}
+            accent="teal"
+            progressPct={Math.round((distributedSystemsStudied / DISTRIBUTED_SYSTEMS_STUDY_TABS.length) * 100)}
+            studiedCount={distributedSystemsStudied}
+            totalCount={DISTRIBUTED_SYSTEMS_STUDY_TABS.length}
+            menuGroups={distributedSystemsMenuGroups as SidebarMenuGroup[]}
+            visited={distributedSystemsVisited as Set<string>}
+            onOpenTab={(id) => handleDistributedSystemsTab(id as import('./types/distributedSystems').DistributedSystemsTab)}
+            nextTabId={nextDistributedSystemsTab}
+            nextTabLabel={nextDistributedSystemsTab ? DISTRIBUTED_SYSTEMS_TAB_META[nextDistributedSystemsTab]?.label : undefined}
+          />
         );
       }
       return (
@@ -992,26 +949,22 @@ export default function App() {
     // ── Algorithms ──────────────────────────────────────────────
     if (activeDomain === 'algorithms') {
       if (algorithmsTab === 'dashboard') {
+        const nextAlgorithmsTab = ALGORITHMS_STUDY_TABS.find(t => !algorithmsVisited.has(t));
         return (
-          <section className="border card-glass card-glass-hover p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-cyan-400">Dashboard · Algoritmos</p>
-            <h3 className="mt-2 text-2xl font-bold text-white font-display">Algoritmos & Paradigmas</h3>
-            <p className="mt-2 text-slate-400 text-[14px]">{algorithmsStudied}/{ALGORITHMS_STUDY_TABS.length} módulos concluídos</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {ALGORITHMS_STUDY_TABS.map(t => (
-                <button key={t} onClick={() => handleAlgorithmsTab(t)}
-                  className={`px-3 py-1.5 text-[11px] font-medium transition-all border ${algorithmsVisited.has(t) ? 'border-cyan-500/30 bg-cyan-500/10 text-cyan-300' : 'border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'}`}>
-                  {algorithmsVisited.has(t) ? '✓ ' : ''}{ALGORITHMS_TAB_META[t]?.label}
-                </button>
-              ))}
-            </div>
-            <div className="mt-5 flex gap-3">
-              <button onClick={() => { const next = ALGORITHMS_STUDY_TABS.find(t => !algorithmsVisited.has(t)); if (next) handleAlgorithmsTab(next); }}
-                className="px-4 py-2.5 border border-cyan-500/30 bg-cyan-500/10 text-cyan-200 text-[13px] font-semibold hover:bg-cyan-500/15 transition-all">
-                Continuar estudo
-              </button>
-            </div>
-          </section>
+          <DomainDashboard
+            eyebrow="Dashboard · Algoritmos"
+            title="Algoritmos & Paradigmas"
+            description={`Complexidade, recursão, grafos, programação dinâmica e busca. ${ALGORITHMS_STUDY_TABS.length} módulos práticos.`}
+            accent="cyan"
+            progressPct={Math.round((algorithmsStudied / ALGORITHMS_STUDY_TABS.length) * 100)}
+            studiedCount={algorithmsStudied}
+            totalCount={ALGORITHMS_STUDY_TABS.length}
+            menuGroups={algorithmsMenuGroups as SidebarMenuGroup[]}
+            visited={algorithmsVisited as Set<string>}
+            onOpenTab={(id) => handleAlgorithmsTab(id as import('./types/algorithms').AlgorithmsTab)}
+            nextTabId={nextAlgorithmsTab}
+            nextTabLabel={nextAlgorithmsTab ? ALGORITHMS_TAB_META[nextAlgorithmsTab]?.label : undefined}
+          />
         );
       }
       return (
@@ -1125,7 +1078,7 @@ export default function App() {
                   </button>
                   <button
                     onClick={() => setShowProjects(true)}
-                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 border border-orange-500/30 bg-orange-500/10 text-orange-200 text-[11px] font-semibold hover:bg-orange-500/20 font-mono"
+                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 border border-violet-500/30 bg-violet-500/10 text-violet-200 text-[11px] font-semibold hover:bg-violet-500/20 font-mono"
                   >
                     <Rocket size={11} />
                     Projectos

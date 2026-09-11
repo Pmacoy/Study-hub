@@ -18,7 +18,9 @@ export type StudyTab =
   | 'gitops'
   | 'sre';
 
-export type DevOpsTab = 'dashboard' | 'exam' | StudyTab;
+export type CertExamTab = 'terraform-exam' | 'cka-exam';
+
+export type DevOpsTab = 'dashboard' | 'exam' | CertExamTab | StudyTab;
 
 export const STUDY_TABS: StudyTab[] = [
   'devops-intro',
@@ -45,6 +47,8 @@ export function isDevOpsTab(value: string): value is DevOpsTab {
   return (
     value === 'dashboard' ||
     value === 'exam' ||
+    value === 'terraform-exam' ||
+    value === 'cka-exam' ||
     (STUDY_TABS as string[]).includes(value)
   );
 }

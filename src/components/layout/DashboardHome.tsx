@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { BookOpen, GraduationCap, Rocket, Zap, Terminal, Shield, BarChart3, Cpu, ArrowRight } from 'lucide-react';
+import { BookOpen, GraduationCap, Rocket, Zap, Terminal, Shield, BarChart3, Cpu, ArrowRight, Award, ShieldCheck } from 'lucide-react';
 import type { DevOpsTab, StudyTab } from '../../types/devops';
 import { TAB_META } from '../../data/tabMeta';
 import QuickStat from '../shared/QuickStat';
@@ -46,12 +46,15 @@ export default function DashboardHome({
     { id: 'dora-devex' as StudyTab,   color: 'emerald', icon: BarChart3 },
   ];
 
-  const revealRef = useReveal();
+  const heroRef = useReveal();
+  const modulesRef = useReveal();
+  const moduleGridRef = useReveal();
+  const actionsRef = useReveal();
 
   return (
-    <div ref={revealRef} className="space-y-6">
+    <div className="space-y-6">
       {/* Hero */}
-      <section className="reveal reveal-delay-1 border card-glass card-glass-hover card-glass-violet p-6 md:p-8 relative overflow-hidden border-l-4 border-l-violet-500/50">
+      <section ref={heroRef} className="reveal reveal-delay-1 border card-glass card-glass-hover card-glass-violet p-6 md:p-8 relative overflow-hidden border-l-4 border-l-violet-500/50">
         {/* Top gradient line */}
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-400/60 via-cyan-400/40 to-transparent" />
         {/* Ambient glow orbs */}
@@ -67,7 +70,7 @@ export default function DashboardHome({
               Da execução (DevOps) à plataforma como produto.
             </h3>
             <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-400">
-              12 módulos · 9 de fundamentos DevOps + 3 de Platform Engineering (IDP · Golden Paths · DORA &amp; DevEx). Simuladores interactivos alinhados com o mercado 2026.
+              12 módulos · 9 de fundamentos DevOps + 3 de Platform Engineering (IDP · Golden Paths · DORA &amp; DevEx). Simuladores interactivos alinhados com o mercado 2026, incluindo trilhos de certificação Terraform Associate e CKA.
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
               <button
@@ -109,7 +112,7 @@ export default function DashboardHome({
       </section>
 
       {/* Modules grid */}
-      <section className="reveal reveal-delay-2 border card-glass card-glass-hover card-glass-violet p-6 relative overflow-hidden border-l-4 border-l-violet-500/50">
+      <section ref={modulesRef} className="reveal reveal-delay-2 border card-glass card-glass-hover card-glass-violet p-6 relative overflow-hidden border-l-4 border-l-violet-500/50">
         {/* Top gradient line */}
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-400/60 via-cyan-400/40 to-transparent" />
         <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-cyan-500/8 rounded-full blur-2xl" style={{ animation: 'float 10s ease-in-out infinite reverse' }} />
@@ -122,7 +125,7 @@ export default function DashboardHome({
           <BlockProgress value={studiedCount} max={12} tone="violet" showPct={true} />
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 stagger-children">
+        <div ref={moduleGridRef} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 stagger-children">
           {modules.map(m => {
             const done = completedTabs.includes(m.id);
             const Icon = m.icon;
@@ -156,7 +159,7 @@ export default function DashboardHome({
       </section>
 
       {/* Quick actions */}
-      <section className="reveal reveal-delay-3 grid grid-cols-1 md:grid-cols-2 gap-3 stagger-children">
+      <section ref={actionsRef} className="reveal reveal-delay-3 grid grid-cols-1 md:grid-cols-2 gap-3 stagger-children">
         <button
           onClick={() => onOpenTab(nextRecommendedTab)}
           className="border card-glass card-glass-hover card-glass-violet p-5 text-left transition-all group border-violet-500/20 relative overflow-hidden"
@@ -188,6 +191,40 @@ export default function DashboardHome({
               <div className="text-sm font-bold text-white font-display">Pronto para testar?</div>
             </div>
             <ArrowRight size={14} className="ml-auto text-amber-400 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-1" />
+          </div>
+        </button>
+
+        <button
+          onClick={() => onOpenTab('terraform-exam')}
+          className="border card-glass card-glass-hover card-glass-violet p-5 text-left transition-all group border-violet-500/20 relative overflow-hidden"
+        >
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center border border-violet-500/30 bg-violet-500/10">
+              <Award size={16} className="text-violet-400" />
+            </div>
+            <div>
+              <div className="text-2xs font-black text-slate-500 uppercase tracking-widest font-mono">Certificação</div>
+              <div className="text-sm font-bold text-white font-display">Terraform Associate</div>
+            </div>
+            <ArrowRight size={14} className="ml-auto text-violet-400 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-1" />
+          </div>
+        </button>
+
+        <button
+          onClick={() => onOpenTab('cka-exam')}
+          className="border card-glass card-glass-hover card-glass-violet p-5 text-left transition-all group border-violet-500/20 relative overflow-hidden"
+        >
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center border border-violet-500/30 bg-violet-500/10">
+              <ShieldCheck size={16} className="text-violet-400" />
+            </div>
+            <div>
+              <div className="text-2xs font-black text-slate-500 uppercase tracking-widest font-mono">Certificação</div>
+              <div className="text-sm font-bold text-white font-display">CKA (Kubernetes)</div>
+            </div>
+            <ArrowRight size={14} className="ml-auto text-violet-400 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-1" />
           </div>
         </button>
       </section>

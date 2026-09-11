@@ -19,6 +19,8 @@ import {
   Network,
   RotateCw,
   AlertTriangle,
+  Award,
+  ShieldCheck,
 } from 'lucide-react';
 import type { DevOpsTab } from '../types/devops';
 
@@ -70,6 +72,13 @@ export const menuGroups: MenuGroup[] = [
     items: [
       { id: 'monitoring', label: 'Monitoring', sublabel: 'Prometheus · Grafana · ELK', icon: Activity },
       { id: 'security', label: 'DevSecOps', sublabel: 'SonarQube · Trivy · OPA', icon: Shield },
+    ],
+  },
+  {
+    title: 'Certificações',
+    items: [
+      { id: 'terraform-exam', label: 'Terraform Associate', sublabel: 'Simulado HashiCorp (003)', icon: Award },
+      { id: 'cka-exam', label: 'CKA', sublabel: 'Certified Kubernetes Administrator', icon: ShieldCheck },
     ],
   },
   {

@@ -15,13 +15,18 @@ export default {
         mono:  ['JetBrains Mono', 'Fira Code', 'monospace'],
         display: ['Outfit', 'Inter', 'sans-serif'],
       },
+      // 2xs/xs/sm ficam como estão — são a camada de labels/chrome (badges,
+      // eyebrows, meta-info), que a own QuizRunner.tsx já documenta como
+      // intencionalmente pequena. base/md/lg subiram porque são a camada de
+      // leitura real (pergunta, opções, explicação) e estavam abaixo dos
+      // 14-18px recomendados para corpo de texto — ver QuizRunner.tsx:20.
       fontSize: {
         '2xs': ['10px',  { lineHeight: '14px' }],
         'xs':  ['11px',  { lineHeight: '16px' }],
         'sm':  ['12px',  { lineHeight: '18px' }],
-        'base': ['13px',  { lineHeight: '20px' }],
-        'md':  ['14px',  { lineHeight: '21px' }],
-        'lg':  ['15px',  { lineHeight: '22px' }],
+        'base': ['15px', { lineHeight: '22px' }],
+        'md':  ['16px',  { lineHeight: '24px' }],
+        'lg':  ['17px',  { lineHeight: '25px' }],
       },
       // Small radius for a tech feel — sharp but not dead
       borderRadius: {

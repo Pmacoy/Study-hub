@@ -415,6 +415,8 @@
   .card-glass-amber:hover   { box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 12px 40px rgba(0,0,0,0.5), 0 0 32px rgba(251,191,36,0.12); }
   .card-glass-orange:hover  { box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 12px 40px rgba(0,0,0,0.5), 0 0 32px rgba(250,179,135,0.12); }
   .card-glass-rose:hover    { box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 12px 40px rgba(0,0,0,0.5), 0 0 32px rgba(251,113,133,0.12); }
+  .card-glass-teal:hover    { box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 12px 40px rgba(0,0,0,0.5), 0 0 32px rgba(45,212,191,0.12); }
+  .card-glass-cyan:hover    { box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 12px 40px rgba(0,0,0,0.5), 0 0 32px rgba(34,211,238,0.12); }
 
   /* ─── Button glow variants ─────────────────────────────────── */
   .btn-glow-violet:hover  { box-shadow: 0 0 20px rgba(167,139,250,0.3), 0 0 50px rgba(167,139,250,0.1); }
