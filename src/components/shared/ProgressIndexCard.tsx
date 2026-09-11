@@ -1,63 +1,57 @@
-import type { ProgressBreakdown } from '../../types/progress';
-
-const RING_SIZE = 96;
-const RING_STROKE = 8;
-const RADIUS = (RING_SIZE - RING_STROKE) / 2;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-
-function toneFor(value: number): { text: string; bar: string; ring: string } {
-  if (value >= 70) return { text: 'text-emerald-400', bar: 'bg-emerald-500', ring: '#34d399' };
-  if (value >= 40) return { text: 'text-amber-400', bar: 'bg-amber-500', ring: '#fbbf24' };
-  return { text: 'text-rose-400', bar: 'bg-rose-500', ring: '#fb7185' };
-}
-
-function MetricBar({ label, value, hint }: { label: string; value: number; hint: string }) {
-  const tone = toneFor(value);
-  return (
-    <div>
-      <div className="flex items-center justify-between mb-1">
-        <span className="text-[11px] font-semibold text-slate-400">{label}</span>
-        <span className={`text-[11px] font-bold ${tone.text}`}>{value}%</span>
-      </div>
-      <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
-        <div className={`h-full rounded-full ${tone.bar} transition-all duration-700`} style={{ width: `${value}%` }} />
-      </div>
-      <p className="text-[9px] text-slate-600 mt-1">{hint}</p>
-    </div>
-  );
-}
+import { ProgressBreakdown } from '../../types/progress';
+import BlockProgress from './BlockProgress';
 
 export default function ProgressIndexCard({ breakdown }: { breakdown: ProgressBreakdown }) {
-  const tone = toneFor(breakdown.composite);
-  const dashOffset = CIRCUMFERENCE * (1 - breakdown.composite / 100);
-
   return (
-    <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-6">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500 mb-4">Índice de Progresso</p>
+    <section className="border card-glass card-glass-hover card-glass-violet p-6 relative overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-400/60 via-cyan-400/40 to-transparent" />
+      <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-violet-500/5 rounded-full blur-3xl" />
 
-      <div className="flex items-center gap-6">
-        {/* Ring */}
-        <div className="relative shrink-0" style={{ width: RING_SIZE, height: RING_SIZE }}>
-          <svg width={RING_SIZE} height={RING_SIZE} className="-rotate-90">
-            <circle cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={RADIUS} fill="none" stroke="#1e293b" strokeWidth={RING_STROKE} />
-            <circle
-              cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={RADIUS} fill="none"
-              stroke={tone.ring} strokeWidth={RING_STROKE} strokeLinecap="round"
-              strokeDasharray={CIRCUMFERENCE} strokeDashoffset={dashOffset}
-              style={{ transition: 'stroke-dashoffset 0.7s ease' }}
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className={`text-2xl font-black ${tone.text}`}>{breakdown.composite}</span>
-            <span className="text-[8px] text-slate-600 uppercase font-bold">/ 100</span>
-          </div>
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-violet-400 font-mono mb-5 relative">
+        Progresso global
+      </p>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative">
+        {/* Composite score */}
+        <div className="md:col-span-1">
+          <div className="text-4xl font-black text-white font-mono">{breakdown.composite}%</div>
+          <div className="text-xs text-slate-500 font-mono mt-1 uppercase tracking-wider">Score geral</div>
+          <BlockProgress
+            value={breakdown.composite}
+            max={100}
+            tone="violet"
+            showPct={false}
+          />
         </div>
 
-        {/* Bars */}
-        <div className="flex-1 space-y-3">
-          <MetricBar label="Cobertura" value={breakdown.coverage} hint="Módulos estudados em todos os domínios" />
-          <MetricBar label="Consistência" value={breakdown.consistency} hint="Baseado na streak actual (máx. 14 dias)" />
-          <MetricBar label="Desempenho" value={breakdown.engagement} hint="Acerto médio nas últimas sessões" />
+        {/* Coverage */}
+        <div>
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="w-2 h-2 rounded-full bg-violet-400" />
+            <span className="text-2xs font-semibold uppercase tracking-widest text-slate-500 font-mono">Cobertura</span>
+          </div>
+          <div className="text-2xl font-black text-violet-300 font-mono">{breakdown.coverage}%</div>
+          <div className="text-2xs text-slate-600 font-mono mt-0.5">módulos estudados</div>
+        </div>
+
+        {/* Consistency */}
+        <div>
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="w-2 h-2 rounded-full bg-sky-400" />
+            <span className="text-2xs font-semibold uppercase tracking-widest text-slate-500 font-mono">Consistência</span>
+          </div>
+          <div className="text-2xl font-black text-sky-300 font-mono">{breakdown.consistency}%</div>
+          <div className="text-2xs text-slate-600 font-mono mt-0.5">baseado no streak</div>
+        </div>
+
+        {/* Engagement */}
+        <div>
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+            <span className="text-2xs font-semibold uppercase tracking-widest text-slate-500 font-mono">Engajamento</span>
+          </div>
+          <div className="text-2xl font-black text-emerald-300 font-mono">{breakdown.engagement}%</div>
+          <div className="text-2xs text-slate-600 font-mono mt-0.5">taxa de acerto</div>
         </div>
       </div>
     </section>

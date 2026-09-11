@@ -1,41 +1,47 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { usePersistedState } from './usePersistedState';
+import { isDailyState } from '../types/validators';
 import { DAILY_STORAGE_KEY } from '../data/storageKeys';
 import type { DailyState, DailyStepId } from '../types/daily';
 import { EMPTY_DAILY_STATE, reconcileDailyState, completeStep, todayIso } from '../types/daily';
 
 export function useDailyState() {
-  const [state, setState] = useState<DailyState>(EMPTY_DAILY_STATE);
-  const [loaded, setLoaded] = useState(false);
+  const [state, setState, loaded] = usePersistedState(
+    DAILY_STORAGE_KEY,
+    EMPTY_DAILY_STATE,
+    isDailyState
+  );
 
-  // Load + reconcile on mount
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(DAILY_STORAGE_KEY);
-      const parsed: DailyState = raw ? JSON.parse(raw) : EMPTY_DAILY_STATE;
-      const reconciled = reconcileDailyState(parsed);
-      setState(reconciled);
-    } catch {
-      setState(reconcileDailyState(EMPTY_DAILY_STATE));
-    } finally {
-      setLoaded(true);
-    }
-  }, []);
+  // Reconciliar ao carregar ou quando o dia muda
+  const [lastReconciled, setLastReconciled] = useState<string | null>(null);
 
-  // Persist on every change
   useEffect(() => {
     if (!loaded) return;
-    try {
-      localStorage.setItem(DAILY_STORAGE_KEY, JSON.stringify(state));
-    } catch { /* ignore */ }
-  }, [state, loaded]);
 
-  const markStepComplete = useCallback((step: DailyStepId) => {
-    setState(prev => completeStep(prev, step));
-  }, []);
+    const today = todayIso();
+    // Só reconcilia se a data mudou desde a última reconciliação
+    if (lastReconciled !== today) {
+      const reconciled = reconcileDailyState(state);
+      if (reconciled !== state) {
+        setState(reconciled);
+      }
+      setLastReconciled(today);
+    }
+  }, [loaded, state, lastReconciled, setState]);
 
-  const isStepDoneToday = useCallback((step: DailyStepId) => {
-    return state.sessionDate === todayIso() && state.completedSteps.includes(step);
-  }, [state]);
+  const markStepComplete = useCallback(
+    (step: DailyStepId) => {
+      setState((prev) => completeStep(prev, step));
+    },
+    [setState]
+  );
+
+  const isStepDoneToday = useCallback(
+    (step: DailyStepId) => {
+      return state.sessionDate === todayIso() && state.completedSteps.includes(step);
+    },
+    [state.sessionDate, state.completedSteps]
+  );
 
   return { daily: state, markStepComplete, isStepDoneToday, loaded };
 }

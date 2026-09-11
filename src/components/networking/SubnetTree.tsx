@@ -62,7 +62,7 @@ const SubnetNode: React.FC<SubnetNodeProps> = ({ ipInt, cidr, isRoot, splitMap, 
           <span className="text-emerald-400 font-mono font-bold text-lg">
             {ipString}/{cidr}
           </span>
-          <span className="text-xs font-bold text-slate-500 bg-slate-950 px-2 py-1 rounded">
+          <span className="text-xs font-bold text-slate-400 bg-[#181926] px-2 py-1 rounded">
             {usableHosts} Hosts
           </span>
         </div>
@@ -140,7 +140,7 @@ export default function SubnetTree({ baseIpInt, baseCidr }: SubnetTreeProps) {
       {/* Cabeçalho Didático (Passo B) */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
-          <h3 className="text-xs text-slate-500 uppercase font-bold">Divisor Visual de Sub-redes:</h3>
+          <h3 className="text-xs text-slate-400 uppercase font-bold">Divisor Visual de Sub-redes:</h3>
           <p className="text-xs text-sky-400 mt-1 max-w-lg leading-relaxed">
             💡 <strong>O que acontece ao dividir?</strong> O CIDR aumenta em +1. Você "rouba" 1 bit dos hosts para criar mais redes. A rede original é cortada <strong>exatamente a meio</strong> (metade dos hosts para cada lado).
           </p>

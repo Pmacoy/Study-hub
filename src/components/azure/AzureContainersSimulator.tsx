@@ -149,7 +149,7 @@ export default function AzureContainersSimulator() {
 
   return (
     <div className="w-full space-y-6 animate-in fade-in duration-500 text-slate-200">
-      <section className="overflow-hidden rounded-3xl border border-blue-500/15 bg-slate-950/80 shadow-2xl shadow-black/10">
+      <section className="overflow-hidden rounded-3xl border border-blue-500/15 bg-[#181926]/80 shadow-2xl shadow-black/10">
         <div className="border-b border-slate-800/80 px-6 py-5 md:px-8">
           <div className="flex items-start gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-blue-500/20 bg-blue-500/10 text-blue-300">
@@ -157,13 +157,13 @@ export default function AzureContainersSimulator() {
             </div>
 
             <div className="min-w-0">
-              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-blue-300">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-blue-300">
                 Containers e plataforma
               </p>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white leading-tight">
                 Containers & PaaS
               </h2>
-              <p className="mt-2 max-w-2xl text-[15px] text-slate-400 leading-relaxed">
+              <p className="mt-2 max-w-2xl text-lg text-slate-400 leading-relaxed">
                 Compara ACI, AKS e App Service para te ajudar a decidir entre container isolado, orquestração Kubernetes e aplicação web gerida no Azure.
               </p>
             </div>
@@ -178,7 +178,7 @@ export default function AzureContainersSimulator() {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+      <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6">
         <div className="flex flex-wrap gap-2">
           {[{ id: 'compare', label: 'Comparação' }, ...SERVICES.map((s) => ({ id: s.id, label: s.name.replace('Azure ', '') }))].map((item) => (
             <button
@@ -187,7 +187,7 @@ export default function AzureContainersSimulator() {
                 setMode(item.id as ContainerMode);
                 setDeployStep(0);
               }}
-              className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${
+              className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${
                 mode === item.id
                   ? 'bg-blue-500/10 border border-blue-500/30 text-blue-200'
                   : 'bg-slate-900 border border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
@@ -206,29 +206,29 @@ export default function AzureContainersSimulator() {
               <button
                 key={s.id}
                 onClick={() => setMode(s.id)}
-                className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 text-left transition-all hover:border-slate-700 hover:bg-slate-900"
+                className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 text-left transition-all hover:border-slate-700 hover:bg-slate-900"
               >
                 <div className={`mb-4 ${accentText(s.accent)}`}>{s.icon}</div>
-                <h3 className="text-[15px] font-semibold text-white">{s.name.replace('Azure ', '')}</h3>
-                <p className="mt-1 text-[12px] text-slate-500 leading-relaxed">{s.subtitle}</p>
-                <div className={`mt-4 inline-flex items-center gap-1 text-[11px] font-medium ${accentText(s.accent)}`}>
+                <h3 className="text-lg font-semibold text-white">{s.name.replace('Azure ', '')}</h3>
+                <p className="mt-1 text-sm text-slate-400 leading-relaxed">{s.subtitle}</p>
+                <div className={`mt-4 inline-flex items-center gap-1 text-xs font-medium ${accentText(s.accent)}`}>
                   Ver cenário <ArrowRight size={12} />
                 </div>
               </button>
             ))}
           </section>
 
-          <section className="rounded-3xl border border-slate-800 bg-slate-950/70 overflow-hidden">
+          <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 overflow-hidden">
             <div className="border-b border-slate-800 px-5 py-4">
               <h3 className="text-sm font-semibold text-white">Matriz de decisão</h3>
-              <p className="mt-1 text-[12px] text-slate-500">
+              <p className="mt-1 text-sm text-slate-400">
                 Comparação rápida para acertar mais depressa nas questões de AZ-104.
               </p>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-[12px]">
-                <thead className="bg-slate-900/70 text-slate-500">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-slate-900/70 text-slate-400">
                   <tr>
                     <th className="px-5 py-4 font-semibold">Critério</th>
                     <th className="px-5 py-4 font-semibold text-blue-300">ACI</th>
@@ -276,22 +276,22 @@ export default function AzureContainersSimulator() {
       {currentService && mode !== 'compare' && (
         <div className="grid grid-cols-1 xl:grid-cols-[380px_minmax(0,1fr)] gap-6 animate-in fade-in duration-300">
           <div className="space-y-4">
-            <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
+            <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5">
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles size={16} className={accentText(currentService.accent)} />
                 <h3 className="text-sm font-semibold text-white">{currentService.name}</h3>
               </div>
 
               <div className={`rounded-2xl border p-4 ${accentSoft(currentService.accent)}`}>
-                <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-white/80">Resposta de prova</p>
-                <p className="mt-2 text-[13px] leading-relaxed text-slate-200">
+                <p className="text-sm font-semibold uppercase tracking-[0.12em] text-white/80">Resposta de prova</p>
+                <p className="mt-2 text-base leading-relaxed text-slate-200">
                   {currentService.examDecision}
                 </p>
               </div>
             </section>
 
-            <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
-              <h3 className="text-[13px] font-semibold text-white mb-4">✅ Ideal para</h3>
+            <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5">
+              <h3 className="text-base font-semibold text-white mb-4"><CheckCircle2 size={16} className="inline mr-1 text-emerald-400" /> Ideal para</h3>
               <div className="space-y-3">
                 {currentService.useCases.map((u, i) => (
                   <ListItem key={i} icon={<CheckCircle2 size={14} className="text-emerald-300" />} text={u} />
@@ -300,7 +300,7 @@ export default function AzureContainersSimulator() {
             </section>
 
             <section className="rounded-3xl border border-rose-500/15 bg-rose-500/5 p-5">
-              <h3 className="text-[13px] font-semibold text-rose-300 mb-4">❌ Não usar para</h3>
+              <h3 className="text-base font-semibold text-rose-300 mb-4"><XCircle size={16} className="inline mr-1 text-rose-400" /> Não usar para</h3>
               <div className="space-y-3">
                 {currentService.notFor.map((n, i) => (
                   <ListItem key={i} icon={<XCircle size={14} className="text-rose-300" />} text={n} />
@@ -308,8 +308,8 @@ export default function AzureContainersSimulator() {
               </div>
             </section>
 
-            <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
-              <h3 className="text-[13px] font-semibold text-white mb-4">⚡ Factos-chave</h3>
+            <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5">
+              <h3 className="text-base font-semibold text-white mb-4"><Zap size={16} className="inline mr-1 text-amber-400" /> Factos-chave</h3>
               <div className="space-y-3">
                 {currentService.keyFacts.map((f, i) => (
                   <ListItem key={i} icon={<Zap size={14} className="text-amber-300" />} text={f} />
@@ -321,15 +321,15 @@ export default function AzureContainersSimulator() {
           <div className="space-y-6">
             {mode === 'aci' && (
               <>
-                <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+                <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6">
                   <div className="flex items-center justify-between gap-3 mb-5">
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                         Deploy rápido
                       </p>
                       <h3 className="mt-1 text-sm font-semibold text-white">Fluxo de execução do ACI</h3>
                     </div>
-                    <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-[11px] text-blue-200">
+                    <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs text-blue-200">
                       Serverless container
                     </span>
                   </div>
@@ -350,19 +350,19 @@ export default function AzureContainersSimulator() {
                               : 'border-slate-800 bg-slate-900/40 opacity-50'
                           }`}
                         >
-                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-semibold ${
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold ${
                             done
                               ? 'bg-emerald-400 text-slate-950'
                               : active
                               ? 'bg-blue-400 text-slate-950 animate-pulse'
-                              : 'bg-slate-800 text-slate-500'
+                              : 'bg-slate-800 text-slate-400'
                           }`}>
                             {done ? '✓' : i + 1}
                           </div>
 
                           <div>
-                            <p className="text-[14px] font-medium text-white">{step.label}</p>
-                            <p className="mt-1 text-[12px] text-slate-500 font-mono">{step.desc}</p>
+                            <p className="text-md font-medium text-white">{step.label}</p>
+                            <p className="mt-1 text-sm text-slate-400 font-mono">{step.desc}</p>
                           </div>
                         </div>
                       );
@@ -373,14 +373,14 @@ export default function AzureContainersSimulator() {
                     <button
                       onClick={() => setDeployStep((p) => Math.min(p + 1, aciSteps.length))}
                       disabled={deployStep >= aciSteps.length}
-                      className="flex-1 rounded-2xl bg-blue-500 hover:bg-blue-400 disabled:bg-slate-800 disabled:text-slate-600 px-4 py-3 text-[12px] font-semibold text-white transition-all"
+                      className="flex-1 rounded-2xl bg-blue-500 hover:bg-blue-400 disabled:bg-slate-800 disabled:text-slate-600 px-4 py-3 text-sm font-semibold text-white transition-all"
                     >
                       {deployStep >= aciSteps.length ? 'Deploy concluído' : 'Próximo passo'}
                     </button>
 
                     <button
                       onClick={() => setDeployStep(0)}
-                      className="rounded-2xl border border-slate-800 bg-slate-900 hover:bg-slate-800 px-4 py-3 text-[12px] font-semibold text-slate-300 transition-all"
+                      className="rounded-2xl border border-slate-800 bg-slate-900 hover:bg-slate-800 px-4 py-3 text-sm font-semibold text-slate-300 transition-all"
                     >
                       Reset
                     </button>
@@ -397,15 +397,15 @@ export default function AzureContainersSimulator() {
 
             {mode === 'aks' && (
               <>
-                <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+                <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6">
                   <div className="flex items-center justify-between gap-3 mb-5">
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                         Arquitetura AKS
                       </p>
                       <h3 className="mt-1 text-sm font-semibold text-white">Control plane + node pools</h3>
                     </div>
-                    <span className="rounded-full border border-indigo-500/20 bg-indigo-500/10 px-3 py-1 text-[11px] text-indigo-200">
+                    <span className="rounded-full border border-indigo-500/20 bg-indigo-500/10 px-3 py-1 text-xs text-indigo-200">
                       Kubernetes gerido
                     </span>
                   </div>
@@ -413,23 +413,23 @@ export default function AzureContainersSimulator() {
                   <div className="rounded-3xl border border-indigo-500/15 bg-indigo-500/5 p-5">
                     <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-5 items-start">
                       <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/10 p-4">
-                        <p className="text-[12px] font-semibold text-indigo-100">Control plane</p>
-                        <p className="mt-2 text-[12px] text-slate-300 leading-relaxed">
+                        <p className="text-sm font-semibold text-indigo-100">Control plane</p>
+                        <p className="mt-2 text-sm text-slate-300 leading-relaxed">
                           Gerido pelo Azure, com foco em APIs, scheduling e controlo do cluster.
                         </p>
                       </div>
 
-                      <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+                      <div className="rounded-2xl border border-slate-800 bg-[#181926]/60 p-4">
                         <div className="flex items-center justify-between mb-4">
-                          <p className="text-[12px] font-semibold text-white">Node pool</p>
-                          <span className="text-[12px] text-slate-400">{aksScale} nós</span>
+                          <p className="text-sm font-semibold text-white">Node pool</p>
+                          <span className="text-sm text-slate-400">{aksScale} nós</span>
                         </div>
 
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                           {Array.from({ length: aksScale }).map((_, i) => (
                             <div key={i} className="rounded-2xl border border-indigo-500/20 bg-indigo-500/10 p-4 flex flex-col items-center gap-2">
                               <Server size={18} className="text-indigo-300" />
-                              <span className="text-[11px] text-indigo-100">Node {i + 1}</span>
+                              <span className="text-xs text-indigo-100">Node {i + 1}</span>
                               <div className="flex gap-1">
                                 <Container size={10} className="text-indigo-300" />
                                 <Container size={10} className="text-indigo-300" />
@@ -463,23 +463,23 @@ export default function AzureContainersSimulator() {
 
             {mode === 'appservice' && (
               <>
-                <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+                <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6">
                   <div className="flex items-center justify-between gap-3 mb-5">
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                         Operação web
                       </p>
                       <h3 className="mt-1 text-sm font-semibold text-white">App Service Plan + deployment slots</h3>
                     </div>
-                    <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[11px] text-emerald-200">
+                    <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-200">
                       PaaS web
                     </span>
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div className="rounded-3xl border border-slate-800 bg-slate-900/40 p-5">
-                      <h4 className="text-[13px] font-semibold text-white">App Service Plan</h4>
-                      <p className="mt-2 text-[12px] text-slate-400 leading-relaxed">
+                      <h4 className="text-base font-semibold text-white">App Service Plan</h4>
+                      <p className="mt-2 text-sm text-slate-400 leading-relaxed">
                         O plano define a capacidade e o custo. Várias apps podem partilhar o mesmo plano.
                       </p>
 
@@ -489,7 +489,7 @@ export default function AzureContainersSimulator() {
                           'Standard: suporta deployment slots',
                           'Premium/Isolated: mais capacidade e mais slots',
                         ].map((item) => (
-                          <div key={item} className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-[12px] text-slate-300">
+                          <div key={item} className="rounded-2xl border border-slate-800 bg-[#181926]/60 px-4 py-3 text-sm text-slate-300">
                             {item}
                           </div>
                         ))}
@@ -498,26 +498,26 @@ export default function AzureContainersSimulator() {
 
                     <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/10 p-5">
                       <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-[13px] font-semibold text-white">Deployment slots</h4>
+                        <h4 className="text-base font-semibold text-white">Deployment slots</h4>
                         <button
                           onClick={() => setSlotMode((prev) => (prev === 'staging' ? 'swap' : 'staging'))}
-                          className="rounded-xl border border-emerald-500/20 bg-slate-950/40 px-3 py-2 text-[11px] text-emerald-100"
+                          className="rounded-xl border border-emerald-500/20 bg-[#181926]/40 px-3 py-2 text-xs text-emerald-100"
                         >
                           {slotMode === 'staging' ? 'Executar swap' : 'Voltar a staging'}
                         </button>
                       </div>
 
                       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-                        <div className={`rounded-2xl border p-4 ${slotMode === 'staging' ? 'border-amber-500/20 bg-amber-500/10' : 'border-slate-800 bg-slate-950/50'}`}>
-                          <p className="text-[12px] font-semibold text-white">Staging</p>
-                          <p className="mt-1 text-[12px] text-slate-400">Nova versão validada</p>
+                        <div className={`rounded-2xl border p-4 ${slotMode === 'staging' ? 'border-amber-500/20 bg-amber-500/10' : 'border-slate-800 bg-[#181926]/50'}`}>
+                          <p className="text-sm font-semibold text-white">Staging</p>
+                          <p className="mt-1 text-sm text-slate-400">Nova versão validada</p>
                         </div>
 
                         <GitBranch size={16} className="text-emerald-300" />
 
-                        <div className={`rounded-2xl border p-4 ${slotMode === 'swap' ? 'border-emerald-500/20 bg-emerald-500/10' : 'border-slate-800 bg-slate-950/50'}`}>
-                          <p className="text-[12px] font-semibold text-white">Production</p>
-                          <p className="mt-1 text-[12px] text-slate-400">
+                        <div className={`rounded-2xl border p-4 ${slotMode === 'swap' ? 'border-emerald-500/20 bg-emerald-500/10' : 'border-slate-800 bg-[#181926]/50'}`}>
+                          <p className="text-sm font-semibold text-white">Production</p>
+                          <p className="mt-1 text-sm text-slate-400">
                             {slotMode === 'swap' ? 'Versão promovida com swap' : 'Versão atual em produção'}
                           </p>
                         </div>
@@ -534,13 +534,13 @@ export default function AzureContainersSimulator() {
               </>
             )}
 
-            <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
+            <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5">
               <div className="flex items-center gap-2 mb-4">
                 <Info size={16} className="text-blue-300" />
                 <h3 className="text-sm font-semibold text-white">Memória de exame</h3>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[13px]">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-base">
                 <FactBox
                   title="ACI vs AKS"
                   text="ACI é para container isolado e rapidez; AKS é para Kubernetes, orquestração e escala maior."
@@ -602,9 +602,9 @@ function TopMetric({
 
   return (
     <div className={`rounded-2xl border p-4 ${styles[tone]}`}>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] opacity-75">{label}</p>
-      <p className="mt-2 text-[18px] font-semibold leading-tight">{value}</p>
-      <p className="mt-1 text-[12px] opacity-70">{hint}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.12em] opacity-75">{label}</p>
+      <p className="mt-2 text-xl font-semibold leading-tight">{value}</p>
+      <p className="mt-1 text-sm opacity-70">{hint}</p>
     </div>
   );
 }
@@ -627,14 +627,14 @@ function DecisionCard({
   };
 
   return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
+    <div className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5">
       <div className="flex items-start gap-3">
         <div className={`flex h-10 w-10 items-center justify-center rounded-2xl border ${styles[tone]}`}>
           {icon}
         </div>
         <div>
-          <h4 className="text-[15px] font-semibold text-white">{title}</h4>
-          <p className="mt-2 text-[13px] text-slate-400 leading-relaxed">{text}</p>
+          <h4 className="text-lg font-semibold text-white">{title}</h4>
+          <p className="mt-2 text-base text-slate-400 leading-relaxed">{text}</p>
         </div>
       </div>
     </div>
@@ -651,7 +651,7 @@ function ListItem({
   return (
     <div className="flex items-start gap-3">
       <div className="mt-0.5 shrink-0">{icon}</div>
-      <p className="text-[13px] text-slate-300 leading-relaxed">{text}</p>
+      <p className="text-base text-slate-300 leading-relaxed">{text}</p>
     </div>
   );
 }
@@ -672,10 +672,10 @@ function CapabilityCard({
           <XCircle size={18} className="text-slate-600" />
         )}
         <div>
-          <p className={`text-[14px] font-medium ${active ? 'text-emerald-100' : 'text-slate-300'}`}>
+          <p className={`text-md font-medium ${active ? 'text-emerald-100' : 'text-slate-300'}`}>
             {title}
           </p>
-          <p className="mt-1 text-[12px] text-slate-500">
+          <p className="mt-1 text-sm text-slate-400">
             {active ? 'Presente neste cenário' : 'Não é o foco deste cenário'}
           </p>
         </div>
@@ -693,8 +693,8 @@ function FactBox({
 }) {
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
-      <p className="text-[12px] font-semibold text-white">{title}</p>
-      <p className="mt-2 text-[12px] text-slate-400 leading-relaxed">{text}</p>
+      <p className="text-sm font-semibold text-white">{title}</p>
+      <p className="mt-2 text-sm text-slate-400 leading-relaxed">{text}</p>
     </div>
   );
 }

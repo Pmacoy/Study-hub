@@ -127,7 +127,7 @@ export default function AzureRbacSimulator() {
 
   return (
     <div className="w-full space-y-6 animate-in fade-in duration-500">
-      <section className="overflow-hidden rounded-3xl border border-sky-500/15 bg-slate-950/80 shadow-2xl shadow-black/10">
+      <section className="overflow-hidden rounded-3xl border border-sky-500/15 bg-[#181926]/80 shadow-2xl shadow-black/10">
         <div className="border-b border-slate-800/80 px-6 py-5 md:px-8">
           <div className="flex items-start gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-sky-500/20 bg-sky-500/10 text-sky-300">
@@ -135,13 +135,13 @@ export default function AzureRbacSimulator() {
             </div>
 
             <div className="min-w-0">
-              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-sky-300">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-sky-300">
                 Controle de acesso
               </p>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white leading-tight">
                 RBAC no Azure
               </h2>
-              <p className="mt-2 max-w-2xl text-[15px] text-slate-400 leading-relaxed">
+              <p className="mt-2 max-w-2xl text-lg text-slate-400 leading-relaxed">
                 Simula como roles e escopos definem permissões efetivas, herança e limite de atuação dentro da hierarquia Azure.
               </p>
             </div>
@@ -171,14 +171,14 @@ export default function AzureRbacSimulator() {
       </section>
 
       <section className="grid grid-cols-1 xl:grid-cols-[360px_minmax(0,1fr)] gap-6">
-        <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+        <div className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6">
           <div className="flex items-center gap-2 mb-5">
             <Sparkles size={16} className="text-sky-300" />
             <h3 className="text-sm font-semibold text-white">Configurar acesso</h3>
           </div>
 
           <div>
-            <label className="mb-3 block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+            <label className="mb-3 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
               1. Tipo de identidade
             </label>
 
@@ -192,12 +192,12 @@ export default function AzureRbacSimulator() {
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-950 text-slate-300">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-800 bg-[#181926] text-slate-300">
                     <User size={16} />
                   </div>
                   <div>
-                    <p className="text-[14px] font-semibold text-white">Utilizador</p>
-                    <p className="text-[12px] text-slate-500">Atribuição direta</p>
+                    <p className="text-md font-semibold text-white">Utilizador</p>
+                    <p className="text-sm text-slate-400">Atribuição direta</p>
                   </div>
                 </div>
               </button>
@@ -211,12 +211,12 @@ export default function AzureRbacSimulator() {
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-950 text-slate-300">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-800 bg-[#181926] text-slate-300">
                     <Users size={16} />
                   </div>
                   <div>
-                    <p className="text-[14px] font-semibold text-white">Grupo</p>
-                    <p className="text-[12px] text-slate-500">Escala melhor</p>
+                    <p className="text-md font-semibold text-white">Grupo</p>
+                    <p className="text-sm text-slate-400">Escala melhor</p>
                   </div>
                 </div>
               </button>
@@ -224,7 +224,7 @@ export default function AzureRbacSimulator() {
           </div>
 
           <div className="mt-6 border-t border-slate-800 pt-6">
-            <label className="mb-3 block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+            <label className="mb-3 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
               2. Escolhe a role
             </label>
 
@@ -249,8 +249,8 @@ export default function AzureRbacSimulator() {
                       </div>
 
                       <div className="min-w-0">
-                        <p className="text-[14px] font-semibold text-white">{config.label}</p>
-                        <p className="mt-1 text-[12px] text-slate-500 leading-relaxed">
+                        <p className="text-md font-semibold text-white">{config.label}</p>
+                        <p className="mt-1 text-sm text-slate-400 leading-relaxed">
                           {config.desc}
                         </p>
                       </div>
@@ -266,7 +266,7 @@ export default function AzureRbacSimulator() {
           </div>
 
           <div className="mt-6 border-t border-slate-800 pt-6">
-            <label className="mb-3 block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+            <label className="mb-3 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
               3. Define o escopo
             </label>
 
@@ -285,13 +285,13 @@ export default function AzureRbacSimulator() {
                     }`}
                   >
                     <div className="flex items-start gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-800 bg-slate-950 text-slate-300">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-800 bg-[#181926] text-slate-300">
                         {scope.icon}
                       </div>
 
                       <div className="min-w-0">
-                        <p className="text-[14px] font-semibold text-white">{scope.label}</p>
-                        <p className="mt-1 text-[12px] text-slate-500">{scope.subtitle}</p>
+                        <p className="text-md font-semibold text-white">{scope.label}</p>
+                        <p className="mt-1 text-sm text-slate-400">{scope.subtitle}</p>
                       </div>
                     </div>
                   </button>
@@ -301,17 +301,17 @@ export default function AzureRbacSimulator() {
           </div>
 
           <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500 mb-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400 mb-2">
               Resultado da atribuição
             </p>
-            <p className="text-[13px] text-slate-300 leading-relaxed">
+            <p className="text-base text-slate-300 leading-relaxed">
               {summary}
             </p>
           </div>
         </div>
 
         <div className="space-y-6">
-          <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+          <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6">
             <div className="flex items-center gap-2 mb-5">
               <KeyRound size={16} className="text-slate-400" />
               <h3 className="text-sm font-semibold text-white">Permissões efetivas</h3>
@@ -337,10 +337,10 @@ export default function AzureRbacSimulator() {
                         <XCircle size={18} className="text-slate-600" />
                       )}
                       <div>
-                        <p className={`text-[14px] font-medium ${allowed ? 'text-emerald-100' : 'text-slate-300'}`}>
+                        <p className={`text-md font-medium ${allowed ? 'text-emerald-100' : 'text-slate-300'}`}>
                           {permissionLabels[permission]}
                         </p>
-                        <p className="mt-1 text-[12px] text-slate-500">
+                        <p className="mt-1 text-sm text-slate-400">
                           {allowed ? 'Permitido nesta role' : 'Não permitido nesta role'}
                         </p>
                       </div>
@@ -351,7 +351,7 @@ export default function AzureRbacSimulator() {
             </div>
           </section>
 
-          <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+          <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6">
             <div className="flex items-center gap-2 mb-5">
               <ShieldCheck size={16} className="text-slate-400" />
               <h3 className="text-sm font-semibold text-white">Herança do escopo</h3>
@@ -374,26 +374,26 @@ export default function AzureRbacSimulator() {
                     }`}
                   >
                     <div className="flex items-start gap-4">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-800 bg-slate-950 text-slate-300">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-800 bg-[#181926] text-slate-300">
                         {scope.icon}
                       </div>
 
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <h4 className="text-[16px] font-semibold text-white">{scope.label}</h4>
+                          <h4 className="text-lg font-semibold text-white">{scope.label}</h4>
                           {selected && (
-                            <span className="rounded-full border border-sky-500/20 bg-sky-500/10 px-2.5 py-1 text-[11px] text-sky-200">
+                            <span className="rounded-full border border-sky-500/20 bg-sky-500/10 px-2.5 py-1 text-xs text-sky-200">
                               Escopo atribuído
                             </span>
                           )}
                           {!selected && inherited && (
-                            <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-[11px] text-emerald-200">
+                            <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs text-emerald-200">
                               Herda acesso
                             </span>
                           )}
                         </div>
 
-                        <p className="mt-2 text-[13px] text-slate-400">
+                        <p className="mt-2 text-base text-slate-400">
                           {scope.subtitle}
                         </p>
                       </div>
@@ -443,9 +443,9 @@ function TopMetric({
 
   return (
     <div className={`rounded-2xl border p-4 ${styles[tone]}`}>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] opacity-75">{label}</p>
-      <p className="mt-2 text-[18px] font-semibold leading-tight">{value}</p>
-      <p className="mt-1 text-[12px] opacity-70">{hint}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.12em] opacity-75">{label}</p>
+      <p className="mt-2 text-xl font-semibold leading-tight">{value}</p>
+      <p className="mt-1 text-sm opacity-70">{hint}</p>
     </div>
   );
 }
@@ -467,15 +467,15 @@ function RuleCard({
   };
 
   return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
+    <div className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5">
       <div className="flex items-start gap-3">
         <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border ${styles[tone]}`}>
           {icon}
         </div>
 
         <div>
-          <h4 className="text-[15px] font-semibold text-white">{title}</h4>
-          <p className="mt-2 text-[13px] text-slate-400 leading-relaxed">
+          <h4 className="text-lg font-semibold text-white">{title}</h4>
+          <p className="mt-2 text-base text-slate-400 leading-relaxed">
             {text}
           </p>
         </div>

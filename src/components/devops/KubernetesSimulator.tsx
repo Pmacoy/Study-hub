@@ -1,7 +1,6 @@
+import React from 'react';
 import { useState } from 'react';
-import { useLang } from '../../i18n/LangContext';
-import { K8S_EN, tr } from '../../i18n/modulesEn';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Package, Key, Box, Keyboard } from 'lucide-react';
 
 type View = 'architecture' | 'resources' | 'commands' | 'rbac';
 
@@ -10,13 +9,13 @@ function Code({ code, lang = '' }: { code: string; lang?: string }) {
   return (
     <div className="rounded-xl border border-slate-800 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="text-[10px] font-mono text-slate-500">{lang}</span>
+        <span className="text-2xs font-mono text-slate-400">{lang}</span>
         <button onClick={() => { navigator.clipboard.writeText(code); setC(true); setTimeout(() => setC(false), 1400); }}
-          className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-slate-300">
+          className="flex items-center gap-1 text-2xs text-slate-400 hover:text-slate-300">
           {c ? <><Check size={10} className="text-emerald-400" /><span className="text-emerald-400">Copiado</span></> : <><Copy size={10} />Copiar</>}
         </button>
       </div>
-      <pre className="p-4 text-[11px] font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 text-xs font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => <div key={i} className={line.startsWith('#') || line.startsWith('//') ? 'text-slate-600' : line.match(/^(apiVersion|kind|metadata|spec|status):/) ? 'text-sky-300' : line.match(/^  (name|namespace|labels|image|replicas|selector|ports|resources|env):/) ? 'text-violet-300' : line.startsWith('$') ? 'text-emerald-300' : 'text-slate-300'}>{line}</div>)}
       </pre>
     </div>
@@ -40,7 +39,7 @@ spec:
     resources:
       requests: { cpu: "100m", memory: "64Mi" }
       limits:   { cpu: "500m", memory: "256Mi" }` },
-  { name: 'Deployment', icon: '📦', color: 'violet', desc: 'Gere um conjunto de Pods idênticos com rolling update, rollback e autoscaling.', yaml: `apiVersion: apps/v1
+  { name: 'Deployment', icon: Package, color: 'violet', desc: 'Gere um conjunto de Pods idênticos com rolling update, rollback e autoscaling.', yaml: `apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app-deploy
@@ -80,7 +79,7 @@ spec:
 # Para expor externamente:
 # type: LoadBalancer  → cloud LB (AKS, EKS, GKE)
 # type: NodePort      → porta no node (dev/testing)` },
-  { name: 'ConfigMap & Secret', icon: '🗝️', color: 'rose', desc: 'ConfigMap para config não-sensível. Secret para passwords, tokens (base64 encoded).', yaml: `apiVersion: v1
+  { name: 'ConfigMap & Secret', icon: Key, color: 'rose', desc: 'ConfigMap para config não-sensível. Secret para passwords, tokens (base64 encoded).', yaml: `apiVersion: v1
 kind: ConfigMap
 metadata:
   name: app-config
@@ -159,15 +158,14 @@ roleRef:
 # Verificar: kubectl auth can-i get pods -n prod --as joao@example.com`;
 
 export default function KubernetesSimulator() {
-  const { lang } = useLang();
   const [view, setView] = useState<View>('architecture');
   const [resource, setResource] = useState(0);
   const [cmdGroup, setCmdGroup] = useState('Diagnóstico');
 
   const views = [
-    { id: 'architecture' as View, label: '☸️ Arquitectura' },
-    { id: 'resources' as View, label: '📦 Recursos & YAML' },
-    { id: 'commands' as View, label: '⌨️ kubectl' },
+    { id: 'architecture' as View, label: <><Box size={14} className="mr-1 inline" /> Arquitectura</> },
+    { id: 'resources' as View, label: <><Package size={14} className="mr-1 inline" /> Recursos & YAML</> },
+    { id: 'commands' as View, label: <><Keyboard size={14} className="mr-1 inline" /> kubectl</> },
     { id: 'rbac' as View, label: '🔐 RBAC' },
   ];
 
@@ -176,7 +174,7 @@ export default function KubernetesSimulator() {
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
-            className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${view === v.id ? 'bg-violet-500/20 border border-violet-500/40 text-violet-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
+            className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${view === v.id ? 'bg-violet-500/20 border border-violet-500/40 text-violet-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300'}`}>
             {v.label}
           </button>
         ))}
@@ -186,7 +184,7 @@ export default function KubernetesSimulator() {
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-5 rounded-2xl border border-violet-500/20 bg-violet-500/5">
-              <div className="text-[11px] font-black text-violet-400 uppercase tracking-widest mb-3">Control Plane</div>
+              <div className="text-xs font-black text-violet-400 uppercase tracking-widest mb-3">Control Plane</div>
               {[
                 { c: 'kube-apiserver', d: 'Gateway de toda a comunicação do cluster. REST API.' },
                 { c: 'etcd', d: 'Datastore distribuído — fonte de verdade do estado do cluster.' },
@@ -194,13 +192,13 @@ export default function KubernetesSimulator() {
                 { c: 'controller-manager', d: 'Loops de controlo: ReplicaSet, Deployment, Node, Endpoints...' },
               ].map(x => (
                 <div key={x.c} className="flex items-start gap-3 py-2 border-b border-slate-800/50 last:border-0">
-                  <code className="font-mono text-[11px] text-violet-300 shrink-0 w-36">{x.c}</code>
-                  <span className="text-[11px] text-slate-400">{tr({...K8S_EN.controlPlane, ...K8S_EN.rbac}, x.d, lang)}</span>
+                  <code className="font-mono text-xs text-violet-300 shrink-0 w-36">{x.c}</code>
+                  <span className="text-xs text-slate-400">{x.d}</span>
                 </div>
               ))}
             </div>
             <div className="p-5 rounded-2xl border border-sky-500/20 bg-sky-500/5">
-              <div className="text-[11px] font-black text-sky-400 uppercase tracking-widest mb-3">Worker Node</div>
+              <div className="text-xs font-black text-sky-400 uppercase tracking-widest mb-3">Worker Node</div>
               {[
                 { c: 'kubelet', d: 'Agente no node. Garante que os containers estão a correr.' },
                 { c: 'kube-proxy', d: 'Mantém as regras de rede (iptables/ipvs) para os Services.' },
@@ -208,8 +206,8 @@ export default function KubernetesSimulator() {
                 { c: 'pods', d: 'Unidades deployadas no node com volumes e rede partilhados.' },
               ].map(x => (
                 <div key={x.c} className="flex items-start gap-3 py-2 border-b border-slate-800/50 last:border-0">
-                  <code className="font-mono text-[11px] text-sky-300 shrink-0 w-36">{x.c}</code>
-                  <span className="text-[11px] text-slate-400">{tr({...K8S_EN.controlPlane, ...K8S_EN.rbac}, x.d, lang)}</span>
+                  <code className="font-mono text-xs text-sky-300 shrink-0 w-36">{x.c}</code>
+                  <span className="text-xs text-slate-400">{x.d}</span>
                 </div>
               ))}
             </div>
@@ -221,9 +219,9 @@ export default function KubernetesSimulator() {
               { t: 'Scheduling', items: ['Requests/Limits CPU+Mem', 'NodeSelector', 'Affinity/Anti-affinity', 'Taints & Tolerations'], c: 'rose' },
               { t: 'Observabilidade', items: ['Liveness Probe', 'Readiness Probe', 'Startup Probe', 'kubectl top / metrics-server'], c: 'emerald' },
             ].map(g => (
-              <div key={tr(K8S_EN.groups, g.t, lang)} className={`p-4 rounded-2xl border ${g.c === 'amber' ? 'border-amber-500/30 bg-amber-500/8' : g.c === 'teal' ? 'border-teal-500/30 bg-teal-500/8' : g.c === 'rose' ? 'border-rose-500/30 bg-rose-500/8' : 'border-emerald-500/30 bg-emerald-500/8'}`}>
-                <div className={`text-[10px] font-black uppercase mb-2 ${g.c === 'amber' ? 'text-amber-400' : g.c === 'teal' ? 'text-teal-400' : g.c === 'rose' ? 'text-rose-400' : 'text-emerald-400'}`}>{tr(K8S_EN.groups, g.t, lang)}</div>
-                {g.items.map(i => <div key={i} className="text-[10px] text-slate-500 py-0.5">{i}</div>)}
+              <div key={g.t} className={`p-4 rounded-2xl border ${g.c === 'amber' ? 'border-amber-500/30 bg-amber-500/8' : g.c === 'teal' ? 'border-teal-500/30 bg-teal-500/8' : g.c === 'rose' ? 'border-rose-500/30 bg-rose-500/8' : 'border-emerald-500/30 bg-emerald-500/8'}`}>
+                <div className={`text-2xs font-black uppercase mb-2 ${g.c === 'amber' ? 'text-amber-400' : g.c === 'teal' ? 'text-teal-400' : g.c === 'rose' ? 'text-rose-400' : 'text-emerald-400'}`}>{g.t}</div>
+                {g.items.map(i => <div key={i} className="text-2xs text-slate-400 py-0.5">{i}</div>)}
               </div>
             ))}
           </div>
@@ -236,15 +234,15 @@ export default function KubernetesSimulator() {
             {K8S_RESOURCES.map((r, i) => (
               <button key={i} onClick={() => setResource(i)}
                 className={`w-full text-left p-3 rounded-xl transition-all ${resource === i ? 'bg-violet-500/15 border border-violet-500/30' : 'border border-slate-800 hover:border-slate-700 hover:bg-slate-900'}`}>
-                <div className="text-lg">{r.icon}</div>
-                <div className={`text-[12px] font-bold ${resource === i ? 'text-violet-300' : 'text-slate-300'}`}>{r.name}</div>
+                <div className="text-lg">{React.createElement(r.icon, { size: 18 })}</div>
+                <div className={`text-sm font-bold ${resource === i ? 'text-violet-300' : 'text-slate-300'}`}>{r.name}</div>
               </button>
             ))}
           </div>
           <div className="lg:col-span-3 space-y-3">
             <div className="p-4 rounded-2xl border border-slate-800 bg-slate-900/50">
-              <div className="text-[13px] font-semibold text-slate-200 mb-1">{K8S_RESOURCES[resource].icon} {K8S_RESOURCES[resource].name}</div>
-              <p className="text-[12px] text-slate-400">{K8S_RESOURCES[resource].desc}</p>
+              <div className="text-base font-semibold text-slate-200 mb-1">{React.createElement(K8S_RESOURCES[resource].icon, { size: 18 })} {K8S_RESOURCES[resource].name}</div>
+              <p className="text-sm text-slate-400">{K8S_RESOURCES[resource].desc}</p>
             </div>
             <Code code={K8S_RESOURCES[resource].yaml} lang={`${K8S_RESOURCES[resource].name.toLowerCase()}.yaml`} />
           </div>
@@ -256,7 +254,7 @@ export default function KubernetesSimulator() {
           <div className="space-y-1">
             {Object.keys(KUBECTL_CMDS).map(g => (
               <button key={g} onClick={() => setCmdGroup(g)}
-                className={`w-full text-left px-3 py-2.5 rounded-xl text-[12px] font-medium transition-all ${cmdGroup === g ? 'bg-violet-500/15 border border-violet-500/30 text-violet-300' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-900'}`}>
+                className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${cmdGroup === g ? 'bg-violet-500/15 border border-violet-500/30 text-violet-300' : 'text-slate-400 hover:text-slate-300 hover:bg-slate-900'}`}>
                 {g}
               </button>
             ))}
@@ -264,8 +262,8 @@ export default function KubernetesSimulator() {
           <div className="lg:col-span-3 space-y-2">
             {KUBECTL_CMDS[cmdGroup].map((c, i) => (
               <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-slate-900 border border-slate-800">
-                <code className="text-[11px] font-mono text-violet-300 flex-1">{c.cmd}</code>
-                <span className="text-[11px] text-slate-500 shrink-0 text-right max-w-[200px]">{tr(K8S_EN.cmdDescs, c.desc, lang)}</span>
+                <code className="text-xs font-mono text-violet-300 flex-1">{c.cmd}</code>
+                <span className="text-xs text-slate-400 shrink-0 text-right max-w-[200px]">{c.desc}</span>
               </div>
             ))}
           </div>
@@ -281,8 +279,8 @@ export default function KubernetesSimulator() {
               { t: 'RoleBinding / ClusterRoleBinding', d: 'Liga Role a User/Group/ServiceAccount', c: 'amber' },
             ].map(x => (
               <div key={x.t} className={`p-3 rounded-xl border text-center ${x.c === 'sky' ? 'border-sky-500/30 bg-sky-500/8' : x.c === 'violet' ? 'border-violet-500/30 bg-violet-500/8' : 'border-amber-500/30 bg-amber-500/8'}`}>
-                <div className={`text-[11px] font-black ${x.c === 'sky' ? 'text-sky-400' : x.c === 'violet' ? 'text-violet-400' : 'text-amber-400'}`}>{x.t}</div>
-                <div className="text-[10px] text-slate-500 mt-1">{tr({...K8S_EN.controlPlane, ...K8S_EN.rbac}, x.d, lang)}</div>
+                <div className={`text-xs font-black ${x.c === 'sky' ? 'text-sky-400' : x.c === 'violet' ? 'text-violet-400' : 'text-amber-400'}`}>{x.t}</div>
+                <div className="text-2xs text-slate-400 mt-1">{x.d}</div>
               </div>
             ))}
           </div>

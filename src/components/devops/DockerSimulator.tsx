@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { useLang } from '../../i18n/LangContext';
-import { DOCKER_EN, tr } from '../../i18n/modulesEn';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Monitor, Settings, Package, XCircle, Container, FileText, Keyboard, Music } from 'lucide-react';
 
 type View = 'concepts' | 'dockerfile' | 'commands' | 'compose';
 
@@ -10,13 +8,13 @@ function Code({ code, lang = '' }: { code: string; lang?: string }) {
   return (
     <div className="rounded-xl border border-slate-800 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="text-[10px] font-mono text-slate-500">{lang}</span>
+        <span className="text-2xs font-mono text-slate-400">{lang}</span>
         <button onClick={() => { navigator.clipboard.writeText(code); setC(true); setTimeout(() => setC(false), 1400); }}
-          className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-slate-300">
+          className="flex items-center gap-1 text-2xs text-slate-400 hover:text-slate-300">
           {c ? <><Check size={10} className="text-emerald-400" /><span className="text-emerald-400">Copiado</span></> : <><Copy size={10} />Copiar</>}
         </button>
       </div>
-      <pre className="p-4 text-[11px] font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 text-xs font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => <div key={i} className={line.startsWith('#') ? 'text-slate-600' : line.match(/^(FROM|RUN|COPY|ADD|CMD|ENTRYPOINT|ENV|ARG|WORKDIR|EXPOSE|USER|VOLUME|HEALTHCHECK|LABEL)\b/) ? 'text-sky-300' : line.startsWith('$') ? 'text-emerald-300' : 'text-slate-300'}>{line}</div>)}
       </pre>
     </div>
@@ -142,16 +140,15 @@ const CMD_GROUPS: Record<string, { cmd: string; desc: string }[]> = {
 };
 
 export default function DockerSimulator() {
-  const { lang } = useLang();
   const [view, setView] = useState<View>('concepts');
   const [dfMode, setDfMode] = useState<'good' | 'bad'>('good');
   const [cmdGroup, setCmdGroup] = useState('Imagens');
 
   const views = [
-    { id: 'concepts' as View, label: '🐳 Arquitectura' },
-    { id: 'dockerfile' as View, label: '📄 Dockerfile' },
-    { id: 'commands' as View, label: '⌨️ Comandos' },
-    { id: 'compose' as View, label: '🎼 Compose' },
+    { id: 'concepts' as View, label: <><Container size={14} className="mr-1 inline" /> Arquitectura</> },
+    { id: 'dockerfile' as View, label: <><FileText size={14} className="mr-1 inline" /> Dockerfile</> },
+    { id: 'commands' as View, label: <><Keyboard size={14} className="mr-1 inline" /> Comandos</> },
+    { id: 'compose' as View, label: <><Music size={14} className="mr-1 inline" /> Compose</> },
   ];
 
   return (
@@ -159,8 +156,8 @@ export default function DockerSimulator() {
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
-            className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${view === v.id ? 'bg-sky-500/20 border border-sky-500/40 text-sky-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
-            {tr(DOCKER_EN.views, v.label, lang)}
+            className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${view === v.id ? 'bg-sky-500/20 border border-sky-500/40 text-sky-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300'}`}>
+            {v.label}
           </button>
         ))}
       </div>
@@ -169,35 +166,35 @@ export default function DockerSimulator() {
         <div className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
-              { n: 'Docker Client', e: '💻', d: 'CLI que envia comandos ao Daemon via REST API', c: 'sky' },
-              { n: 'Docker Daemon', e: '⚙️', d: 'dockerd — gere containers, imagens, redes e volumes', c: 'violet' },
-              { n: 'Registry', e: '📦', d: 'Docker Hub, ECR, ACR, GCR — armazena imagens', c: 'amber' },
-              { n: 'Container', e: '🎁', d: 'Processo isolado com filesystem e rede próprios', c: 'emerald' },
+              { n: 'Docker Client', e: Monitor, d: 'CLI que envia comandos ao Daemon via REST API', c: 'sky' },
+              { n: 'Docker Daemon', e: Settings, d: 'dockerd — gere containers, imagens, redes e volumes', c: 'violet' },
+              { n: 'Registry', e: Package, d: 'Docker Hub, ECR, ACR, GCR — armazena imagens', c: 'amber' },
+              { n: 'Container', e: Package, d: 'Processo isolado com filesystem e rede próprios', c: 'emerald' },
             ].map(c => (
               <div key={c.n} className={`p-4 rounded-2xl border text-center ${c.c === 'sky' ? 'border-sky-500/30 bg-sky-500/8' : c.c === 'violet' ? 'border-violet-500/30 bg-violet-500/8' : c.c === 'amber' ? 'border-amber-500/30 bg-amber-500/8' : 'border-emerald-500/30 bg-emerald-500/8'}`}>
-                <div className="text-2xl mb-2">{c.e}</div>
-                <div className={`text-[11px] font-black mb-1 ${c.c === 'sky' ? 'text-sky-400' : c.c === 'violet' ? 'text-violet-400' : c.c === 'amber' ? 'text-amber-400' : 'text-emerald-400'}`}>{c.n}</div>
-                <div className="text-[10px] text-slate-500 leading-relaxed">{c.d}</div>
+                <div className="mb-2"><c.e size={28} /></div>
+                <div className={`text-xs font-black mb-1 ${c.c === 'sky' ? 'text-sky-400' : c.c === 'violet' ? 'text-violet-400' : c.c === 'amber' ? 'text-amber-400' : 'text-emerald-400'}`}>{c.n}</div>
+                <div className="text-2xs text-slate-400 leading-relaxed">{c.d}</div>
               </div>
             ))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-2xl border border-slate-800 bg-slate-950/70">
-              <div className="text-[11px] font-black text-sky-400 uppercase tracking-widest mb-3">VM vs Container</div>
-              <table className="w-full text-[11px]">
-                <thead><tr className="border-b border-slate-800">{['', 'VM', 'Container'].map(h => <th key={h} className="text-left text-slate-500 pb-2 pr-3">{h}</th>)}</tr></thead>
+            <div className="p-4 rounded-2xl border border-slate-800 bg-[#181926]/70">
+              <div className="text-xs font-black text-sky-400 uppercase tracking-widest mb-3">VM vs Container</div>
+              <table className="w-full text-xs">
+                <thead><tr className="border-b border-slate-800">{['', 'VM', 'Container'].map(h => <th key={h} className="text-left text-slate-400 pb-2 pr-3">{h}</th>)}</tr></thead>
                 <tbody className="divide-y divide-slate-800/40">
                   {[['Boot', '~1-2 min', '~1-2 sec'], ['Tamanho', 'GBs', 'MBs'], ['OS', 'Guest OS próprio', 'Kernel partilhado'], ['Isolamento', 'Hardware', 'Processo'], ['Uso', 'Workloads legacy', 'Microserviços']].map(([k, v, c]) => (
-                    <tr key={k}><td className="py-1.5 pr-3 text-slate-500">{k}</td><td className="py-1.5 pr-3 text-rose-300">{v}</td><td className="py-1.5 text-emerald-300">{c}</td></tr>
+                    <tr key={k}><td className="py-1.5 pr-3 text-slate-400">{k}</td><td className="py-1.5 pr-3 text-rose-300">{v}</td><td className="py-1.5 text-emerald-300">{c}</td></tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <div className="p-4 rounded-2xl border border-slate-800 bg-slate-950/70">
-              <div className="text-[11px] font-black text-amber-400 uppercase tracking-widest mb-3">Boas Práticas</div>
+            <div className="p-4 rounded-2xl border border-slate-800 bg-[#181926]/70">
+              <div className="text-xs font-black text-amber-400 uppercase tracking-widest mb-3">Boas Práticas</div>
               <div className="space-y-2">
                 {['Multi-stage builds — imagem mínima em produção', 'Nunca correr como root (USER nonroot)', 'Um processo por container (Single Responsibility)', 'HEALTHCHECK em todos os serviços', 'Imagens base oficiais e mínimas (alpine, distroless)', '.dockerignore para excluir node_modules, .git', 'Scan de vulnerabilidades com Trivy antes do push', 'Secrets via variáveis de ambiente, nunca no Dockerfile'].map(b => (
-                  <div key={b} className="flex items-start gap-2 text-[11px] text-slate-400">
+                  <div key={b} className="flex items-start gap-2 text-xs text-slate-400">
                     <span className="text-emerald-400 shrink-0">✓</span>{b}
                   </div>
                 ))}
@@ -212,7 +209,7 @@ export default function DockerSimulator() {
           <div className="flex gap-2">
             {([['good', '✓ Produção (Multi-stage)', 'emerald'], ['bad', '✗ Anti-pattern', 'rose']] as const).map(([id, label, color]) => (
               <button key={id} onClick={() => setDfMode(id)}
-                className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${dfMode === id ? color === 'emerald' ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300' : 'bg-rose-500/20 border border-rose-500/40 text-rose-300' : 'border border-slate-800 text-slate-500'}`}>
+                className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${dfMode === id ? color === 'emerald' ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300' : 'bg-rose-500/20 border border-rose-500/40 text-rose-300' : 'border border-slate-800 text-slate-400'}`}>
                 {label}
               </button>
             ))}
@@ -220,9 +217,9 @@ export default function DockerSimulator() {
           <Code code={dfMode === 'good' ? DOCKERFILE_PROD : DOCKERFILE_BAD} lang={`Dockerfile — ${dfMode === 'good' ? 'multi-stage produção' : 'anti-pattern ❌'}`} />
           {dfMode === 'bad' && (
             <div className="p-4 rounded-2xl border border-rose-500/20 bg-rose-500/8 space-y-2">
-              <div className="text-[11px] font-black text-rose-400 uppercase">Problemas neste Dockerfile</div>
+              <div className="text-xs font-black text-rose-400 uppercase">Problemas neste Dockerfile</div>
               {['Copia todo o código antes de instalar deps — invalida cache a cada mudança de código', 'node:20 tem >1GB — alpine tem ~180MB', 'npm install inclui devDependencies desnecessárias em prod', 'Corre como root — se o container for comprometido, tem acesso total', 'Sem HEALTHCHECK — orchestrators não sabem se o app está saudável'].map(p => (
-                <div key={p} className="flex items-start gap-2 text-[11px] text-slate-400"><span className="text-rose-400 shrink-0">✗</span>{p}</div>
+                <div key={p} className="flex items-start gap-2 text-xs text-slate-400"><span className="text-rose-400 shrink-0">✗</span>{p}</div>
               ))}
             </div>
           )}
@@ -234,7 +231,7 @@ export default function DockerSimulator() {
           <div className="space-y-1">
             {Object.keys(CMD_GROUPS).map(g => (
               <button key={g} onClick={() => setCmdGroup(g)}
-                className={`w-full text-left px-3 py-2.5 rounded-xl text-[12px] font-medium transition-all ${cmdGroup === g ? 'bg-sky-500/15 border border-sky-500/30 text-sky-300' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-900'}`}>
+                className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${cmdGroup === g ? 'bg-sky-500/15 border border-sky-500/30 text-sky-300' : 'text-slate-400 hover:text-slate-300 hover:bg-slate-900'}`}>
                 {g}
               </button>
             ))}
@@ -242,8 +239,8 @@ export default function DockerSimulator() {
           <div className="lg:col-span-3 space-y-2">
             {CMD_GROUPS[cmdGroup].map((c, i) => (
               <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-slate-900 border border-slate-800">
-                <code className="text-[12px] font-mono text-sky-300 flex-1">{c.cmd}</code>
-                <span className="text-[11px] text-slate-500 shrink-0">{tr(DOCKER_EN.cmdDescs, c.desc, lang)}</span>
+                <code className="text-sm font-mono text-sky-300 flex-1">{c.cmd}</code>
+                <span className="text-xs text-slate-400 shrink-0">{c.desc}</span>
               </div>
             ))}
           </div>

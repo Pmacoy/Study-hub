@@ -11,12 +11,14 @@ import {
   GitBranch,
   GraduationCap,
   Layers,
-  PiggyBank,
   LayoutDashboard,
   Package,
   Route,
   Shield,
   Terminal,
+  Network,
+  RotateCw,
+  AlertTriangle,
 } from 'lucide-react';
 import type { DevOpsTab } from '../types/devops';
 
@@ -44,7 +46,6 @@ export const menuGroups: MenuGroup[] = [
     items: [
       { id: 'devops-intro', label: 'DevOps & DevSecOps', sublabel: 'Cultura e ciclo de vida', icon: LayoutDashboard },
       { id: 'linux', label: 'Linux & Shell', sublabel: 'Comandos e scripting', icon: Terminal },
-      { id: 'shell-scripting', label: 'Shell Scripting', sublabel: 'Bash de produção', icon: Terminal },
       { id: 'git', label: 'Git & Versionamento', sublabel: 'Branches e workflows', icon: GitBranch },
     ],
   },
@@ -60,7 +61,6 @@ export const menuGroups: MenuGroup[] = [
     title: 'Automação',
     items: [
       { id: 'cicd', label: 'CI/CD Pipelines', sublabel: 'Jenkins · GH Actions', icon: Layers },
-      { id: 'gitops', label: 'GitOps', sublabel: 'ArgoCD · Flux', icon: GitBranch },
       { id: 'terraform', label: 'Terraform / IaC', sublabel: 'Módulos e multi-cloud', icon: GitBranch },
       { id: 'cloudformation', label: 'CloudFormation', sublabel: 'Templates e stacks AWS', icon: Boxes },
     ],
@@ -69,7 +69,6 @@ export const menuGroups: MenuGroup[] = [
     title: 'Operações',
     items: [
       { id: 'monitoring', label: 'Monitoring', sublabel: 'Prometheus · Grafana · ELK', icon: Activity },
-      { id: 'finops', label: 'FinOps · Custos', sublabel: 'Spot · Karpenter · KEDA', icon: PiggyBank },
       { id: 'security', label: 'DevSecOps', sublabel: 'SonarQube · Trivy · OPA', icon: Shield },
     ],
   },
@@ -80,6 +79,9 @@ export const menuGroups: MenuGroup[] = [
       { id: 'golden-paths', label: 'Golden Paths', sublabel: 'Paved-road templates', icon: Route },
       { id: 'dora-devex', label: 'DORA & DevEx', sublabel: 'Métricas · Cognitive load', icon: GaugeCircle },
       { id: 'mlops', label: 'MLOps & AI', sublabel: 'MLflow · drift · agentic AI', icon: BrainCircuit },
+      { id: 'service-mesh', label: 'Service Mesh', sublabel: 'Istio · mTLS · Traffic', icon: Network },
+      { id: 'gitops', label: 'GitOps', sublabel: 'Argo CD · Flux · Declarative', icon: RotateCw },
+      { id: 'sre', label: 'SRE & Fiabilidade', sublabel: 'SLO · Error Budget · Incidents', icon: AlertTriangle },
     ],
   },
 ];

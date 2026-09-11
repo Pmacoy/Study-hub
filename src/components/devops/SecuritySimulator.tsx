@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { useLang } from '../../i18n/LangContext';
-import { MISC_EN, tr } from '../../i18n/modulesEn';
-import { Copy, Check, Shield } from 'lucide-react';
+import { Copy, Check, Shield, Search, Container, Scale } from 'lucide-react';
 
 type View = 'overview' | 'sast' | 'container' | 'opa';
 
@@ -10,13 +8,13 @@ function Code({ code, lang = '' }: { code: string; lang?: string }) {
   return (
     <div className="rounded-xl border border-slate-800 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="text-[10px] font-mono text-slate-500">{lang}</span>
+        <span className="text-2xs font-mono text-slate-400">{lang}</span>
         <button onClick={() => { navigator.clipboard.writeText(code); setC(true); setTimeout(() => setC(false), 1400); }}
-          className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-slate-300">
+          className="flex items-center gap-1 text-2xs text-slate-400 hover:text-slate-300">
           {c ? <><Check size={10} className="text-emerald-400" /><span className="text-emerald-400">Copiado</span></> : <><Copy size={10} />Copiar</>}
         </button>
       </div>
-      <pre className="p-4 text-[11px] font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 text-xs font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => <div key={i} className={line.startsWith('#') ? 'text-slate-600' : line.match(/^(package|import|deny|allow|default)\b/) ? 'text-violet-400' : line.startsWith('$') ? 'text-emerald-300' : 'text-slate-300'}>{line}</div>)}
       </pre>
     </div>
@@ -112,14 +110,13 @@ sonar.coverage.exclusions=**/*.test.ts,**/*.spec.ts
 #   uses: sonarsource/sonarqube-quality-gate-action@master`;
 
 export default function SecuritySimulator() {
-  const { lang } = useLang();
   const [view, setView] = useState<View>('overview');
 
   const views = [
-    { id: 'overview' as View, label: '🔐 Shift-Left Security' },
-    { id: 'sast' as View, label: '🔬 SAST — SonarQube' },
-    { id: 'container' as View, label: '🐳 Container — Trivy' },
-    { id: 'opa' as View, label: '⚖️ Policy as Code — OPA' },
+    { id: 'overview' as View, label: <><Shield size={14} className="mr-1 inline" /> Shift-Left Security</> },
+    { id: 'sast' as View, label: <><Search size={14} className="mr-1 inline" /> SAST — SonarQube</> },
+    { id: 'container' as View, label: <><Container size={14} className="mr-1 inline" /> Container — Trivy</> },
+    { id: 'opa' as View, label: <><Scale size={14} className="mr-1 inline" /> Policy as Code — OPA</> },
   ];
 
   return (
@@ -127,8 +124,8 @@ export default function SecuritySimulator() {
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
-            className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${view === v.id ? 'bg-rose-500/20 border border-rose-500/40 text-rose-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
-            {tr(MISC_EN.views, v.label, lang)}
+            className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${view === v.id ? 'bg-rose-500/20 border border-rose-500/40 text-rose-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300'}`}>
+            {v.label}
           </button>
         ))}
       </div>
@@ -138,9 +135,9 @@ export default function SecuritySimulator() {
           <div className="p-4 rounded-2xl border border-rose-500/20 bg-rose-500/5">
             <div className="flex items-center gap-2 mb-2">
               <Shield size={14} className="text-rose-400" />
-              <span className="text-[12px] font-black text-rose-400 uppercase tracking-widest">Shift-Left Security</span>
+              <span className="text-sm font-black text-rose-400 uppercase tracking-widest">Shift-Left Security</span>
             </div>
-            <p className="text-[12px] text-slate-400">Mover os controlos de segurança para o início do SDLC. Encontrar vulnerabilidades em código é 100x mais barato do que em produção.</p>
+            <p className="text-sm text-slate-400">Mover os controlos de segurança para o início do SDLC. Encontrar vulnerabilidades em código é 100x mais barato do que em produção.</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
@@ -150,26 +147,26 @@ export default function SecuritySimulator() {
               { t: 'Secrets', desc: 'Detecção de credenciais expostas', tools: 'GitLeaks, TruffleHog, detect-secrets', when: 'Pre-commit / CI', color: 'rose' },
             ].map(s => (
               <div key={s.t} className={`p-4 rounded-2xl border ${s.color === 'sky' ? 'border-sky-500/30 bg-sky-500/8' : s.color === 'violet' ? 'border-violet-500/30 bg-violet-500/8' : s.color === 'amber' ? 'border-amber-500/30 bg-amber-500/8' : 'border-rose-500/30 bg-rose-500/8'}`}>
-                <div className={`text-[13px] font-black mb-1 ${s.color === 'sky' ? 'text-sky-400' : s.color === 'violet' ? 'text-violet-400' : s.color === 'amber' ? 'text-amber-400' : 'text-rose-400'}`}>{s.t}</div>
-                <div className="text-[10px] text-slate-400 mb-2">{tr(MISC_EN.descs, s.desc, lang)}</div>
-                <div className="text-[9px] font-mono text-slate-500">{s.tools}</div>
-                <div className={`mt-2 text-[9px] font-bold ${s.color === 'sky' ? 'text-sky-500' : s.color === 'violet' ? 'text-violet-500' : s.color === 'amber' ? 'text-amber-500' : 'text-rose-500'}`}>Stage: {s.when}</div>
+                <div className={`text-base font-black mb-1 ${s.color === 'sky' ? 'text-sky-400' : s.color === 'violet' ? 'text-violet-400' : s.color === 'amber' ? 'text-amber-400' : 'text-rose-400'}`}>{s.t}</div>
+                <div className="text-2xs text-slate-400 mb-2">{s.desc}</div>
+                <div className="text-2xs font-mono text-slate-400">{s.tools}</div>
+                <div className={`mt-2 text-2xs font-bold ${s.color === 'sky' ? 'text-sky-500' : s.color === 'violet' ? 'text-violet-500' : s.color === 'amber' ? 'text-amber-500' : 'text-rose-500'}`}>Stage: {s.when}</div>
               </div>
             ))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-2xl border border-slate-800 bg-slate-950/70">
-              <div className="text-[11px] font-black text-emerald-400 uppercase tracking-widest mb-3">✓ Security Checklist</div>
+            <div className="p-4 rounded-2xl border border-slate-800 bg-[#181926]/70">
+              <div className="text-xs font-black text-emerald-400 uppercase tracking-widest mb-3">✓ Security Checklist</div>
               {['Nunca credenciais no código (profiles/*.tfvars em .gitignore)', 'Managed Identity em vez de service principal keys', 'NSG com deny-all por default, allowlist explícita', 'Key Vault com Purge Protection + Soft Delete 90 dias', 'TLS 1.2+ (min_tls_version no storage account)', 'OIDC para GitHub Actions — zero static secrets', 'Trivy scan em todas as imagens antes do push', 'OPA policies validadas em cada terraform plan'].map(i => (
-                <div key={i} className="flex items-start gap-2 text-[11px] text-slate-400 py-0.5">
+                <div key={i} className="flex items-start gap-2 text-xs text-slate-400 py-0.5">
                   <span className="text-emerald-400 shrink-0">✓</span>{i}
                 </div>
               ))}
             </div>
-            <div className="p-4 rounded-2xl border border-slate-800 bg-slate-950/70">
-              <div className="text-[11px] font-black text-rose-400 uppercase tracking-widest mb-3">⚠ Anti-patterns Comuns</div>
+            <div className="p-4 rounded-2xl border border-slate-800 bg-[#181926]/70">
+              <div className="text-xs font-black text-rose-400 uppercase tracking-widest mb-3">⚠ Anti-patterns Comuns</div>
               {['Passwords hardcoded no código fonte ou Dockerfile', 'ENV com secrets em docker-compose.yml commitado', 'kubectl apply com permissão de admin em CI/CD', 'Container a correr como root (USER root)', 'Imagens sem scan de vulnerabilidades', 'NSG com port 22 (SSH) aberto ao 0.0.0.0/0', 'Terraform state local commitado no Git', 'Secrets em variáveis de ambiente não encriptadas'].map(i => (
-                <div key={i} className="flex items-start gap-2 text-[11px] text-slate-400 py-0.5">
+                <div key={i} className="flex items-start gap-2 text-xs text-slate-400 py-0.5">
                   <span className="text-rose-400 shrink-0">✗</span>{i}
                 </div>
               ))}

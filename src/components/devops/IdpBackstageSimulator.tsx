@@ -1,20 +1,18 @@
 import { useState } from 'react';
-import { useLang } from '../../i18n/LangContext';
-import { PLATFORM_EN, tr } from '../../i18n/modulesEn';
-import { Copy, Check, Blocks, Users, Package, FileText, GitBranch, Search } from 'lucide-react';
+import { Copy, Check, Blocks, Users, Package, FileText, GitBranch, Search, Target, Puzzle, Building2, List } from 'lucide-react';
 
 function Code({ code, lang = 'yaml' }: { code: string; lang?: string }) {
   const [copied, setCopied] = useState(false);
   return (
-    <div className="rounded-xl border border-slate-800 overflow-hidden text-[11px]">
+    <div className="rounded-xl border border-slate-800 overflow-hidden text-xs">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="font-mono text-slate-500">{lang}</span>
+        <span className="font-mono text-slate-400">{lang}</span>
         <button onClick={() => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1400); }}
-          className="flex items-center gap-1 text-slate-500 hover:text-slate-300">
+          className="flex items-center gap-1 text-slate-400 hover:text-slate-300">
           {copied ? <Check size={10} className="text-emerald-400" /> : <Copy size={10} />}
         </button>
       </div>
-      <pre className="p-4 font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => (
           <div key={i} className={line.trim().startsWith('#') ? 'text-slate-600' : /^(apiVersion|kind|metadata|spec|type|owner|lifecycle):/.test(line.trim()) ? 'text-violet-400' : 'text-slate-300'}>{line}</div>
         ))}
@@ -24,15 +22,14 @@ function Code({ code, lang = 'yaml' }: { code: string; lang?: string }) {
 }
 
 export default function IdpBackstageModule() {
-  const { lang } = useLang();
   const [section, setSection] = useState<'what' | 'components' | 'backstage' | 'catalog'>('what');
   const [openBenefit, setOpenBenefit] = useState<string | null>(null);
 
   const views = [
-    { id: 'what' as const, label: '🎯 O que é um IDP?' },
-    { id: 'components' as const, label: '🧩 Componentes' },
-    { id: 'backstage' as const, label: '🏛️ Backstage' },
-    { id: 'catalog' as const, label: '📋 Service Catalog' },
+    { id: 'what' as const, label: <><Target size={14} className="mr-1 inline" /> O que é um IDP?</> },
+    { id: 'components' as const, label: <><Puzzle size={14} className="mr-1 inline" /> Componentes</> },
+    { id: 'backstage' as const, label: <><Building2 size={14} className="mr-1 inline" /> Backstage</> },
+    { id: 'catalog' as const, label: <><List size={14} className="mr-1 inline" /> Service Catalog</> },
   ];
 
   return (
@@ -40,8 +37,8 @@ export default function IdpBackstageModule() {
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setSection(v.id)}
-            className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${section === v.id ? 'bg-violet-500/20 border border-violet-500/40 text-violet-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
-            {tr(PLATFORM_EN.views, v.label, lang)}
+            className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${section === v.id ? 'bg-violet-500/20 border border-violet-500/40 text-violet-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300'}`}>
+            {v.label}
           </button>
         ))}
       </div>
@@ -52,8 +49,8 @@ export default function IdpBackstageModule() {
             <div className="flex items-start gap-3">
               <Blocks size={22} className="text-violet-400 shrink-0 mt-0.5" />
               <div>
-                <div className="text-[15px] font-bold text-violet-300">Internal Developer Platform (IDP)</div>
-                <p className="text-[12px] text-slate-400 mt-1 leading-relaxed">
+                <div className="text-lg font-bold text-violet-300">Internal Developer Platform (IDP)</div>
+                <p className="text-sm text-slate-400 mt-1 leading-relaxed">
                   Uma camada de abstracção construída pela equipa Platform que dá aos developers <span className="text-white font-bold">self-service on-demand</span> ao que precisam para entregar software: infra, ambientes, secrets, monitoring, deploys — sem abrir tickets nem ler 20 tutoriais de Kubernetes.
                 </p>
               </div>
@@ -80,9 +77,9 @@ export default function IdpBackstageModule() {
               ] },
             ].map(g => (
               <div key={g.title} className={`p-4 rounded-2xl border ${g.color === 'rose' ? 'border-rose-500/20 bg-rose-500/5' : 'border-emerald-500/20 bg-emerald-500/5'}`}>
-                <div className={`text-[11px] font-black uppercase tracking-widest mb-2 ${g.color === 'rose' ? 'text-rose-400' : 'text-emerald-400'}`}>{g.title}</div>
+                <div className={`text-xs font-black uppercase tracking-widest mb-2 ${g.color === 'rose' ? 'text-rose-400' : 'text-emerald-400'}`}>{g.title}</div>
                 {g.items.map((item, i) => (
-                  <div key={i} className="flex items-start gap-1.5 text-[11px] text-slate-400 py-1">
+                  <div key={i} className="flex items-start gap-1.5 text-xs text-slate-400 py-1">
                     <span className={g.color === 'rose' ? 'text-rose-400 shrink-0' : 'text-emerald-400 shrink-0'}>·</span>
                     {item}
                   </div>
@@ -92,7 +89,7 @@ export default function IdpBackstageModule() {
           </div>
 
           <div className="p-4 rounded-2xl border border-violet-500/20 bg-violet-500/5">
-            <div className="text-[11px] font-black text-violet-400 uppercase tracking-widest mb-3">Benefícios (State of Platform Engineering 2026)</div>
+            <div className="text-xs font-black text-violet-400 uppercase tracking-widest mb-3">Benefícios (State of Platform Engineering 2026)</div>
             <div className="space-y-2">
               {[
                 { k: '45% menos burnout', v: 'em equipas com plataforma madura vs equipas sem plataforma' },
@@ -102,10 +99,10 @@ export default function IdpBackstageModule() {
               ].map(b => (
                 <button key={b.k} onClick={() => setOpenBenefit(openBenefit === b.k ? null : b.k)}
                   className="w-full flex items-start gap-3 p-2 rounded-xl hover:bg-slate-900/50 transition-colors text-left">
-                  <span className="text-violet-400 text-[13px] font-black">→</span>
+                  <span className="text-violet-400 text-base font-black">→</span>
                   <div>
-                    <div className="text-[12px] font-bold text-violet-300">{b.k}</div>
-                    <div className="text-[10px] text-slate-500">{b.v}</div>
+                    <div className="text-sm font-bold text-violet-300">{b.k}</div>
+                    <div className="text-2xs text-slate-400">{b.v}</div>
                   </div>
                 </button>
               ))}
@@ -129,8 +126,8 @@ export default function IdpBackstageModule() {
                 {c.icon}
               </div>
               <div>
-                <div className="text-[13px] font-bold text-white">{c.title}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">{tr(PLATFORM_EN.descs, c.desc, lang)}</div>
+                <div className="text-base font-bold text-white">{c.title}</div>
+                <div className="text-xs text-slate-400 mt-0.5">{c.desc}</div>
               </div>
             </div>
           ))}
@@ -139,7 +136,7 @@ export default function IdpBackstageModule() {
 
       {section === 'backstage' && (
         <div className="space-y-4">
-          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-[12px] text-slate-400 leading-relaxed">
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-sm text-slate-400 leading-relaxed">
             <span className="text-violet-300 font-bold">Backstage</span> é a plataforma open-source criada pelo Spotify e doada à CNCF. É a "cara" do IDP: dá ao dev um portal com service catalog, TechDocs, templates e plugins.
           </div>
 
@@ -151,14 +148,14 @@ export default function IdpBackstageModule() {
               { name: 'Plugins', desc: '150+ plugins: Kubernetes, ArgoCD, Grafana, PagerDuty, SonarQube, GitHub, Jira...' },
             ].map(f => (
               <div key={f.name} className="p-3 rounded-xl bg-slate-900 border border-slate-800">
-                <div className="text-[12px] font-bold text-violet-300">{f.name}</div>
-                <div className="text-[10px] text-slate-500 mt-1">{f.desc}</div>
+                <div className="text-sm font-bold text-violet-300">{f.name}</div>
+                <div className="text-2xs text-slate-400 mt-1">{f.desc}</div>
               </div>
             ))}
           </div>
 
           <div>
-            <div className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-2">Setup mínimo (Backstage app)</div>
+            <div className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Setup mínimo (Backstage app)</div>
             <Code lang="bash" code={`# Criar novo app Backstage
 npx @backstage/create-app@latest --path my-idp
 
@@ -177,7 +174,7 @@ yarn add @backstage/plugin-catalog-backend-module-github`} />
 
       {section === 'catalog' && (
         <div className="space-y-4">
-          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-[12px] text-slate-400 leading-relaxed">
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-sm text-slate-400 leading-relaxed">
             O <span className="text-violet-300 font-bold">Service Catalog</span> é o coração do IDP. Cada componente é declarado num ficheiro <code className="text-amber-300">catalog-info.yaml</code> dentro do repo — Backstage descobre automaticamente.
           </div>
 
@@ -218,8 +215,8 @@ spec:
               { k: 'Group / User', v: 'Team + membros — coluna "owner" de tudo o resto' },
             ].map(e => (
               <div key={e.k} className="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
-                <div className="text-[11px] font-bold text-violet-300">{e.k}</div>
-                <div className="text-[9px] text-slate-500 mt-0.5">{e.v}</div>
+                <div className="text-xs font-bold text-violet-300">{e.k}</div>
+                <div className="text-2xs text-slate-400 mt-0.5">{e.v}</div>
               </div>
             ))}
           </div>

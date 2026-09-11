@@ -1,29 +1,29 @@
 import { useState } from 'react';
-import { Copy, Check, Shield } from 'lucide-react';
+import { Copy, Check, Shield, Building2, Users, FolderOpen, AlertTriangle } from 'lucide-react';
 
 function Code({ code, output }: { code: string; output?: string }) {
   const [copied, setCopied] = useState(false);
   const [show, setShow] = useState(false);
   return (
-    <div className="rounded-xl border border-slate-800 overflow-hidden text-[11px]">
+    <div className="rounded-xl border border-slate-800 overflow-hidden text-xs">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="font-mono text-slate-500">python</span>
+        <span className="font-mono text-slate-400">python</span>
         <div className="flex gap-2">
-          {output && <button onClick={() => setShow(s => !s)} className="text-amber-400 text-[10px] hover:text-amber-300 font-semibold">{show ? '▼ hide' : '▶ run'}</button>}
+          {output && <button onClick={() => setShow(s => !s)} className="text-amber-400 text-2xs hover:text-amber-300 font-semibold">{show ? '▼ hide' : '▶ run'}</button>}
           <button onClick={() => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1400); }}
-            className="flex items-center gap-1 text-slate-500 hover:text-slate-300">
+            className="flex items-center gap-1 text-slate-400 hover:text-slate-300">
             {copied ? <Check size={10} className="text-emerald-400" /> : <Copy size={10} />}
           </button>
         </div>
       </div>
-      <pre className="p-4 font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => (
           <div key={i} className={line.trim().startsWith('#') ? 'text-slate-600' : /^\s*(class|def|if|for|try|except|finally|with|return|raise|import|from|super)\b/.test(line) ? 'text-violet-400' : 'text-slate-300'}>{line}</div>
         ))}
       </pre>
       {output && show && (
         <div className="border-t border-slate-800 bg-slate-900/80 px-4 py-3">
-          <pre className="font-mono text-amber-300 text-[11px]">{output}</pre>
+          <pre className="font-mono text-amber-300 text-xs">{output}</pre>
         </div>
       )}
     </div>
@@ -34,10 +34,10 @@ export default function OopModule() {
   const [section, setSection] = useState<'classes' | 'inheritance' | 'fileio' | 'exceptions'>('classes');
 
   const views = [
-    { id: 'classes' as const, label: '🏛️ Classes & OOP' },
-    { id: 'inheritance' as const, label: '👪 Herança & Dunder' },
-    { id: 'fileio' as const, label: '📁 File I/O & JSON' },
-    { id: 'exceptions' as const, label: '🚨 Excepções' },
+    { id: 'classes' as const, label: <><Building2 size={14} className="mr-1 inline" /> Classes & OOP</> },
+    { id: 'inheritance' as const, label: <><Users size={14} className="mr-1 inline" /> Herança & Dunder</> },
+    { id: 'fileio' as const, label: <><FolderOpen size={14} className="mr-1 inline" /> File I/O & JSON</> },
+    { id: 'exceptions' as const, label: <><AlertTriangle size={14} className="mr-1 inline" /> Excepções</> },
   ];
 
   return (
@@ -45,7 +45,7 @@ export default function OopModule() {
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setSection(v.id)}
-            className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${section === v.id ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
+            className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${section === v.id ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300'}`}>
             {v.label}
           </button>
         ))}
@@ -154,7 +154,7 @@ True
 False`} />
           <div className="grid grid-cols-2 gap-3">
             <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
-              <div className="text-[11px] font-black text-amber-300 mb-2">Dunder Methods Essenciais</div>
+              <div className="text-xs font-black text-amber-300 mb-2">Dunder Methods Essenciais</div>
               {[
                 ['__init__', 'Construtor'],
                 ['__str__', 'print(obj)'],
@@ -168,13 +168,13 @@ False`} />
                 ['__enter__/__exit__', 'with obj:'],
               ].map(([m, d]) => (
                 <div key={m} className="flex gap-2 py-0.5">
-                  <code className="font-mono text-[10px] text-violet-300 shrink-0 w-28">{m}</code>
-                  <span className="text-[10px] text-slate-500">{d}</span>
+                  <code className="font-mono text-2xs text-violet-300 shrink-0 w-28">{m}</code>
+                  <span className="text-2xs text-slate-400">{d}</span>
                 </div>
               ))}
             </div>
             <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
-              <div className="text-[11px] font-black text-amber-300 mb-2">Princípios OOP</div>
+              <div className="text-xs font-black text-amber-300 mb-2">Princípios OOP</div>
               {[
                 ['Encapsulação', 'Esconder estado interno com _private / __dunder'],
                 ['Herança', 'Reutilizar código via parent class'],
@@ -182,8 +182,8 @@ False`} />
                 ['Abstracção', 'ABC: forçar métodos nas subclasses'],
               ].map(([p, d]) => (
                 <div key={p} className="py-1 border-b border-slate-800 last:border-0">
-                  <div className="text-[11px] font-semibold text-sky-300">{p}</div>
-                  <div className="text-[10px] text-slate-500">{d}</div>
+                  <div className="text-xs font-semibold text-sky-300">{p}</div>
+                  <div className="text-2xs text-slate-400">{d}</div>
                 </div>
               ))}
             </div>
@@ -314,7 +314,7 @@ with TempDir("deploy-") as d:
           <div className="p-4 rounded-2xl border border-rose-500/20 bg-rose-500/5">
             <div className="flex items-center gap-2 mb-3">
               <Shield size={13} className="text-rose-400" />
-              <div className="text-[11px] font-black text-rose-400 uppercase">Excepções Built-in mais Comuns</div>
+              <div className="text-xs font-black text-rose-400 uppercase">Excepções Built-in mais Comuns</div>
             </div>
             <div className="grid grid-cols-2 gap-2">
               {[
@@ -327,9 +327,9 @@ with TempDir("deploy-") as d:
                 ['ImportError', 'Módulo não encontrado'],
                 ['StopIteration', 'Iterador esgotado'],
               ].map(([e, d]) => (
-                <div key={e} className="flex gap-2 text-[11px]">
-                  <code className="font-mono text-rose-300 shrink-0 text-[10px]">{e}</code>
-                  <span className="text-slate-500">{d}</span>
+                <div key={e} className="flex gap-2 text-xs">
+                  <code className="font-mono text-rose-300 shrink-0 text-2xs">{e}</code>
+                  <span className="text-slate-400">{d}</span>
                 </div>
               ))}
             </div>

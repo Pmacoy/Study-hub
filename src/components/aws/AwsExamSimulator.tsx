@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   GraduationCap,
   CheckCircle2,
@@ -8,22 +8,26 @@ import {
   BookOpen,
   BarChart3,
   Trophy,
+  Lock,
+  Globe,
+  Cpu,
+  Database,
+  Warehouse,
+  Building2,
 } from 'lucide-react';
 import type { AwsQuestion, AwsExamTopicFilter } from '../../types/awsExam';
-import { ALL_AWS_QUESTIONS, SCENARIO_QUESTIONS } from '../../data/aws/examQuestions';
+import { ALL_AWS_QUESTIONS } from '../../data/aws/examQuestions';
+import { useQuizEngine, type Question } from '../../hooks/useQuizEngine';
 
-type QuizMode = 'menu' | 'quiz' | 'result';
-type QuestionStyle = 'all' | 'scenario';
-
-const TOPICS: { key: AwsExamTopicFilter; label: string; emoji: string }[] = [
-  { key: 'all', label: 'Todos os tópicos', emoji: '🎯' },
-  { key: 'iam', label: 'IAM & Segurança', emoji: '🔐' },
-  { key: 'vpc', label: 'VPC & Networking', emoji: '🌐' },
-  { key: 'compute', label: 'Compute', emoji: '💻' },
-  { key: 'storage', label: 'Storage', emoji: '📦' },
-  { key: 'databases', label: 'Databases', emoji: '🗄️' },
-  { key: 'wellarch', label: 'Well-Architected', emoji: '🏛️' },
-];
+const TOPIC_ICONS: Record<AwsExamTopicFilter, React.ReactNode> = {
+  all: <Globe size={14} className="text-sky-400" />,
+  iam: <Lock size={14} className="text-rose-400" />,
+  vpc: <Globe size={14} className="text-emerald-400" />,
+  compute: <Cpu size={14} className="text-amber-400" />,
+  storage: <Warehouse size={14} className="text-violet-400" />,
+  databases: <Database size={14} className="text-cyan-400" />,
+  wellarch: <Building2 size={14} className="text-sky-400" />,
+};
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -34,73 +38,55 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
+/** Converte uma AwsQuestion para o formato genérico do motor de quiz. */
+function toGeneric(q: AwsQuestion): Question {
+  return {
+    q: q.question,
+    opts: q.options,
+    a: q.correctIndex,
+    exp: q.explanation,
+    mod: q.topicLabel,
+  };
+}
+
 export default function AwsExamSimulator() {
-  const [mode, setMode] = useState<QuizMode>('menu');
+  // Configuração do menu
   const [topic, setTopic] = useState<AwsExamTopicFilter>('all');
-  const [style, setStyle] = useState<QuestionStyle>('all');
   const [count, setCount] = useState<number>(20);
   const [timed, setTimed] = useState<boolean>(false);
-  const [questions, setQuestions] = useState<AwsQuestion[]>([]);
-  const [current, setCurrent] = useState(0);
-  const [answers, setAnswers] = useState<(number | null)[]>([]);
-  const [showFeedback, setShowFeedback] = useState(false);
+
+  // Questões cruas desta sessão — o motor guarda a versão genérica, mas
+  // o render precisa dos campos específicos da AWS (difficulty, topicLabel).
+  const [picked, setPicked] = useState<AwsQuestion[]>([]);
   const [startTs, setStartTs] = useState<number>(0);
-  const [remainingSec, setRemainingSec] = useState<number>(0);
 
-  const availableForTopic = useMemo(() => {
-    const pool = style === 'scenario' ? SCENARIO_QUESTIONS : ALL_AWS_QUESTIONS;
-    return topic === 'all' ? pool : pool.filter(q => q.topic === topic);
-  }, [topic, style]);
+  const { state, score, percentage, handleStartWith, handleAnswer, handleNext, handleReset } =
+    useQuizEngine({ questions: [], autoShuffle: false });
 
-  useEffect(() => {
-    if (mode !== 'quiz' || !timed || remainingSec <= 0) return;
-    const t = setInterval(() => setRemainingSec(s => s - 1), 1000);
-    return () => clearInterval(t);
-  }, [mode, timed, remainingSec]);
-
-  useEffect(() => {
-    if (mode === 'quiz' && timed && remainingSec <= 0) {
-      setMode('result');
-    }
-  }, [mode, timed, remainingSec]);
+  const availableForTopic = useMemo(
+    () => topic === 'all' ? ALL_AWS_QUESTIONS : ALL_AWS_QUESTIONS.filter(q => q.topic === topic),
+    [topic]
+  );
 
   const handleStart = useCallback(() => {
-    const picked = shuffle(availableForTopic).slice(0, Math.min(count, availableForTopic.length));
-    setQuestions(picked);
-    setCurrent(0);
-    setAnswers(new Array(picked.length).fill(null));
-    setShowFeedback(false);
+    const raw = shuffle(availableForTopic).slice(0, Math.min(count, availableForTopic.length));
+    setPicked(raw);
     setStartTs(Date.now());
-    setRemainingSec(count * 90); // 90s por questão (~65min para 45q como o real)
-    setMode('quiz');
-  }, [availableForTopic, count]);
+    // 90s por questão (~65min para 45q como o real); sem timer em modo prática
+    handleStartWith(raw.map(toGeneric), timed ? raw.length * 90 : undefined);
+  }, [availableForTopic, count, timed, handleStartWith]);
 
-  const handleAnswer = (idx: number) => {
-    if (showFeedback) return;
-    const newAns = [...answers];
-    newAns[current] = idx;
-    setAnswers(newAns);
-    setShowFeedback(true);
-  };
-
-  const handleNext = () => {
-    if (current + 1 >= questions.length) {
-      setMode('result');
-    } else {
-      setCurrent(current + 1);
-      setShowFeedback(false);
-    }
-  };
-
-  const correctCount = answers.reduce<number>(
-    (acc, ans, i) => acc + (ans !== null && ans === questions[i]?.correctIndex ? 1 : 0),
-    0
-  );
-  const pct = questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0;
+  const questions = picked;
+  const answers = state.answers;
+  const current = state.current;
+  const showFeedback = state.showExplanation;
+  const remainingSec = state.timeRemaining ?? 0;
+  const correctCount = score;
+  const pct = percentage;
   const durationSec = Math.round((Date.now() - startTs) / 1000);
 
   // ── Menu ────────────────────────────────────────────────────
-  if (mode === 'menu') {
+  if (state.mode === 'menu') {
     return (
       <div className="space-y-6">
         <section className="rounded-3xl border border-orange-500/25 bg-orange-500/5 p-6">
@@ -117,45 +103,25 @@ export default function AwsExamSimulator() {
           </p>
         </section>
 
-        {/* Estilo das questões */}
-        <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
-          <div className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3">Estilo das questões</div>
-          <div className="grid grid-cols-2 gap-3">
-            <button onClick={() => setStyle('all')}
-              className={`p-4 rounded-2xl border text-left transition-all ${style === 'all' ? 'border-orange-500/40 bg-orange-500/10' : 'border-slate-800 bg-slate-900 hover:border-slate-700'}`}>
-              <div className="text-[13px] font-bold text-white">Todas</div>
-              <div className="text-[10px] text-slate-500 mt-1">Conceitos + cenários · {ALL_AWS_QUESTIONS.length}Q</div>
-            </button>
-            <button onClick={() => setStyle('scenario')}
-              className={`p-4 rounded-2xl border text-left transition-all ${style === 'scenario' ? 'border-orange-500/40 bg-orange-500/10' : 'border-slate-800 bg-slate-900 hover:border-slate-700'}`}>
-              <div className="text-[13px] font-bold text-white">Só cenários</div>
-              <div className="text-[10px] text-slate-500 mt-1">Como no exame real · {SCENARIO_QUESTIONS.length}Q</div>
-            </button>
-          </div>
-          {style === 'scenario' && (
-            <p className="mt-3 text-[11px] text-orange-200/70 leading-relaxed">
-              Situações de negócio reais onde tens de escolher a solução arquitectural — o formato dominante no SAA-C03.
-            </p>
-          )}
-        </section>
-
         {/* Tópico */}
-        <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
-          <div className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3">Tópico</div>
+        <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5">
+          <div className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Tópico</div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            {TOPICS.map(t => {
-              const pool = style === 'scenario' ? SCENARIO_QUESTIONS : ALL_AWS_QUESTIONS;
-              const count = t.key === 'all' ? pool.length : pool.filter(q => q.topic === t.key).length;
+            {(Object.keys(TOPIC_ICONS) as AwsExamTopicFilter[]).map(key => {
+              const label = key === 'all' ? 'Todos os tópicos'
+                : key === 'iam' ? 'IAM & Segurança'
+                : key === 'vpc' ? 'VPC & Networking'
+                : key === 'compute' ? 'Compute'
+                : key === 'storage' ? 'Storage'
+                : key === 'databases' ? 'Databases'
+                : 'Well-Architected';
+              const count = key === 'all' ? ALL_AWS_QUESTIONS.length : ALL_AWS_QUESTIONS.filter(q => q.topic === key).length;
               return (
-                <button key={t.key} onClick={() => setTopic(t.key)} disabled={count === 0}
-                  className={`p-3 rounded-2xl border text-left transition-all ${
-                    count === 0 ? 'border-slate-800 bg-slate-900/40 opacity-40 cursor-not-allowed'
-                    : topic === t.key ? 'border-orange-500/40 bg-orange-500/10'
-                    : 'border-slate-800 bg-slate-900 hover:border-slate-700'
-                  }`}>
-                  <div className="text-lg">{t.emoji}</div>
-                  <div className="text-[12px] font-semibold text-white mt-1">{t.label}</div>
-                  <div className="text-[10px] text-slate-500">{count} Q</div>
+                <button key={key} onClick={() => setTopic(key)}
+                  className={`p-3 rounded-2xl border text-left transition-all ${topic === key ? 'border-orange-500/40 bg-orange-500/10' : 'border-slate-800 bg-slate-900 hover:border-slate-700'}`}>
+                  <div className="text-base">{TOPIC_ICONS[key]}</div>
+                  <div className="text-[12px] font-semibold text-white mt-1">{label}</div>
+                  <div className="text-[10px] text-slate-400">{count} Q</div>
                 </button>
               );
             })}
@@ -163,8 +129,8 @@ export default function AwsExamSimulator() {
         </section>
 
         {/* Contagem */}
-        <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
-          <div className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3">Quantas questões?</div>
+        <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5">
+          <div className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Quantas questões?</div>
           <div className="grid grid-cols-4 gap-2">
             {[10, 20, 45, 65].map(n => (
               <button key={n} onClick={() => setCount(n)}
@@ -177,20 +143,20 @@ export default function AwsExamSimulator() {
         </section>
 
         {/* Modo */}
-        <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
-          <div className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3">Modo</div>
+        <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5">
+          <div className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Modo</div>
           <div className="grid grid-cols-2 gap-3">
             <button onClick={() => setTimed(false)}
               className={`p-4 rounded-2xl border text-left transition-all ${!timed ? 'border-orange-500/40 bg-orange-500/10' : 'border-slate-800 bg-slate-900 hover:border-slate-700'}`}>
-              <BookOpen size={16} className={`mb-2 ${!timed ? 'text-orange-400' : 'text-slate-500'}`} />
+              <BookOpen size={16} className={`mb-2 ${!timed ? 'text-orange-400' : 'text-slate-400'}`} />
               <div className="text-[13px] font-bold text-white">Prática</div>
-              <div className="text-[10px] text-slate-500 mt-1">Feedback imediato · sem timer</div>
+              <div className="text-[10px] text-slate-400 mt-1">Feedback imediato · sem timer</div>
             </button>
             <button onClick={() => setTimed(true)}
               className={`p-4 rounded-2xl border text-left transition-all ${timed ? 'border-orange-500/40 bg-orange-500/10' : 'border-slate-800 bg-slate-900 hover:border-slate-700'}`}>
-              <Clock size={16} className={`mb-2 ${timed ? 'text-orange-400' : 'text-slate-500'}`} />
+              <Clock size={16} className={`mb-2 ${timed ? 'text-orange-400' : 'text-slate-400'}`} />
               <div className="text-[13px] font-bold text-white">Exame simulado</div>
-              <div className="text-[10px] text-slate-500 mt-1">Timer · resultado só no fim</div>
+              <div className="text-[10px] text-slate-400 mt-1">Timer · resultado só no fim</div>
             </button>
           </div>
         </section>
@@ -204,7 +170,7 @@ export default function AwsExamSimulator() {
   }
 
   // ── Result ─────────────────────────────────────────────────
-  if (mode === 'result') {
+  if (state.mode === 'finished') {
     const grade = pct >= 72 ? 'pass' : pct >= 60 ? 'close' : 'fail';
     const gradeCopy = {
       pass:  { title: 'Pronto para o SAA-C03', tone: 'text-emerald-300', bg: 'bg-emerald-500/10 border-emerald-500/30' },
@@ -229,24 +195,24 @@ export default function AwsExamSimulator() {
           <div className="grid grid-cols-3 gap-3 mt-4">
             <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
               <div className="text-2xl font-black text-white">{correctCount}/{questions.length}</div>
-              <div className="text-[9px] text-slate-500 uppercase mt-1">Certas</div>
+              <div className="text-[9px] text-slate-400 uppercase mt-1">Certas</div>
             </div>
             <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
               <div className="text-2xl font-black text-white">{pct}%</div>
-              <div className="text-[9px] text-slate-500 uppercase mt-1">Percentagem</div>
+              <div className="text-[9px] text-slate-400 uppercase mt-1">Percentagem</div>
             </div>
             <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
               <div className="text-2xl font-black text-white">{Math.floor(durationSec/60)}:{(durationSec%60).toString().padStart(2,'0')}</div>
-              <div className="text-[9px] text-slate-500 uppercase mt-1">Tempo</div>
+              <div className="text-[9px] text-slate-400 uppercase mt-1">Tempo</div>
             </div>
           </div>
         </section>
 
         {Object.keys(wrongByTopic).length > 0 && (
-          <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
+          <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5">
             <div className="flex items-center gap-2 mb-3">
               <BarChart3 size={14} className="text-orange-400" />
-              <div className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Áreas a rever</div>
+              <div className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Áreas a rever</div>
             </div>
             <div className="space-y-2">
               {Object.entries(wrongByTopic).sort((a,b) => b[1]-a[1]).map(([label, n]) => (
@@ -260,7 +226,7 @@ export default function AwsExamSimulator() {
         )}
 
         <div className="flex gap-3">
-          <button onClick={() => setMode('menu')}
+          <button onClick={handleReset}
             className="flex-1 py-3 rounded-2xl border border-slate-800 bg-slate-900 text-slate-300 hover:border-slate-700">
             Voltar ao menu
           </button>
@@ -280,7 +246,7 @@ export default function AwsExamSimulator() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <span className="text-[11px] text-slate-500">Questão {current+1} de {questions.length}</span>
+        <span className="text-[11px] text-slate-400">Questão {current+1} de {questions.length}</span>
         {timed && (
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/25 text-orange-300 text-[11px] font-semibold">
             <Clock size={11} />
@@ -293,7 +259,7 @@ export default function AwsExamSimulator() {
         <div className="h-full bg-orange-500 transition-all" style={{ width: `${((current+1)/questions.length)*100}%` }}/>
       </div>
 
-      <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-6">
+      <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-6">
         <div className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-3">{q.topicLabel} · {q.difficulty}</div>
         <h3 className="text-[15px] font-semibold text-white mb-5">{q.question}</h3>
 
@@ -306,7 +272,7 @@ export default function AwsExamSimulator() {
             else if (showFeedback && picked && !isCorrect) cls = 'border-rose-500/50 bg-rose-500/10';
 
             return (
-              <button key={i} onClick={() => handleAnswer(i)} disabled={showFeedback && !timed}
+              <button key={i} onClick={() => handleAnswer(i)} disabled={showFeedback}
                 className={`w-full text-left rounded-2xl border p-4 transition-all ${cls}`}>
                 <div className="flex items-start gap-3">
                   <div className="shrink-0 w-6 h-6 rounded-full border border-current flex items-center justify-center text-[10px] font-black text-slate-400">
@@ -336,7 +302,7 @@ export default function AwsExamSimulator() {
         )}
 
         {timed && !showFeedback && (
-          <div className="mt-4 text-center text-[10px] text-slate-500">
+          <div className="mt-4 text-center text-[10px] text-slate-400">
             Sem feedback no modo exame simulado. Responde e passa à próxima.
           </div>
         )}

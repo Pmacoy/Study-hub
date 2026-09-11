@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { useLang } from '../../i18n/LangContext';
-import { MISC_EN, tr } from '../../i18n/modulesEn';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Construction, Folder, Zap, Keyboard } from 'lucide-react';
 
 type View = 'concepts' | 'structure' | 'cpe' | 'commands';
 
@@ -10,13 +8,13 @@ function Code({ code, lang = '' }: { code: string; lang?: string }) {
   return (
     <div className="rounded-xl border border-slate-800 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="text-[10px] font-mono text-slate-500">{lang}</span>
+        <span className="text-2xs font-mono text-slate-400">{lang}</span>
         <button onClick={() => { navigator.clipboard.writeText(code); setC(true); setTimeout(() => setC(false), 1400); }}
-          className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-slate-300">
+          className="flex items-center gap-1 text-2xs text-slate-400 hover:text-slate-300">
           {c ? <><Check size={10} className="text-emerald-400" /><span className="text-emerald-400">Copiado</span></> : <><Copy size={10} />Copiar</>}
         </button>
       </div>
-      <pre className="p-4 text-[11px] font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 text-xs font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => <div key={i} className={line.startsWith('#') ? 'text-slate-600' : line.match(/^(terraform|provider|resource|module|variable|output|locals|data)\b/) ? 'text-violet-400' : line.match(/^\s+(source|version|count|for_each)\s*=/) ? 'text-sky-300' : line.startsWith('$') ? 'text-emerald-300' : 'text-slate-300'}>{line}</div>)}
       </pre>
     </div>
@@ -119,15 +117,14 @@ const TF_COMMANDS = [
 ];
 
 export default function TerraformSimulator() {
-  const { lang } = useLang();
   const [view, setView] = useState<View>('concepts');
   const [snippet, setSnippet] = useState<'main' | 'haproxy'>('main');
 
   const views = [
-    { id: 'concepts' as View, label: '🏗️ Conceitos' },
-    { id: 'structure' as View, label: '📁 Estrutura' },
-    { id: 'cpe' as View, label: '⚡ Projecto Cross-Cloud' },
-    { id: 'commands' as View, label: '⌨️ Comandos' },
+    { id: 'concepts' as View, label: <><Construction size={14} className="mr-1 inline" /> Conceitos</> },
+    { id: 'structure' as View, label: <><Folder size={14} className="mr-1 inline" /> Estrutura</> },
+    { id: 'cpe' as View, label: <><Zap size={14} className="mr-1 inline" /> Projecto Cross-Cloud</> },
+    { id: 'commands' as View, label: <><Keyboard size={14} className="mr-1 inline" /> Comandos</> },
   ];
 
   return (
@@ -135,8 +132,8 @@ export default function TerraformSimulator() {
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
-            className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${view === v.id ? 'bg-violet-500/20 border border-violet-500/40 text-violet-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
-            {tr(MISC_EN.views, v.label, lang)}
+            className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${view === v.id ? 'bg-violet-500/20 border border-violet-500/40 text-violet-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300'}`}>
+            {v.label}
           </button>
         ))}
       </div>
@@ -150,15 +147,15 @@ export default function TerraformSimulator() {
             { t: 'Boas Práticas', c: 'emerald', items: ['backend.tfvars separado — nunca hardcoded', 'profiles/work.tfvars em .gitignore', 'locals{} para lógica condicional por ambiente', 'templatefile() para configs dinâmicos (haproxy_cfg.tpl)', 'Outputs para passar valores entre módulos'] },
           ].map(g => (
             <div key={g.t} className={`p-5 rounded-2xl border ${g.c === 'violet' ? 'border-violet-500/20 bg-violet-500/5' : g.c === 'sky' ? 'border-sky-500/20 bg-sky-500/5' : g.c === 'amber' ? 'border-amber-500/20 bg-amber-500/5' : 'border-emerald-500/20 bg-emerald-500/5'}`}>
-              <div className={`text-[11px] font-black uppercase tracking-widest mb-3 ${g.c === 'violet' ? 'text-violet-400' : g.c === 'sky' ? 'text-sky-400' : g.c === 'amber' ? 'text-amber-400' : 'text-emerald-400'}`}>{g.t}</div>
-              {g.items.map(i => <div key={i} className="flex items-start gap-2 text-[12px] text-slate-400 py-0.5"><span className={`${g.c === 'violet' ? 'text-violet-500' : g.c === 'sky' ? 'text-sky-500' : g.c === 'amber' ? 'text-amber-500' : 'text-emerald-500'} shrink-0`}>·</span>{i}</div>)}
+              <div className={`text-xs font-black uppercase tracking-widest mb-3 ${g.c === 'violet' ? 'text-violet-400' : g.c === 'sky' ? 'text-sky-400' : g.c === 'amber' ? 'text-amber-400' : 'text-emerald-400'}`}>{g.t}</div>
+              {g.items.map(i => <div key={i} className="flex items-start gap-2 text-sm text-slate-400 py-0.5"><span className={`${g.c === 'violet' ? 'text-violet-500' : g.c === 'sky' ? 'text-sky-500' : g.c === 'amber' ? 'text-amber-500' : 'text-emerald-500'} shrink-0`}>·</span>{i}</div>)}
             </div>
           ))}
         </div>
       )}
 
       {view === 'structure' && (
-        <div className="p-5 rounded-2xl border border-slate-800 bg-slate-950/70 font-mono text-[11px] space-y-0.5">
+        <div className="p-5 rounded-2xl border border-slate-800 bg-[#181926]/70 font-mono text-xs space-y-0.5">
           {[
             ['cpe-multicloud-infra/', 'slate', 0],
             ['├── main.tf', 'violet', 1],
@@ -196,7 +193,7 @@ export default function TerraformSimulator() {
           <div className="flex gap-2">
             {([['main', '📋 main.tf', 'violet'], ['haproxy', '⚙️ haproxy_cfg.tpl', 'amber']] as const).map(([id, label, color]) => (
               <button key={id} onClick={() => setSnippet(id)}
-                className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${snippet === id ? color === 'violet' ? 'bg-violet-500/20 border border-violet-500/40 text-violet-300' : 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-500'}`}>
+                className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${snippet === id ? color === 'violet' ? 'bg-violet-500/20 border border-violet-500/40 text-violet-300' : 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-400'}`}>
                 {label}
               </button>
             ))}
@@ -209,8 +206,8 @@ export default function TerraformSimulator() {
         <div className="space-y-2">
           {TF_COMMANDS.map((c, i) => (
             <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-slate-900 border border-slate-800">
-              <code className="text-[11px] font-mono text-violet-300 flex-1">{c.cmd}</code>
-              <span className="text-[11px] text-slate-500 shrink-0 text-right max-w-[250px]">{tr(MISC_EN.descs, c.desc, lang)}</span>
+              <code className="text-xs font-mono text-violet-300 flex-1">{c.cmd}</code>
+              <span className="text-xs text-slate-400 shrink-0 text-right max-w-[250px]">{c.desc}</span>
             </div>
           ))}
         </div>

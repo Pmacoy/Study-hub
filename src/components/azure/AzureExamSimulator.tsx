@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   GraduationCap,
   CheckCircle2,
@@ -22,8 +22,20 @@ import type {
   QuestionTopic,
 } from '../../types/exam';
 import { ALL_QUESTIONS } from '../../data/azure/examQuestions';
+import { useQuizEngine, type Question as EngineQuestion } from '../../hooks/useQuizEngine';
 
-type QuizMode = 'menu' | 'quiz' | 'result';
+type QuizMode = 'menu' | 'quiz' | 'finished';
+
+/** Converte uma Question de Azure para o formato genérico do motor. */
+function toEngineQuestion(q: Question): EngineQuestion {
+  return {
+    q: q.question,
+    opts: q.options,
+    a: q.correctIndex,
+    exp: q.explanation,
+    mod: q.topicLabel,
+  };
+}
 
 const TOPICS = [
   { key: 'all', label: 'Todos os tópicos' },
@@ -87,7 +99,7 @@ function getOptionClass({
     return 'border-amber-500/30 bg-amber-500/10 text-amber-100';
   }
 
-  return 'border-slate-800 bg-slate-950/60 text-slate-200 hover:border-slate-700 hover:bg-slate-900';
+  return 'border-slate-800 bg-[#181926]/60 text-slate-200 hover:border-slate-700 hover:bg-slate-900';
 }
 
 function getOptionLetterClass({
@@ -119,104 +131,46 @@ type WeakTopicStat = {
 };
 
 export default function AzureExamSimulator() {
-  const [mode, setMode] = useState<QuizMode>('menu');
   const [topicFilter, setTopicFilter] = useState<ExamTopicFilter>('all');
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [showExplanation, setShowExplanation] = useState(false);
-  const [answers, setAnswers] = useState<(number | null)[]>([]);
-  const [timeLeft, setTimeLeft] = useState(0);
-  const [timerActive, setTimerActive] = useState(false);
   const [examMode, setExamMode] = useState(false);
 
-  useEffect(() => {
-    if (!timerActive || timeLeft <= 0) return;
+  // Questões cruas da sessão — o motor guarda a versão genérica, mas o render
+  // precisa dos campos específicos do Azure (topic, topicLabel, difficulty).
+  const [questions, setQuestions] = useState<Question[]>([]);
 
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [timerActive, timeLeft]);
-
-  useEffect(() => {
-    if (timerActive && timeLeft === 0) {
-      setTimerActive(false);
-      setMode('result');
-    }
-  }, [timerActive, timeLeft]);
+  const { state, score, percentage, handleStartWith, handleAnswer, handleNext, handleReset } =
+    useQuizEngine({ questions: [], autoShuffle: false });
 
   const startQuiz = useCallback(
     (isExamMode: boolean) => {
       const sessionQuestions = buildSessionQuestions(topicFilter, isExamMode);
 
       setQuestions(sessionQuestions);
-      setAnswers(new Array(sessionQuestions.length).fill(null));
-      setCurrentIdx(0);
-      setSelectedAnswer(null);
-      setShowExplanation(false);
       setExamMode(isExamMode);
-      setTimeLeft(isExamMode ? sessionQuestions.length * 90 : 0);
-      setTimerActive(isExamMode);
-      setMode('quiz');
+      // 90s por questão em modo exame; sem timer em modo estudo
+      handleStartWith(
+        sessionQuestions.map(toEngineQuestion),
+        isExamMode ? sessionQuestions.length * 90 : undefined
+      );
     },
-    [topicFilter]
+    [topicFilter, handleStartWith]
   );
-
-  const handleAnswer = useCallback(
-    (idx: number) => {
-      if (selectedAnswer !== null) return;
-
-      setSelectedAnswer(idx);
-      setShowExplanation(true);
-
-      setAnswers((prev) => {
-        const next = [...prev];
-        next[currentIdx] = idx;
-        return next;
-      });
-    },
-    [currentIdx, selectedAnswer]
-  );
-
-  const handleNext = useCallback(() => {
-    if (currentIdx < questions.length - 1) {
-      setCurrentIdx((prev) => prev + 1);
-      setSelectedAnswer(null);
-      setShowExplanation(false);
-      return;
-    }
-
-    setTimerActive(false);
-    setMode('result');
-  }, [currentIdx, questions.length]);
 
   const resetToMenu = useCallback(() => {
-    setTimerActive(false);
-    setMode('menu');
     setQuestions([]);
-    setAnswers([]);
-    setCurrentIdx(0);
-    setSelectedAnswer(null);
-    setShowExplanation(false);
-    setTimeLeft(0);
     setExamMode(false);
-  }, []);
+    handleReset();
+  }, [handleReset]);
+
+  // Aliases sobre o estado do motor — mantêm o JSX abaixo inalterado
+  const currentIdx = state.current;
+  const answers = state.answers;
+  const showExplanation = state.showExplanation;
+  const selectedAnswer = state.answers[state.current] ?? null;
+  const timeLeft = state.timeRemaining ?? 0;
+  const pct = percentage;
 
   const currentQ = questions[currentIdx];
-
-  const score = useMemo(() => {
-    return answers.filter(
-      (answer, i) => answer === questions[i]?.correctIndex
-    ).length;
-  }, [answers, questions]);
-
-  const pct = useMemo(() => {
-    return questions.length > 0
-      ? Math.round((score / questions.length) * 100)
-      : 0;
-  }, [questions.length, score]);
 
   const mins = useMemo(() => Math.floor(timeLeft / 60), [timeLeft]);
   const secs = useMemo(() => timeLeft % 60, [timeLeft]);
@@ -270,7 +224,7 @@ export default function AzureExamSimulator() {
       : 0;
   }, [currentIdx, questions.length]);
 
-  if (mode === 'menu') {
+  if (state.mode === 'menu') {
     return (
       <div className="w-full space-y-6 animate-in fade-in duration-500">
         <section className="overflow-hidden rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-500/10 via-slate-950/90 to-slate-950 shadow-2xl shadow-black/10">
@@ -281,13 +235,13 @@ export default function AzureExamSimulator() {
               </div>
 
               <div className="min-w-0">
-                <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-300">
+                <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-amber-300">
                   Simulação oficial de estudo
                 </p>
                 <h2 className="text-2xl font-bold tracking-tight text-white md:text-3xl">
                   Simulador de exame AZ-104
                 </h2>
-                <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-slate-400">
+                <p className="mt-2 max-w-2xl text-lg leading-relaxed text-slate-400">
                   Treina com questões de múltipla escolha, feedback imediato em modo estudo e pressão realista em modo exame.
                 </p>
               </div>
@@ -319,9 +273,9 @@ export default function AzureExamSimulator() {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-6 md:p-7">
+        <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-6 md:p-7">
           <div className="mb-4 flex items-center gap-2">
-            <Filter size={15} className="text-slate-500" />
+            <Filter size={15} className="text-slate-400" />
             <h3 className="text-sm font-semibold text-white">
               Escolhe o foco do simulado
             </h3>
@@ -332,7 +286,7 @@ export default function AzureExamSimulator() {
               <button
                 key={topic.key}
                 onClick={() => setTopicFilter(topic.key)}
-                className={`rounded-xl px-3 py-2 text-[12px] font-medium transition-all ${
+                className={`rounded-xl px-3 py-2 text-sm font-medium transition-all ${
                   topicFilter === topic.key
                     ? 'border border-amber-500/30 bg-amber-500/10 text-amber-200'
                     : 'border border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700 hover:text-slate-200'
@@ -343,7 +297,7 @@ export default function AzureExamSimulator() {
             ))}
           </div>
 
-          <p className="mt-4 text-[13px] text-slate-500">
+          <p className="mt-4 text-base text-slate-400">
             {topicQuestionCount} questões disponíveis para o filtro atual.
           </p>
         </section>
@@ -358,11 +312,11 @@ export default function AzureExamSimulator() {
             </div>
 
             <h3 className="text-xl font-semibold text-white">Modo estudo</h3>
-            <p className="mt-2 text-[14px] leading-relaxed text-slate-400">
+            <p className="mt-2 text-md leading-relaxed text-slate-400">
               Faz até 10 perguntas por sessão, sem tempo limite, com explicação detalhada logo após responder.
             </p>
 
-            <div className="mt-5 flex items-center gap-2 text-[13px] font-medium text-sky-300">
+            <div className="mt-5 flex items-center gap-2 text-base font-medium text-sky-300">
               Iniciar treino guiado
               <ChevronRight size={15} className="transition-transform group-hover:translate-x-1" />
             </div>
@@ -377,11 +331,11 @@ export default function AzureExamSimulator() {
             </div>
 
             <h3 className="text-xl font-semibold text-white">Modo exame</h3>
-            <p className="mt-2 text-[14px] leading-relaxed text-slate-400">
+            <p className="mt-2 text-md leading-relaxed text-slate-400">
               Simula pressão real com 25 perguntas, cronómetro ativo e fluxo contínuo de resolução.
             </p>
 
-            <div className="mt-5 flex items-center gap-2 text-[13px] font-medium text-amber-300">
+            <div className="mt-5 flex items-center gap-2 text-base font-medium text-amber-300">
               Iniciar sessão cronometrada
               <ChevronRight size={15} className="transition-transform group-hover:translate-x-1" />
             </div>
@@ -391,7 +345,7 @@ export default function AzureExamSimulator() {
     );
   }
 
-  if (mode === 'result') {
+  if (state.mode === 'finished') {
     const passed = pct >= 70;
 
     return (
@@ -406,7 +360,7 @@ export default function AzureExamSimulator() {
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p
-                className={`mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] ${
+                className={`mb-2 text-xs font-semibold uppercase tracking-[0.14em] ${
                   passed ? 'text-emerald-300' : 'text-rose-300'
                 }`}
               >
@@ -415,10 +369,10 @@ export default function AzureExamSimulator() {
               <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
                 {pct}% de acerto
               </h2>
-              <p className="mt-2 text-[15px] text-slate-300">
+              <p className="mt-2 text-lg text-slate-300">
                 {score} corretas em {questions.length} questões.
               </p>
-              <p className="mt-1 text-[14px] text-slate-400">
+              <p className="mt-1 text-md text-slate-400">
                 {passed
                   ? 'Bom trabalho — já estás em zona de aprovação.'
                   : 'Ainda há espaço claro para revisão antes da prova.'}
@@ -456,7 +410,7 @@ export default function AzureExamSimulator() {
         </section>
 
         {weakestTopics.length > 0 && (
-          <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-6">
+          <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-6">
             <div className="mb-4 flex items-center gap-2">
               <BarChart3 size={16} className="text-slate-400" />
               <h3 className="text-sm font-semibold text-white">
@@ -471,10 +425,10 @@ export default function AzureExamSimulator() {
                   className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4"
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-[14px] font-medium text-white">
+                    <span className="text-md font-medium text-white">
                       {item.label}
                     </span>
-                    <span className="text-[12px] text-slate-400">
+                    <span className="text-sm text-slate-400">
                       {item.correct}/{item.total}
                     </span>
                   </div>
@@ -490,7 +444,7 @@ export default function AzureExamSimulator() {
                       style={{ width: `${item.pct}%` }}
                     />
                   </div>
-                  <p className="mt-2 text-[12px] text-slate-500">
+                  <p className="mt-2 text-sm text-slate-400">
                     {item.pct}% de acerto
                   </p>
                 </div>
@@ -531,19 +485,19 @@ export default function AzureExamSimulator() {
 
                   <div className="min-w-0">
                     <div className="mb-2 flex flex-wrap items-center gap-2">
-                      <span className="rounded-full border border-slate-700 bg-slate-900 px-2.5 py-1 text-[11px] text-slate-400">
+                      <span className="rounded-full border border-slate-700 bg-slate-900 px-2.5 py-1 text-xs text-slate-400">
                         {q.topicLabel}
                       </span>
-                      <span className="text-[11px] text-slate-500">
+                      <span className="text-xs text-slate-400">
                         Questão {i + 1}
                       </span>
                     </div>
 
-                    <p className="text-[14px] font-medium leading-relaxed text-white">
+                    <p className="text-md font-medium leading-relaxed text-white">
                       {q.question}
                     </p>
 
-                    <div className="mt-3 space-y-1.5 text-[13px]">
+                    <div className="mt-3 space-y-1.5 text-base">
                       <p className="text-slate-400">
                         A tua resposta:{' '}
                         <span className={isCorrect ? 'text-emerald-300' : 'text-rose-300'}>
@@ -565,7 +519,7 @@ export default function AzureExamSimulator() {
 
         <button
           onClick={resetToMenu}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-800 bg-slate-900 px-5 py-3 text-[14px] font-medium text-slate-200 transition-all hover:border-slate-700 hover:bg-slate-800"
+          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-800 bg-slate-900 px-5 py-3 text-md font-medium text-slate-200 transition-all hover:border-slate-700 hover:bg-slate-800"
         >
           <RotateCcw size={16} />
           Voltar ao menu
@@ -578,20 +532,20 @@ export default function AzureExamSimulator() {
 
   return (
     <div className="w-full space-y-6 animate-in fade-in duration-500">
-      <section className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/70">
+      <section className="overflow-hidden rounded-3xl border border-slate-800 bg-[#181926]/70">
         <div className="border-b border-slate-800 px-6 py-5 md:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="min-w-0">
               <div className="mb-3 flex flex-wrap items-center gap-2">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-300">
+                <span className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-300">
                   {examMode ? 'Modo exame' : 'Modo estudo'}
                 </span>
                 <span
-                  className={`rounded-full border px-2.5 py-1 text-[11px] font-medium ${difficultyBadge}`}
+                  className={`rounded-full border px-2.5 py-1 text-xs font-medium ${difficultyBadge}`}
                 >
                   {currentQ.difficulty}
                 </span>
-                <span className="rounded-full border border-slate-800 bg-slate-900 px-2.5 py-1 text-[11px] text-slate-400">
+                <span className="rounded-full border border-slate-800 bg-slate-900 px-2.5 py-1 text-xs text-slate-400">
                   {currentQ.topicLabel}
                 </span>
               </div>
@@ -599,14 +553,14 @@ export default function AzureExamSimulator() {
               <h2 className="text-2xl font-bold tracking-tight text-white">
                 Questão {currentIdx + 1} de {questions.length}
               </h2>
-              <p className="mt-2 text-[14px] text-slate-400">
+              <p className="mt-2 text-md text-slate-400">
                 Responde com atenção e usa a explicação para consolidar o raciocínio.
               </p>
             </div>
 
             {examMode && (
               <div
-                className={`inline-flex items-center gap-2 rounded-2xl border px-4 py-3 font-mono text-[15px] font-bold ${
+                className={`inline-flex items-center gap-2 rounded-2xl border px-4 py-3 font-mono text-lg font-bold ${
                   timeLeft < 60
                     ? 'border-rose-500/20 bg-rose-500/10 text-rose-300'
                     : 'border-amber-500/20 bg-amber-500/10 text-amber-300'
@@ -621,7 +575,7 @@ export default function AzureExamSimulator() {
 
         <div className="px-6 py-5 md:px-8">
           <div className="mb-5">
-            <div className="mb-2 flex items-center justify-between text-[12px] text-slate-500">
+            <div className="mb-2 flex items-center justify-between text-sm text-slate-400">
               <span>Progresso</span>
               <span>{progressPct}%</span>
             </div>
@@ -666,13 +620,13 @@ export default function AzureExamSimulator() {
                 >
                   <div className="flex items-start gap-4">
                     <div
-                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border text-[13px] font-semibold ${optionLetterClass}`}
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border text-base font-semibold ${optionLetterClass}`}
                     >
                       {String.fromCharCode(65 + idx)}
                     </div>
 
                     <div className="flex-1">
-                      <p className="text-[14px] leading-relaxed">{option}</p>
+                      <p className="text-md leading-relaxed">{option}</p>
                     </div>
 
                     {isAnswered && isCorrect && (
@@ -696,10 +650,10 @@ export default function AzureExamSimulator() {
                 </div>
 
                 <div className="min-w-0">
-                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-sky-300">
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-sky-300">
                     Explicação
                   </p>
-                  <p className="text-[14px] leading-relaxed text-slate-200">
+                  <p className="text-md leading-relaxed text-slate-200">
                     {currentQ.explanation}
                   </p>
                 </div>
@@ -710,7 +664,7 @@ export default function AzureExamSimulator() {
           <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
             <button
               onClick={resetToMenu}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-[14px] font-medium text-slate-300 transition-all hover:border-slate-700 hover:bg-slate-800"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-md font-medium text-slate-300 transition-all hover:border-slate-700 hover:bg-slate-800"
             >
               <RotateCcw size={15} />
               Sair do simulado
@@ -719,10 +673,10 @@ export default function AzureExamSimulator() {
             <button
               onClick={handleNext}
               disabled={!showExplanation}
-              className={`inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-[14px] font-semibold transition-all ${
+              className={`inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-md font-semibold transition-all ${
                 showExplanation
                   ? 'bg-amber-500 text-slate-950 hover:bg-amber-400'
-                  : 'cursor-not-allowed bg-slate-800 text-slate-500'
+                  : 'cursor-not-allowed bg-slate-800 text-slate-400'
               }`}
             >
               {currentIdx === questions.length - 1 ? 'Ver resultado' : 'Próxima questão'}
@@ -755,17 +709,17 @@ function MiniStat({
   };
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-950/50 p-4">
+    <div className="rounded-2xl border border-slate-800 bg-[#181926]/50 p-4">
       <div
         className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl border ${tones[tone]}`}
       >
         {icon}
       </div>
-      <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-slate-500">
+      <p className="text-xs font-medium uppercase tracking-[0.12em] text-slate-400">
         {label}
       </p>
-      <p className="mt-2 text-[18px] font-semibold text-white">{value}</p>
-      <p className="mt-1 text-[13px] text-slate-500">{hint}</p>
+      <p className="mt-2 text-xl font-semibold text-white">{value}</p>
+      <p className="mt-1 text-base text-slate-400">{hint}</p>
     </div>
   );
 }
@@ -789,7 +743,7 @@ function ResultMetric({
 
   return (
     <div className={`rounded-2xl border p-4 ${styles[tone]}`}>
-      <p className="text-[11px] uppercase tracking-[0.12em] opacity-75">
+      <p className="text-xs uppercase tracking-[0.12em] opacity-75">
         {label}
       </p>
       <p className="mt-2 text-xl font-semibold">{value}</p>

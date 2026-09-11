@@ -1,27 +1,27 @@
 import { useState } from 'react';
-import { Copy, Check, ChevronDown, ChevronRight } from 'lucide-react';
+import { Copy, Check, ChevronDown, ChevronRight, RefreshCw, Monitor, Package, Tag, Trash2, Battery, Zap, Settings, Type } from 'lucide-react';
 
 function Code({ code, output }: { code: string; output?: string }) {
   const [copied, setCopied] = useState(false);
   const [showOutput, setShowOutput] = useState(false);
   return (
-    <div className="rounded-xl border border-slate-800 overflow-hidden text-[11px]">
+    <div className="rounded-xl border border-slate-800 overflow-hidden text-xs">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="font-mono text-slate-500">python</span>
+        <span className="font-mono text-slate-400">python</span>
         <div className="flex gap-2">
           {output && (
             <button onClick={() => setShowOutput(s => !s)}
-              className="text-amber-400 text-[10px] hover:text-amber-300 font-semibold">
+              className="text-amber-400 text-2xs hover:text-amber-300 font-semibold">
               {showOutput ? '▼ output' : '▶ run'}
             </button>
           )}
           <button onClick={() => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1400); }}
-            className="flex items-center gap-1 text-slate-500 hover:text-slate-300">
+            className="flex items-center gap-1 text-slate-400 hover:text-slate-300">
             {copied ? <Check size={10} className="text-emerald-400" /> : <Copy size={10} />}
           </button>
         </div>
       </div>
-      <pre className="p-4 font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => {
           const isComment = line.trim().startsWith('#');
           const isKeyword = /^(def|class|import|from|return|if|elif|else|for|while|try|except|finally|with|as|lambda|yield|pass|break|continue|raise|and|or|not|in|is)\b/.test(line.trim());
@@ -34,8 +34,8 @@ function Code({ code, output }: { code: string; output?: string }) {
       </pre>
       {output && showOutput && (
         <div className="border-t border-slate-800 bg-slate-900/80 px-4 py-3">
-          <div className="text-[9px] text-amber-500 font-bold uppercase mb-1">Output:</div>
-          <pre className="font-mono text-amber-300 text-[11px]">{output}</pre>
+          <div className="text-2xs text-amber-500 font-bold uppercase mb-1">Output:</div>
+          <pre className="font-mono text-amber-300 text-xs">{output}</pre>
         </div>
       )}
     </div>
@@ -66,10 +66,10 @@ export default function BasicsModule() {
   const [openOp, setOpenOp] = useState<string | null>('Aritméticos');
 
   const views = [
-    { id: 'intro' as const, label: '🐍 Intro & Instalação' },
-    { id: 'types' as const, label: '📦 Tipos de Dados' },
-    { id: 'operators' as const, label: '⚙️ Operadores' },
-    { id: 'strings' as const, label: '📝 Strings & f-strings' },
+    { id: 'intro' as const, label: <><Zap size={14} className="mr-1 inline" /> Intro & Instalação</> },
+    { id: 'types' as const, label: <><Package size={14} className="mr-1 inline" /> Tipos de Dados</> },
+    { id: 'operators' as const, label: <><Settings size={14} className="mr-1 inline" /> Operadores</> },
+    { id: 'strings' as const, label: <><Type size={14} className="mr-1 inline" /> Strings & f-strings</> },
   ];
 
   return (
@@ -77,7 +77,7 @@ export default function BasicsModule() {
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setSection(v.id)}
-            className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${section === v.id ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
+            className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${section === v.id ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300'}`}>
             {v.label}
           </button>
         ))}
@@ -87,17 +87,17 @@ export default function BasicsModule() {
         <div className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {[
-              { t: 'Interpretada', d: 'Corre linha a linha, sem compilação prévia', e: '🔄' },
-              { t: 'Dinamicamente Tipada', d: 'Tipos inferidos em runtime — sem declarar int/str', e: '🏷️' },
-              { t: 'Garbage Collected', d: 'Memória gerida automaticamente', e: '🗑️' },
-              { t: 'Cross-Platform', d: 'Mesmo código em Windows, macOS, Linux', e: '💻' },
-              { t: 'Batteries Included', d: 'Biblioteca padrão cobre redes, I/O, datas, etc.', e: '🔋' },
-              { t: 'Ecossistema Gigante', d: 'PyPI: +500.000 packages', e: '📦' },
+              { t: 'Interpretada', d: 'Corre linha a linha, sem compilação prévia', e: RefreshCw },
+              { t: 'Dinamicamente Tipada', d: 'Tipos inferidos em runtime — sem declarar int/str', e: Tag },
+              { t: 'Garbage Collected', d: 'Memória gerida automaticamente', e: Trash2 },
+              { t: 'Cross-Platform', d: 'Mesmo código em Windows, macOS, Linux', e: Monitor },
+              { t: 'Batteries Included', d: 'Biblioteca padrão cobre redes, I/O, datas, etc.', e: Battery },
+              { t: 'Ecossistema Gigante', d: 'PyPI: +500.000 packages', e: Package },
             ].map(f => (
               <div key={f.t} className="p-3 rounded-xl bg-slate-900 border border-slate-800">
-                <div className="text-xl mb-1">{f.e}</div>
-                <div className="text-[12px] font-bold text-amber-300">{f.t}</div>
-                <div className="text-[10px] text-slate-500 mt-0.5">{f.d}</div>
+                <div className="text-xl mb-1"><f.e size={20} /></div>
+                <div className="text-sm font-bold text-amber-300">{f.t}</div>
+                <div className="text-2xs text-slate-400 mt-0.5">{f.d}</div>
               </div>
             ))}
           </div>
@@ -111,7 +111,7 @@ python --version   # 3.12.x
 python3 --version  # macOS / Linux`}
             output={`Created by DevOps Shack in 2024`} />
           <div className="p-4 rounded-2xl border border-amber-500/20 bg-amber-500/5">
-            <div className="text-[11px] font-black text-amber-400 uppercase tracking-widest mb-2">Onde Python é usado em DevOps</div>
+            <div className="text-xs font-black text-amber-400 uppercase tracking-widest mb-2">Onde Python é usado em DevOps</div>
             <div className="grid grid-cols-2 gap-2">
               {[
                 ['Automação', 'Ansible, scripts de CI/CD, deploy tools'],
@@ -121,7 +121,7 @@ python3 --version  # macOS / Linux`}
                 ['Data Science', 'Pandas, NumPy para análise de logs'],
                 ['Testing', 'pytest para infrastructure tests'],
               ].map(([k, v]) => (
-                <div key={k} className="text-[11px]">
+                <div key={k} className="text-xs">
                   <span className="text-amber-300 font-bold">{k}:</span>
                   <span className="text-slate-400 ml-1">{v}</span>
                 </div>
@@ -136,9 +136,9 @@ python3 --version  # macOS / Linux`}
           <div className="grid grid-cols-1 gap-2">
             {DATA_TYPES.map(d => (
               <div key={d.type} className="flex items-center gap-3 p-3 rounded-xl bg-slate-900 border border-slate-800">
-                <code className={`font-mono text-[13px] font-black w-20 shrink-0 ${d.color === 'sky' ? 'text-sky-300' : d.color === 'violet' ? 'text-violet-300' : d.color === 'emerald' ? 'text-emerald-300' : d.color === 'amber' ? 'text-amber-300' : d.color === 'teal' ? 'text-teal-300' : 'text-rose-300'}`}>{d.type}</code>
-                <code className="font-mono text-[11px] text-slate-400 flex-1">{d.example}</code>
-                <span className="text-[10px] text-slate-600 text-right shrink-0 max-w-[180px]">{d.note}</span>
+                <code className={`font-mono text-base font-black w-20 shrink-0 ${d.color === 'sky' ? 'text-sky-300' : d.color === 'violet' ? 'text-violet-300' : d.color === 'emerald' ? 'text-emerald-300' : d.color === 'amber' ? 'text-amber-300' : d.color === 'teal' ? 'text-teal-300' : 'text-rose-300'}`}>{d.type}</code>
+                <code className="font-mono text-xs text-slate-400 flex-1">{d.example}</code>
+                <span className="text-2xs text-slate-600 text-right shrink-0 max-w-[180px]">{d.note}</span>
               </div>
             ))}
           </div>
@@ -174,17 +174,17 @@ age * 2 = 60`} />
             <div key={g.cat} className="rounded-2xl border border-slate-800 overflow-hidden">
               <button onClick={() => setOpenOp(openOp === g.cat ? null : g.cat)}
                 className="w-full flex items-center justify-between px-4 py-3 bg-slate-900 hover:bg-slate-800 transition-colors text-left">
-                <span className="text-[13px] font-bold text-amber-300">{g.cat}</span>
-                {openOp === g.cat ? <ChevronDown size={14} className="text-slate-500" /> : <ChevronRight size={14} className="text-slate-500" />}
+                <span className="text-base font-bold text-amber-300">{g.cat}</span>
+                {openOp === g.cat ? <ChevronDown size={14} className="text-slate-400" /> : <ChevronRight size={14} className="text-slate-400" />}
               </button>
               {openOp === g.cat && (
-                <div className="p-3 bg-slate-950 space-y-1">
+                <div className="p-3 bg-[#181926] space-y-1">
                   {g.ops.map(op => {
                     const [sym, ...rest] = op.split('  ');
                     return (
                       <div key={op} className="flex items-center gap-3">
-                        <code className="font-mono text-[12px] font-bold text-amber-300 w-12 shrink-0">{sym}</code>
-                        <span className="text-[11px] text-slate-400">{rest.join(' ')}</span>
+                        <code className="font-mono text-sm font-bold text-amber-300 w-12 shrink-0">{sym}</code>
+                        <span className="text-xs text-slate-400">{rest.join(' ')}</span>
                       </div>
                     );
                   })}

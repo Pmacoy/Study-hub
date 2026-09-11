@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { useLang } from '../../i18n/LangContext';
-import { LINUX_EN, tr } from '../../i18n/modulesEn';
-import { Copy, Check, Terminal } from 'lucide-react';
+import { Copy, Check, Terminal, Lock, Scroll, Cpu, Keyboard } from 'lucide-react';
 
 type View = 'commands' | 'permissions' | 'scripting' | 'processes';
 
@@ -10,8 +8,8 @@ function Cmd({ cmd, desc }: { cmd: string; desc: string }) {
   return (
     <div className="flex items-start justify-between gap-3 p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors">
       <div>
-        <code className="text-[12px] font-mono text-emerald-300">{cmd}</code>
-        <p className="text-[11px] text-slate-500 mt-0.5">{desc}</p>
+        <code className="text-sm font-mono text-emerald-300">{cmd}</code>
+        <p className="text-xs text-slate-400 mt-0.5">{desc}</p>
       </div>
       <button onClick={() => { navigator.clipboard.writeText(cmd.split('  ')[0]); setCopied(true); setTimeout(() => setCopied(false), 1400); }}
         className="shrink-0 text-slate-600 hover:text-slate-400 transition-colors">
@@ -131,7 +129,6 @@ echo "Deploy de $IMAGE concluído com sucesso!"` },
 ];
 
 export default function LinuxSimulator() {
-  const { lang } = useLang();
   const [view, setView] = useState<View>('commands');
   const [activeGroup, setActiveGroup] = useState('Ficheiros & Dirs');
   const [perm, setPerm] = useState({ owner: [true, true, true], group: [true, false, true], other: [false, false, true] });
@@ -144,10 +141,10 @@ export default function LinuxSimulator() {
   const symbolic = [perm.owner, perm.group, perm.other].map(calcSym).join('');
 
   const views = [
-    { id: 'commands' as View, label: '⌨️ Comandos' },
-    { id: 'permissions' as View, label: '🔐 Permissões' },
-    { id: 'scripting' as View, label: '📜 Shell Scripts' },
-    { id: 'processes' as View, label: '⚙️ Processos & Serviços' },
+    { id: 'commands' as View, label: <><Keyboard size={14} className="mr-1 inline" /> Comandos</> },
+    { id: 'permissions' as View, label: <><Lock size={14} className="mr-1 inline" /> Permissões</> },
+    { id: 'scripting' as View, label: <><Scroll size={14} className="mr-1 inline" /> Shell Scripts</> },
+    { id: 'processes' as View, label: <><Cpu size={14} className="mr-1 inline" /> Processos & Serviços</> },
   ];
 
   return (
@@ -155,7 +152,7 @@ export default function LinuxSimulator() {
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
-            className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${view === v.id ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
+            className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${view === v.id ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300'}`}>
             {v.label}
           </button>
         ))}
@@ -166,7 +163,7 @@ export default function LinuxSimulator() {
           <div className="space-y-1">
             {Object.keys(COMMANDS).map(g => (
               <button key={g} onClick={() => setActiveGroup(g)}
-                className={`w-full text-left px-3 py-2.5 rounded-xl text-[12px] font-medium transition-all ${activeGroup === g ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-900'}`}>
+                className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${activeGroup === g ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300' : 'text-slate-400 hover:text-slate-300 hover:bg-slate-900'}`}>
                 {g}
               </button>
             ))}
@@ -179,15 +176,15 @@ export default function LinuxSimulator() {
 
       {view === 'permissions' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          <div className="p-5 rounded-2xl border border-slate-800 bg-slate-950/70 space-y-4">
-            <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Calculadora de Permissões</h3>
+          <div className="p-5 rounded-2xl border border-slate-800 bg-[#181926]/70 space-y-4">
+            <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">Calculadora de Permissões</h3>
             {(['owner', 'group', 'other'] as const).map((who) => (
               <div key={who} className="space-y-2">
-                <div className="text-[11px] font-semibold text-slate-400 capitalize">{who === 'owner' ? 'Dono (Owner)' : who === 'group' ? 'Grupo (Group)' : 'Outros (Other)'}</div>
+                <div className="text-xs font-semibold text-slate-400 capitalize">{who === 'owner' ? 'Dono (Owner)' : who === 'group' ? 'Grupo (Group)' : 'Outros (Other)'}</div>
                 <div className="flex gap-2">
                   {['r', 'w', 'x'].map((bit, i) => (
                     <button key={bit} onClick={() => { const n = { ...perm }; n[who] = [...n[who]]; n[who][i] = !n[who][i]; setPerm(n); }}
-                      className={`flex-1 py-3 rounded-xl text-[13px] font-black uppercase transition-all ${perm[who][i] ? 'bg-emerald-500/20 border-2 border-emerald-500/50 text-emerald-300' : 'bg-slate-900 border border-slate-700 text-slate-600'}`}>
+                      className={`flex-1 py-3 rounded-xl text-base font-black uppercase transition-all ${perm[who][i] ? 'bg-emerald-500/20 border-2 border-emerald-500/50 text-emerald-300' : 'bg-slate-900 border border-slate-700 text-slate-600'}`}>
                       {bit}
                     </button>
                   ))}
@@ -196,24 +193,24 @@ export default function LinuxSimulator() {
             ))}
             <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center space-y-2">
               <div className="font-mono text-3xl font-black text-white">{octal}</div>
-              <div className="font-mono text-[14px] text-slate-400">{symbolic}</div>
-              <div className="text-[11px] text-slate-500">chmod {octal} ficheiro</div>
+              <div className="font-mono text-md text-slate-400">{symbolic}</div>
+              <div className="text-xs text-slate-400">chmod {octal} ficheiro</div>
             </div>
           </div>
-          <div className="p-5 rounded-2xl border border-slate-800 bg-slate-950/70 space-y-3">
-            <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Referência Rápida</h3>
-            <table className="w-full text-[11px]">
-              <thead><tr className="border-b border-slate-800">{['Octal', 'Símbolo', 'Nome', 'Descrição'].map(h => <th key={h} className="text-left text-slate-500 pb-2 pr-3">{h}</th>)}</tr></thead>
+          <div className="p-5 rounded-2xl border border-slate-800 bg-[#181926]/70 space-y-3">
+            <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">Referência Rápida</h3>
+            <table className="w-full text-xs">
+              <thead><tr className="border-b border-slate-800">{['Octal', 'Símbolo', 'Nome', 'Descrição'].map(h => <th key={h} className="text-left text-slate-400 pb-2 pr-3">{h}</th>)}</tr></thead>
               <tbody className="divide-y divide-slate-800/50">
-                {PERM_TABLE.map(p => <tr key={p.num}><td className="py-2 pr-3 font-mono text-amber-300">{p.num}</td><td className="py-2 pr-3 font-mono text-emerald-300">{p.sym}</td><td className="py-2 pr-3 text-slate-300">{p.name}</td><td className="py-2 text-slate-500">{tr(LINUX_EN.cmdDescs, p.desc, lang)}</td></tr>)}
+                {PERM_TABLE.map(p => <tr key={p.num}><td className="py-2 pr-3 font-mono text-amber-300">{p.num}</td><td className="py-2 pr-3 font-mono text-emerald-300">{p.sym}</td><td className="py-2 pr-3 text-slate-300">{p.name}</td><td className="py-2 text-slate-400">{p.desc}</td></tr>)}
               </tbody>
             </table>
             <div className="mt-3 space-y-2">
               {[['755', 'rwxr-xr-x', 'Scripts executáveis', 'emerald'], ['644', 'rw-r--r--', 'Ficheiros de configuração', 'sky'], ['600', 'rw-------', 'Chaves SSH privadas', 'amber'], ['777', 'rwxrwxrwx', '⚠ Nunca usar em prod!', 'rose']].map(([o, s, d, c]) => (
                 <div key={o} className={`flex items-center gap-3 p-2 rounded-lg bg-slate-900 border border-slate-800`}>
-                  <code className="font-mono text-[12px] font-bold text-slate-200 w-8">{o}</code>
-                  <code className="font-mono text-[11px] text-slate-400 w-24">{s}</code>
-                  <span className="text-[11px] text-slate-500">{d}</span>
+                  <code className="font-mono text-sm font-bold text-slate-200 w-8">{o}</code>
+                  <code className="font-mono text-xs text-slate-400 w-24">{s}</code>
+                  <span className="text-xs text-slate-400">{d}</span>
                 </div>
               ))}
             </div>
@@ -226,21 +223,21 @@ export default function LinuxSimulator() {
           <div className="space-y-2">
             {SHELL_SCRIPTS.map((s, i) => (
               <button key={i} onClick={() => setActiveScript(i)}
-                className={`w-full text-left p-3 rounded-xl text-[12px] font-medium transition-all ${activeScript === i ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300 hover:bg-slate-900'}`}>
-                <Terminal size={11} className="inline mr-1.5" />{tr(LINUX_EN.titles, s.title, lang)}
+                className={`w-full text-left p-3 rounded-xl text-sm font-medium transition-all ${activeScript === i ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300 hover:bg-slate-900'}`}>
+                <Terminal size={11} className="inline mr-1.5" />{s.title}
               </button>
             ))}
           </div>
           <div className="lg:col-span-3">
             <div className="rounded-xl border border-slate-800 overflow-hidden">
               <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-                <span className="text-[10px] font-mono text-slate-500">{SHELL_SCRIPTS[activeScript].title.toLowerCase().replace(/ /g, '-')}.sh</span>
+                <span className="text-2xs font-mono text-slate-400">{SHELL_SCRIPTS[activeScript].title.toLowerCase().replace(/ /g, '-')}.sh</span>
                 <button onClick={() => { navigator.clipboard.writeText(SHELL_SCRIPTS[activeScript].code); setCopied(true); setTimeout(() => setCopied(false), 1400); }}
-                  className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-slate-300">
+                  className="flex items-center gap-1 text-2xs text-slate-400 hover:text-slate-300">
                   {copied ? <><Check size={10} className="text-emerald-400" /><span className="text-emerald-400">Copiado</span></> : <><Copy size={10} />Copiar</>}
                 </button>
               </div>
-              <pre className="p-4 text-[11px] font-mono text-slate-300 overflow-x-auto leading-relaxed bg-slate-950">
+              <pre className="p-4 text-xs font-mono text-slate-300 overflow-x-auto leading-relaxed bg-[#181926]">
                 {SHELL_SCRIPTS[activeScript].code.split('\n').map((line, i) => (
                   <div key={i} className={line.startsWith('#') ? 'text-slate-600' : line.match(/^(if|while|for|do|done|fi|else|elif|then)\b/) ? 'text-violet-400' : line.match(/^\s*(echo|curl|kubectl|tar|find|grep|awk)/) ? 'text-sky-300' : 'text-slate-300'}>{line}</div>
                 ))}
@@ -258,11 +255,11 @@ export default function LinuxSimulator() {
             { title: 'Logs com journalctl', color: 'amber', cmds: ['journalctl -u docker -f', 'journalctl --since "2024-01-01" --until "2024-01-02"', 'journalctl -p err -b  # só erros desde o boot', 'journalctl --disk-usage', 'journalctl --vacuum-time=7d  # limpar > 7 dias'] },
             { title: 'Cron Jobs', color: 'violet', cmds: ['crontab -l  # listar crons', 'crontab -e  # editar', '# ┌─ minuto (0-59)', '# │ ┌─ hora (0-23)', '# │ │ ┌─ dia mês (1-31)', '# │ │ │ ┌─ mês (1-12)', '# 0 2 * * * /scripts/backup.sh  # daily 2am', '# */5 * * * * /scripts/health.sh  # a cada 5min'] },
           ].map(g => (
-            <div key={g.title} className="p-4 rounded-2xl border border-slate-800 bg-slate-950/70">
-              <div className={`text-[11px] font-black uppercase tracking-widest mb-3 ${g.color === 'sky' ? 'text-sky-400' : g.color === 'emerald' ? 'text-emerald-400' : g.color === 'amber' ? 'text-amber-400' : 'text-violet-400'}`}>{g.title}</div>
+            <div key={g.title} className="p-4 rounded-2xl border border-slate-800 bg-[#181926]/70">
+              <div className={`text-xs font-black uppercase tracking-widest mb-3 ${g.color === 'sky' ? 'text-sky-400' : g.color === 'emerald' ? 'text-emerald-400' : g.color === 'amber' ? 'text-amber-400' : 'text-violet-400'}`}>{g.title}</div>
               <div className="space-y-1.5">
                 {g.cmds.map((c, i) => (
-                  <div key={i} className={`font-mono text-[11px] ${c.startsWith('#') ? 'text-slate-600' : 'text-emerald-300'}`}>{c.startsWith('#') ? c : `$ ${c}`}</div>
+                  <div key={i} className={`font-mono text-xs ${c.startsWith('#') ? 'text-slate-600' : 'text-emerald-300'}`}>{c.startsWith('#') ? c : `$ ${c}`}</div>
                 ))}
               </div>
             </div>

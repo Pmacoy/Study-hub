@@ -18,6 +18,8 @@ import {
   Unlock,
   Zap,
 } from 'lucide-react';
+import { TopMetric, InfoCard, CapabilityCard } from '../shared/AzureMetricCard';
+import { StatusCard, SelectButton } from '../shared/AzureCardComponents';
 
 type Redundancy = 'LRS' | 'ZRS' | 'GRS' | 'RA-GRS' | 'GZRS' | 'RA-GZRS';
 type NetworkMode = 'public' | 'selected' | 'private';
@@ -189,7 +191,7 @@ export default function AzureStorageSimulator() {
 
   return (
     <div className="w-full space-y-6 animate-in fade-in duration-500 text-slate-200">
-      <section className="overflow-hidden rounded-3xl border border-amber-500/15 bg-slate-950/80 shadow-2xl shadow-black/10">
+      <section className="overflow-hidden rounded-3xl border border-amber-500/15 bg-[#181926]/80 shadow-2xl shadow-black/10">
         <div className="border-b border-slate-800/80 px-6 py-5 md:px-8">
           <div className="flex items-start gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-amber-500/20 bg-amber-500/10 text-amber-300">
@@ -197,13 +199,13 @@ export default function AzureStorageSimulator() {
             </div>
 
             <div className="min-w-0">
-              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-300">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-amber-300">
                 Armazenamento e resiliência
               </p>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white leading-tight">
                 Azure Storage Architecture
               </h2>
-              <p className="mt-2 max-w-2xl text-[15px] text-slate-400 leading-relaxed">
+              <p className="mt-2 max-w-2xl text-lg text-slate-400 leading-relaxed">
                 Compara redundância local, zonal e geográfica, incluindo RA-GZRS, e mostra como segurança de rede muda o desenho operacional da storage account.
               </p>
             </div>
@@ -224,14 +226,14 @@ export default function AzureStorageSimulator() {
       </section>
 
       <section className="grid grid-cols-1 xl:grid-cols-[380px_minmax(0,1fr)] gap-6">
-        <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+        <div className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6">
           <div className="flex items-center gap-2 mb-5">
             <Sparkles size={16} className="text-amber-300" />
             <h3 className="text-sm font-semibold text-white">Configurar cenário</h3>
           </div>
 
           <div>
-            <label className="mb-3 block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+            <label className="mb-3 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
               1. Escolhe a redundância
             </label>
 
@@ -257,14 +259,14 @@ export default function AzureStorageSimulator() {
 
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <p className="text-[14px] font-semibold text-white">{option}</p>
+                          <p className="text-md font-semibold text-white">{option}</p>
                           {item.badge && (
-                            <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[11px] text-amber-200">
+                            <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-xs text-amber-200">
                               {item.badge}
                             </span>
                           )}
                         </div>
-                        <p className="mt-1 text-[12px] text-slate-500 leading-relaxed">{item.short}</p>
+                        <p className="mt-1 text-sm text-slate-400 leading-relaxed">{item.short}</p>
                       </div>
 
                       {active && <CheckCircle2 size={18} className="ml-auto shrink-0 text-amber-300" />}
@@ -276,35 +278,35 @@ export default function AzureStorageSimulator() {
           </div>
 
           <div className="mt-6 border-t border-slate-800 pt-6">
-            <label className="mb-3 block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+            <label className="mb-3 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
               2. Segurança da storage account
             </label>
 
             <div className="space-y-3">
-              <NetworkButton
+              <SelectButton
                 active={networkMode === 'public'}
                 onClick={() => setNetworkMode('public')}
-                icon={<Unlock size={16} />}
+                icon={Unlock}
                 title="Public access"
-                desc="Endpoint público mais aberto, sem restrição forte por origem."
+                description="Endpoint público mais aberto, sem restrição forte por origem."
                 tone="amber"
               />
 
-              <NetworkButton
+              <SelectButton
                 active={networkMode === 'selected'}
                 onClick={() => setNetworkMode('selected')}
-                icon={<Network size={16} />}
+                icon={Network}
                 title="Selected networks"
-                desc="Mantém endpoint público, mas restringe por VNet rules, IP rules e exceções confiáveis."
+                description="Mantém endpoint público, mas restringe por VNet rules, IP rules e exceções confiáveis."
                 tone="sky"
               />
 
-              <NetworkButton
+              <SelectButton
                 active={networkMode === 'private'}
                 onClick={() => setNetworkMode('private')}
-                icon={<Lock size={16} />}
+                icon={Lock}
                 title="Private endpoint"
-                desc="Acesso pela VNet via Private Link, eliminando exposição ao public internet."
+                description="Acesso pela VNet via Private Link, eliminando exposição ao public internet."
                 tone="emerald"
               />
             </div>
@@ -318,33 +320,33 @@ export default function AzureStorageSimulator() {
                   : 'border-amber-500/20 bg-amber-500/10'
               }`}
             >
-              <p className="text-[14px] font-semibold text-white">{securityVerdict.title}</p>
-              <p className="mt-1 text-[12px] text-slate-300 leading-relaxed">{securityVerdict.desc}</p>
+              <p className="text-md font-semibold text-white">{securityVerdict.title}</p>
+              <p className="mt-1 text-sm text-slate-300 leading-relaxed">{securityVerdict.desc}</p>
             </div>
 
             <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
               <div className="flex items-center gap-2 mb-3">
                 <Search size={14} className="text-slate-400" />
-                <p className="text-[12px] font-semibold text-white">Endpoints</p>
+                <p className="text-sm font-semibold text-white">Endpoints</p>
               </div>
 
-              <div className="space-y-3 text-[12px]">
+              <div className="space-y-3 text-sm">
                 <div className="flex items-start justify-between gap-3">
-                  <span className="text-slate-500">Primary endpoint</span>
+                  <span className="text-slate-400">Primary endpoint</span>
                   <span className="font-mono text-emerald-400 text-right break-all">
                     mystorage.blob.core.windows.net
                   </span>
                 </div>
 
                 <div className="flex items-start justify-between gap-3">
-                  <span className="text-slate-500">Secondary endpoint</span>
+                  <span className="text-slate-400">Secondary endpoint</span>
                   <span className={`font-mono text-right break-all ${current.readSecondary ? 'text-sky-400' : 'text-slate-600 italic'}`}>
                     {current.readSecondary ? 'mystorage-secondary.blob.core.windows.net' : 'Leitura indisponível'}
                   </span>
                 </div>
 
                 <div className="flex items-start justify-between gap-3">
-                  <span className="text-slate-500">Acesso de rede</span>
+                  <span className="text-slate-400">Acesso de rede</span>
                   <span className="text-right text-slate-300">
                     {networkMode === 'private'
                       ? 'Private Link / endpoint privado'
@@ -359,16 +361,16 @@ export default function AzureStorageSimulator() {
         </div>
 
         <div className="space-y-6">
-          <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6 min-h-[420px] overflow-hidden">
+          <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6 min-h-[420px] overflow-hidden">
             <div className="flex items-center justify-between gap-3 mb-5">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                   Visualização da arquitetura
                 </p>
                 <h3 className="mt-1 text-sm font-semibold text-white">Distribuição dos dados</h3>
               </div>
 
-              <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-[11px] text-slate-400">
+              <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-xs text-slate-400">
                 {current.geo ? 'Geo replication ativa' : 'Sem região secundária'}
               </span>
             </div>
@@ -377,8 +379,8 @@ export default function AzureStorageSimulator() {
               <div className="flex flex-col items-center gap-5">
                 <div className="text-center">
                   <Globe size={18} className="mx-auto mb-2 text-slate-400" />
-                  <p className="text-[12px] font-semibold text-white">Region 01</p>
-                  <p className="text-[11px] text-slate-500">Primária</p>
+                  <p className="text-sm font-semibold text-white">Region 01</p>
+                  <p className="text-xs text-slate-400">Primária</p>
                 </div>
 
                 <div className="flex gap-3">
@@ -395,7 +397,7 @@ export default function AzureStorageSimulator() {
                         }`}
                       >
                         <Server size={18} className={isActive ? 'text-amber-300' : 'text-slate-600'} />
-                        <span className="text-[11px] font-medium text-slate-200">AZ {i}</span>
+                        <span className="text-xs font-medium text-slate-200">AZ {i}</span>
 
                         <div className="flex gap-1">
                           {current.zonal ? (
@@ -413,7 +415,7 @@ export default function AzureStorageSimulator() {
                   })}
                 </div>
 
-                <span className={`text-[11px] font-medium ${current.zonal ? 'text-amber-300' : 'text-slate-500'}`}>
+                <span className={`text-xs font-medium ${current.zonal ? 'text-amber-300' : 'text-slate-400'}`}>
                   {current.zonal
                     ? 'Replicação síncrona entre zonas na primária'
                     : 'Replicação local dentro de um único datacenter'}
@@ -423,21 +425,21 @@ export default function AzureStorageSimulator() {
               <div className="flex flex-col items-center justify-center pt-20">
                 <div className={`h-1.5 w-24 rounded-full transition-all duration-700 ${current.geo ? 'bg-amber-400 shadow-[0_0_18px_rgba(245,158,11,0.35)]' : 'bg-slate-800'}`} />
                 <Zap size={16} className={`mt-2 ${current.geo ? 'text-amber-300 animate-pulse' : 'text-slate-700'}`} />
-                <span className={`mt-2 text-[11px] ${current.geo ? 'text-amber-300' : 'text-slate-600'}`}>
+                <span className={`mt-2 text-xs ${current.geo ? 'text-amber-300' : 'text-slate-600'}`}>
                   {current.geo ? 'Geo replicação assíncrona' : 'Sem geo replicação'}
                 </span>
               </div>
 
               <div className={`flex flex-col items-center gap-5 transition-all duration-500 ${current.geo ? 'opacity-100' : 'opacity-30 grayscale'}`}>
                 <div className="text-center">
-                  <Globe size={18} className="mx-auto mb-2 text-slate-500" />
-                  <p className="text-[12px] font-semibold text-white">Region 02</p>
-                  <p className="text-[11px] text-slate-500">Secundária</p>
+                  <Globe size={18} className="mx-auto mb-2 text-slate-400" />
+                  <p className="text-sm font-semibold text-white">Region 02</p>
+                  <p className="text-xs text-slate-400">Secundária</p>
                 </div>
 
                 <div className="relative w-20 h-28 rounded-2xl border border-amber-500/20 bg-amber-500/5 flex flex-col items-center justify-center gap-2">
                   <Server size={18} className="text-amber-400/70" />
-                  <span className="text-[11px] font-medium text-amber-200">LRS</span>
+                  <span className="text-xs font-medium text-amber-200">LRS</span>
                   <div className="flex gap-1">
                     <Box size={10} className="text-amber-500" />
                     <Box size={10} className="text-amber-500" />
@@ -451,14 +453,14 @@ export default function AzureStorageSimulator() {
                   )}
                 </div>
 
-                <span className={`text-[11px] font-medium ${current.readSecondary ? 'text-sky-300' : 'text-slate-500'}`}>
+                <span className={`text-xs font-medium ${current.readSecondary ? 'text-sky-300' : 'text-slate-400'}`}>
                   {current.readSecondary ? 'Leitura ativa no secundário' : 'Secundário para failover'}
                 </span>
               </div>
             </div>
           </section>
 
-          <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+          <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6">
             <div className="flex items-center gap-2 mb-4">
               <ShieldCheck size={16} className="text-amber-300" />
               <h3 className="text-sm font-semibold text-white">{current.title}</h3>
@@ -479,10 +481,10 @@ export default function AzureStorageSimulator() {
               <div className="flex items-start gap-3">
                 <AlertTriangle size={16} className="mt-0.5 text-amber-300" />
                 <div>
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-amber-200">
+                  <p className="text-sm font-semibold uppercase tracking-[0.12em] text-amber-200">
                     Leitura de prova
                   </p>
-                  <p className="mt-1 text-[13px] text-slate-300 leading-relaxed">
+                  <p className="mt-1 text-base text-slate-300 leading-relaxed">
                     {current.examFit}
                   </p>
                 </div>
@@ -496,15 +498,15 @@ export default function AzureStorageSimulator() {
             </div>
           </section>
 
-          <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+          <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6">
             <div className="flex items-center gap-2 mb-4">
               <Activity size={16} className="text-amber-300" />
               <h3 className="text-sm font-semibold text-white">Matriz rápida AZ-104</h3>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-[12px]">
-                <thead className="text-slate-500">
+              <table className="w-full text-left text-sm">
+                <thead className="text-slate-400">
                   <tr className="border-b border-slate-800">
                     <th className="py-3 pr-4 font-semibold">Modelo</th>
                     <th className="py-3 pr-4 font-semibold">Geo</th>
@@ -536,114 +538,4 @@ export default function AzureStorageSimulator() {
   );
 }
 
-function TopMetric({
-  label,
-  value,
-  hint,
-  tone,
-}: {
-  label: string;
-  value: string;
-  hint: string;
-  tone: 'amber' | 'sky' | 'emerald';
-}) {
-  const styles = {
-    amber: 'border-amber-500/20 bg-amber-500/5 text-amber-200',
-    sky: 'border-sky-500/20 bg-sky-500/5 text-sky-200',
-    emerald: 'border-emerald-500/20 bg-emerald-500/5 text-emerald-200',
-  };
 
-  return (
-    <div className={`rounded-2xl border p-4 ${styles[tone]}`}>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] opacity-75">{label}</p>
-      <p className="mt-2 text-[18px] font-semibold leading-tight">{value}</p>
-      <p className="mt-1 text-[12px] opacity-70">{hint}</p>
-    </div>
-  );
-}
-
-function NetworkButton({
-  active,
-  onClick,
-  icon,
-  title,
-  desc,
-  tone,
-}: {
-  active: boolean;
-  onClick: () => void;
-  icon: React.ReactNode;
-  title: string;
-  desc: string;
-  tone: 'amber' | 'sky' | 'emerald';
-}) {
-  const activeStyle = {
-    amber: 'border-amber-500/20 bg-amber-500/10',
-    sky: 'border-sky-500/20 bg-sky-500/10',
-    emerald: 'border-emerald-500/20 bg-emerald-500/10',
-  };
-
-  return (
-    <button
-      onClick={onClick}
-      className={`w-full rounded-2xl border p-4 text-left transition-all ${
-        active ? activeStyle[tone] : 'border-slate-800 bg-slate-900/60 hover:border-slate-700'
-      }`}
-    >
-      <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-950 text-slate-300">
-          {icon}
-        </div>
-        <div className="min-w-0">
-          <p className="text-[14px] font-semibold text-white">{title}</p>
-          <p className="mt-1 text-[12px] text-slate-500 leading-relaxed">{desc}</p>
-        </div>
-      </div>
-    </button>
-  );
-}
-
-function InfoCard({
-  label,
-  text,
-  highlight = false,
-}: {
-  label: string;
-  text: string;
-  highlight?: boolean;
-}) {
-  return (
-    <div className={`rounded-2xl border p-4 ${highlight ? 'border-amber-500/20 bg-amber-500/10' : 'border-slate-800 bg-slate-900/50'}`}>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">{label}</p>
-      <p className="mt-2 text-[13px] text-slate-300 leading-relaxed">{text}</p>
-    </div>
-  );
-}
-
-function CapabilityCard({
-  title,
-  active,
-}: {
-  title: string;
-  active: boolean;
-}) {
-  return (
-    <div className={`rounded-2xl border p-4 ${active ? 'border-emerald-500/20 bg-emerald-500/10' : 'border-slate-800 bg-slate-900/50'}`}>
-      <div className="flex items-center gap-3">
-        {active ? (
-          <CheckCircle2 size={18} className="text-emerald-300" />
-        ) : (
-          <AlertTriangle size={18} className="text-slate-600" />
-        )}
-        <div>
-          <p className={`text-[14px] font-medium ${active ? 'text-emerald-100' : 'text-slate-300'}`}>
-            {title}
-          </p>
-          <p className="mt-1 text-[12px] text-slate-500">
-            {active ? 'Disponível neste modelo' : 'Não disponível neste modelo'}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}

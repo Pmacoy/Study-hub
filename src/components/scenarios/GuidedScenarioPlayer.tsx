@@ -14,18 +14,18 @@ function Artifact({ label, language, content }: { label: string; language?: stri
   return (
     <div className="rounded-xl border border-slate-800 overflow-hidden">
       <div className="flex items-center justify-between px-3 py-2 bg-slate-900 border-b border-slate-800">
-        <div className="flex items-center gap-2 text-[11px] text-slate-400 font-mono">
-          <Terminal size={11} className="text-slate-500" />
+        <div className="flex items-center gap-2 text-xs text-slate-400 font-mono">
+          <Terminal size={11} className="text-slate-400" />
           {label}
         </div>
         <button
           onClick={() => { navigator.clipboard.writeText(content); setCopied(true); setTimeout(() => setCopied(false), 1400); }}
-          className="text-slate-500 hover:text-slate-300"
+          className="text-slate-400 hover:text-slate-300"
         >
           {copied ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
         </button>
       </div>
-      <pre className={`p-3 text-[11px] leading-relaxed overflow-x-auto ${isCode ? 'bg-slate-950 font-mono' : 'bg-slate-950/50 text-slate-300'}`}>
+      <pre className={`p-3 text-xs leading-relaxed overflow-x-auto ${isCode ? 'bg-[#181926] font-mono' : 'bg-[#181926]/50 text-slate-300'}`}>
         {content}
       </pre>
     </div>
@@ -110,7 +110,7 @@ export default function GuidedScenarioPlayer({ scenario, onExit, onComplete }: P
       <div className="space-y-5">
         <div className="flex items-start justify-between gap-3">
           <button onClick={onExit}
-            className="flex items-center gap-2 text-[12px] text-slate-500 hover:text-slate-300">
+            className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-300">
             <ArrowLeft size={14} /> Voltar aos cenários
           </button>
         </div>
@@ -120,37 +120,37 @@ export default function GuidedScenarioPlayer({ scenario, onExit, onComplete }: P
             <Trophy size={20} className={gradeCopy.tone} />
             <h2 className={`text-lg font-bold ${gradeCopy.tone}`}>{gradeCopy.title}</h2>
           </div>
-          <p className="text-[13px] text-slate-300">{gradeCopy.body}</p>
+          <p className="text-base text-slate-300">{gradeCopy.body}</p>
           <div className="mt-4 grid grid-cols-3 gap-3">
             <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
               <div className="text-xl font-black text-white">{correctFirstTry}/{totalSteps}</div>
-              <div className="text-[9px] text-slate-500 uppercase mt-1">1ª tentativa</div>
+              <div className="text-2xs text-slate-400 uppercase mt-1">1ª tentativa</div>
             </div>
             <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
               <div className="text-xl font-black text-white">{answersLog.length}</div>
-              <div className="text-[9px] text-slate-500 uppercase mt-1">Passos</div>
+              <div className="text-2xs text-slate-400 uppercase mt-1">Passos</div>
             </div>
             <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
               <div className="text-xl font-black text-white">{Math.round((Date.now() - startTs) / 1000)}s</div>
-              <div className="text-[9px] text-slate-500 uppercase mt-1">Duração</div>
+              <div className="text-2xs text-slate-400 uppercase mt-1">Duração</div>
             </div>
           </div>
         </section>
 
-        <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-6 space-y-4">
+        <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-6 space-y-4">
           <div>
-            <div className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1">Root cause</div>
-            <p className="text-[13px] text-slate-300 leading-relaxed">{scenario.resolution.rootCause}</p>
+            <div className="text-2xs font-black text-rose-400 uppercase tracking-widest mb-1">Root cause</div>
+            <p className="text-base text-slate-300 leading-relaxed">{scenario.resolution.rootCause}</p>
           </div>
           <div>
-            <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Correcção aplicada</div>
-            <p className="text-[13px] text-slate-300 leading-relaxed">{scenario.resolution.fix}</p>
+            <div className="text-2xs font-black text-emerald-400 uppercase tracking-widest mb-1">Correcção aplicada</div>
+            <p className="text-base text-slate-300 leading-relaxed">{scenario.resolution.fix}</p>
           </div>
           <div>
-            <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-2">Prevenções</div>
+            <div className="text-2xs font-black text-sky-400 uppercase tracking-widest mb-2">Prevenções</div>
             <ul className="space-y-1.5">
               {scenario.resolution.preventions.map((p, i) => (
-                <li key={i} className="flex gap-2 text-[12px] text-slate-300">
+                <li key={i} className="flex gap-2 text-sm text-slate-300">
                   <span className="text-sky-400 shrink-0">→</span>{p}
                 </li>
               ))}
@@ -160,7 +160,7 @@ export default function GuidedScenarioPlayer({ scenario, onExit, onComplete }: P
 
         <div className="flex gap-3">
           <button onClick={onExit}
-            className="flex-1 px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-slate-300 text-[13px] font-semibold hover:border-slate-700">
+            className="flex-1 px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-slate-300 text-base font-semibold hover:border-slate-700">
             Voltar aos cenários
           </button>
         </div>
@@ -174,10 +174,10 @@ export default function GuidedScenarioPlayer({ scenario, onExit, onComplete }: P
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <button onClick={onExit}
-          className="flex items-center gap-2 text-[12px] text-slate-500 hover:text-slate-300">
+          className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-300">
           <ArrowLeft size={14} /> Sair do cenário
         </button>
-        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+        <div className="text-2xs font-black text-slate-400 uppercase tracking-widest">
           Passo {stepIdx + 1} de {scenario.steps.length}
         </div>
       </div>
@@ -187,8 +187,8 @@ export default function GuidedScenarioPlayer({ scenario, onExit, onComplete }: P
         <div className="flex items-start gap-3">
           <AlertTriangle size={18} className="text-amber-400 shrink-0 mt-0.5" />
           <div>
-            <h2 className="text-[15px] font-bold text-white">{scenario.title}</h2>
-            <p className="mt-1.5 text-[12px] text-slate-300 leading-relaxed">{scenario.hook}</p>
+            <h2 className="text-lg font-bold text-white">{scenario.title}</h2>
+            <p className="mt-1.5 text-sm text-slate-300 leading-relaxed">{scenario.hook}</p>
           </div>
         </div>
         <div className="mt-4 h-1 rounded-full bg-slate-800 overflow-hidden">
@@ -199,7 +199,7 @@ export default function GuidedScenarioPlayer({ scenario, onExit, onComplete }: P
       {/* Artifacts panel */}
       {visibleArtifacts.length > 0 && (
         <section className="space-y-2">
-          <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Informação recolhida</div>
+          <div className="text-2xs font-black text-slate-400 uppercase tracking-widest">Informação recolhida</div>
           <div className="space-y-2">
             {visibleArtifacts.map(a => <Artifact key={a.id} label={a.label} language={a.language} content={a.content} />)}
           </div>
@@ -207,9 +207,9 @@ export default function GuidedScenarioPlayer({ scenario, onExit, onComplete }: P
       )}
 
       {/* Question */}
-      <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
-        <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-2">Decisão</div>
-        <h3 className="text-[14px] font-bold text-white mb-4">{currentStep.prompt}</h3>
+      <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5">
+        <div className="text-2xs font-black text-violet-400 uppercase tracking-widest mb-2">Decisão</div>
+        <h3 className="text-md font-bold text-white mb-4">{currentStep.prompt}</h3>
 
         <div className="space-y-2">
           {currentStep.options.map(opt => {
@@ -230,13 +230,13 @@ export default function GuidedScenarioPlayer({ scenario, onExit, onComplete }: P
                   className={`w-full text-left rounded-2xl border p-4 transition-all ${cls} ${isDisabled ? 'cursor-default' : ''}`}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="shrink-0 w-6 h-6 rounded-full border border-current flex items-center justify-center text-[10px] font-black">
+                    <div className="shrink-0 w-6 h-6 rounded-full border border-current flex items-center justify-center text-2xs font-black">
                       {showFeedback && opt.correct ? <Check size={12} /> : showFeedback && !opt.correct ? <X size={12} /> : opt.id.toUpperCase()}
                     </div>
                     <div className="flex-1">
-                      <div className="text-[12px] font-medium text-slate-200">{opt.label}</div>
+                      <div className="text-sm font-medium text-slate-200">{opt.label}</div>
                       {showFeedback && (
-                        <div className={`mt-2 text-[11px] leading-relaxed ${opt.correct ? 'text-emerald-300' : 'text-rose-300'}`}>
+                        <div className={`mt-2 text-xs leading-relaxed ${opt.correct ? 'text-emerald-300' : 'text-rose-300'}`}>
                           {opt.feedback}
                         </div>
                       )}
@@ -252,14 +252,14 @@ export default function GuidedScenarioPlayer({ scenario, onExit, onComplete }: P
           <div className="mt-4 p-3 rounded-2xl border border-sky-500/25 bg-sky-500/5">
             <div className="flex items-start gap-2">
               <Lightbulb size={14} className="text-sky-400 shrink-0 mt-0.5" />
-              <div className="text-[11px] text-sky-200 leading-relaxed">{currentStep.teachingNote}</div>
+              <div className="text-xs text-sky-200 leading-relaxed">{currentStep.teachingNote}</div>
             </div>
           </div>
         )}
 
         {picked?.correct && (
           <button onClick={handleNext}
-            className="mt-5 w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-semibold text-[13px] hover:bg-emerald-500/25 transition-all">
+            className="mt-5 w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-semibold text-base hover:bg-emerald-500/25 transition-all">
             {isLastStep ? 'Ver post-mortem' : 'Próximo passo'} <ArrowRight size={14} />
           </button>
         )}

@@ -39,7 +39,7 @@ export default function AzureIdentitySimulator() {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-6 bg-slate-950 text-slate-50 rounded-xl shadow-2xl border border-slate-800 space-y-8 animate-in fade-in duration-500">
+    <div className="w-full max-w-5xl mx-auto p-6 bg-[#181926] text-slate-50 rounded-xl shadow-2xl border border-slate-800 space-y-8 animate-in fade-in duration-500">
       
       <div className="flex justify-between items-start">
         <div>
@@ -53,18 +53,18 @@ export default function AzureIdentitySimulator() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="bg-slate-900/50 p-5 rounded-lg border border-slate-800 space-y-4">
-          <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+          <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
             <UserPlus size={14} /> Provisionamento
           </h3>
           <div className="space-y-3">
             <input 
               type="text" placeholder="Nome do Usuário" value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-700 p-2.5 rounded text-sm outline-none focus:border-sky-500"
+              className="w-full bg-[#181926] border border-slate-700 p-2.5 rounded text-sm outline-none focus:border-sky-500"
             />
             <select 
               value={newGroup} onChange={(e) => setNewGroup(e.target.value as any)}
-              className="w-full bg-slate-950 border border-slate-700 p-2.5 rounded text-sm"
+              className="w-full bg-[#181926] border border-slate-700 p-2.5 rounded text-sm"
             >
               <option value="Admin">Global Admin</option>
               <option value="Dev">Application Developer</option>
@@ -78,12 +78,12 @@ export default function AzureIdentitySimulator() {
 
         <div className="lg:col-span-2 bg-slate-900/30 rounded-lg border border-slate-800 overflow-hidden">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-900 text-slate-500 border-b border-slate-800">
+            <thead className="bg-slate-900 text-slate-400 border-b border-slate-800">
               <tr>
-                <th className="p-4 text-[10px] uppercase font-black">Identidade</th>
-                <th className="p-4 text-[10px] uppercase font-black">Grupo / Role</th>
-                <th className="p-4 text-[10px] uppercase font-black text-center">SSPR</th>
-                <th className="p-4 text-[10px] uppercase font-black text-right">Ação</th>
+                <th className="p-4 text-2xs uppercase font-black">Identidade</th>
+                <th className="p-4 text-2xs uppercase font-black">Grupo / Role</th>
+                <th className="p-4 text-2xs uppercase font-black text-center">SSPR</th>
+                <th className="p-4 text-2xs uppercase font-black text-right">Ação</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800">
@@ -91,10 +91,10 @@ export default function AzureIdentitySimulator() {
                 <tr key={user.id} className="hover:bg-slate-800/30">
                   <td className="p-4">
                     <div className="font-bold">{user.name}</div>
-                    <div className="text-[10px] text-slate-500 font-mono">{user.email}</div>
+                    <div className="text-2xs text-slate-400 font-mono">{user.email}</div>
                   </td>
                   <td className="p-4">
-                    <span className="bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded-full text-[10px] font-bold">{user.group}</span>
+                    <span className="bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded-full text-2xs font-bold">{user.group}</span>
                   </td>
                   <td className="p-4 text-center">
                     <button onClick={() => toggleSspr(user.id)} className={`p-1.5 rounded ${user.ssprEnabled ? 'text-emerald-400' : 'text-slate-600'}`}>
@@ -114,16 +114,16 @@ export default function AzureIdentitySimulator() {
       {/* CONCEITOS PRIMORDIAIS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-slate-800 pt-6">
         <div className="bg-slate-900/40 p-4 rounded-lg border border-slate-800">
-          <h4 className="text-sky-400 font-bold text-[10px] uppercase mb-2 flex items-center gap-2"><Users size={12}/> Usuários & Grupos</h4>
-          <p className="text-[11px] text-slate-400 leading-relaxed">No Azure, grupos podem ser <strong>Assigned</strong> (manual) ou <strong>Dynamic</strong> (baseado em regras de atributos).</p>
+          <h4 className="text-sky-400 font-bold text-2xs uppercase mb-2 flex items-center gap-2"><Users size={12}/> Usuários & Grupos</h4>
+          <p className="text-xs text-slate-400 leading-relaxed">No Azure, grupos podem ser <strong>Assigned</strong> (manual) ou <strong>Dynamic</strong> (baseado em regras de atributos).</p>
         </div>
         <div className="bg-slate-900/40 p-4 rounded-lg border border-slate-800">
-          <h4 className="text-emerald-400 font-bold text-[10px] uppercase mb-2 flex items-center gap-2"><Key size={12}/> SSPR</h4>
-          <p className="text-[11px] text-slate-400 leading-relaxed">O <strong>Self-Service Password Reset</strong> reduz chamados de suporte. Requer licenciamento <strong>P1 ou P2</strong>.</p>
+          <h4 className="text-emerald-400 font-bold text-2xs uppercase mb-2 flex items-center gap-2"><Key size={12}/> SSPR</h4>
+          <p className="text-xs text-slate-400 leading-relaxed">O <strong>Self-Service Password Reset</strong> reduz chamados de suporte. Requer licenciamento <strong>P1 ou P2</strong>.</p>
         </div>
         <div className="bg-slate-900/40 p-4 rounded-lg border border-slate-800">
-          <h4 className="text-rose-400 font-bold text-[10px] uppercase mb-2 flex items-center gap-2"><ShieldAlert size={12}/> MFA</h4>
-          <p className="text-[11px] text-slate-400 leading-relaxed">Multi-Factor Authentication é a maior defesa contra ataques de identidade no Entra ID.</p>
+          <h4 className="text-rose-400 font-bold text-2xs uppercase mb-2 flex items-center gap-2"><ShieldAlert size={12}/> MFA</h4>
+          <p className="text-xs text-slate-400 leading-relaxed">Multi-Factor Authentication é a maior defesa contra ataques de identidade no Entra ID.</p>
         </div>
       </div>
     </div>

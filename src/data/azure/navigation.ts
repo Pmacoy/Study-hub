@@ -99,12 +99,6 @@ export const menuGroups: MenuGroup[] = [
         sublabel: 'Logs, ASR e Vault',
         icon: Activity,
       },
-      {
-        id: 'architecture',
-        label: 'Arquitectura',
-        sublabel: 'Como tudo se liga',
-        icon: Network,
-      },
     ],
   },
 ];

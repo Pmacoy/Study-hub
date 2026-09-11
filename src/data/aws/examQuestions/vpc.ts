@@ -205,15 +205,15 @@ export const vpcQuestions: AwsQuestion[] = [
     id: 2015,
     topic: 'vpc',
     topicLabel: 'VPC & Networking',
-    question: 'Que CIDR seria INVÁLIDO para uma VPC?',
+    question: 'Que CIDR seria INVÁLIDO para uma VPC na AWS?',
     options: [
       '10.0.0.0/16',
       '172.16.0.0/12',
       '192.168.0.0/16',
-      '10.0.0.0/28',
+      '10.0.0.0/8',
     ],
     correctIndex: 3,
-    explanation: 'AWS aceita CIDRs entre /16 (65k IPs) e /28 (16 IPs) para VPCs. Uma /28 tem apenas 11 IPs úteis (16 - 5 reservados). Um CIDR maior que /16 (ex: /15) também é inválido.',
+    explanation: 'AWS aceita CIDRs entre /16 (65k IPs) e /28 (16 IPs) para VPCs. /8 tem 16M IPs — excede o máximo de /16. /16, /12 e /192.168.0.0/16 são todos CIDRs RFC 1918 válidos dentro do range permitido.',
     difficulty: 'medium',
   },
   {

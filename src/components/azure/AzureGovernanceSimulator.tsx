@@ -53,7 +53,7 @@ export default function AzureGovernanceSimulator() {
 
   return (
     <div className="w-full space-y-6 animate-in fade-in duration-500">
-      <section className="overflow-hidden rounded-3xl border border-violet-500/15 bg-slate-950/80 shadow-2xl shadow-black/10">
+      <section className="overflow-hidden rounded-3xl border border-violet-500/15 bg-[#181926]/80 shadow-2xl shadow-black/10">
         <div className="border-b border-slate-800/80 px-6 py-5 md:px-8">
           <div className="flex items-start gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-violet-500/20 bg-violet-500/10 text-violet-300">
@@ -61,13 +61,13 @@ export default function AzureGovernanceSimulator() {
             </div>
 
             <div className="min-w-0">
-              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-violet-300">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-violet-300">
                 Governança e conformidade
               </p>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white leading-tight">
                 Policy, locks e herança de escopo
               </h2>
-              <p className="mt-2 max-w-2xl text-[15px] text-slate-400 leading-relaxed">
+              <p className="mt-2 max-w-2xl text-lg text-slate-400 leading-relaxed">
                 Simula como regras aplicadas em níveis mais altos descem na hierarquia do Azure e afetam subscriptions e resource groups.
               </p>
             </div>
@@ -97,14 +97,14 @@ export default function AzureGovernanceSimulator() {
       </section>
 
       <section className="grid grid-cols-1 xl:grid-cols-[360px_minmax(0,1fr)] gap-6">
-        <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+        <div className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6">
           <div className="flex items-center gap-2 mb-5">
             <Sparkles size={16} className="text-violet-300" />
             <h3 className="text-sm font-semibold text-white">Configurar cenário</h3>
           </div>
 
           <div>
-            <label className="mb-3 block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+            <label className="mb-3 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
               1. Escolhe o escopo
             </label>
 
@@ -124,10 +124,10 @@ export default function AzureGovernanceSimulator() {
                   >
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <p className={`text-[14px] font-semibold ${selected ? 'text-violet-200' : 'text-white'}`}>
+                        <p className={`text-md font-semibold ${selected ? 'text-violet-200' : 'text-white'}`}>
                           {scope}
                         </p>
-                        <p className="mt-1 text-[12px] text-slate-500">
+                        <p className="mt-1 text-sm text-slate-400">
                           {scope === 'Management Group' && 'Afeta subscriptions e resource groups abaixo.'}
                           {scope === 'Subscription' && 'Afeta a subscription e os resource groups descendentes.'}
                           {scope === 'Resource Group' && 'Afeta apenas o grupo de recursos escolhido.'}
@@ -143,7 +143,7 @@ export default function AzureGovernanceSimulator() {
           </div>
 
           <div className="mt-6 border-t border-slate-800 pt-6">
-            <label className="mb-3 block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+            <label className="mb-3 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
               2. Ativa as regras
             </label>
 
@@ -161,17 +161,17 @@ export default function AzureGovernanceSimulator() {
                     className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${
                       hasPolicy
                         ? 'border-rose-500/20 bg-rose-500/10 text-rose-300'
-                        : 'border-slate-800 bg-slate-950 text-slate-500'
+                        : 'border-slate-800 bg-[#181926] text-slate-400'
                     }`}
                   >
                     <Ban size={16} />
                   </div>
 
                   <div className="min-w-0">
-                    <p className={`text-[14px] font-semibold ${hasPolicy ? 'text-rose-200' : 'text-white'}`}>
+                    <p className={`text-md font-semibold ${hasPolicy ? 'text-rose-200' : 'text-white'}`}>
                       Azure Policy
                     </p>
-                    <p className="mt-1 text-[12px] text-slate-500 leading-relaxed">
+                    <p className="mt-1 text-sm text-slate-400 leading-relaxed">
                       Controla conformidade e define o que pode ou não pode ser criado.
                     </p>
                   </div>
@@ -191,17 +191,17 @@ export default function AzureGovernanceSimulator() {
                     className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${
                       hasLock
                         ? 'border-amber-500/20 bg-amber-500/10 text-amber-300'
-                        : 'border-slate-800 bg-slate-950 text-slate-500'
+                        : 'border-slate-800 bg-[#181926] text-slate-400'
                     }`}
                   >
                     <Lock size={16} />
                   </div>
 
                   <div className="min-w-0">
-                    <p className={`text-[14px] font-semibold ${hasLock ? 'text-amber-200' : 'text-white'}`}>
+                    <p className={`text-md font-semibold ${hasLock ? 'text-amber-200' : 'text-white'}`}>
                       Resource Lock
                     </p>
-                    <p className="mt-1 text-[12px] text-slate-500 leading-relaxed">
+                    <p className="mt-1 text-sm text-slate-400 leading-relaxed">
                       Protege recursos contra modificação ou eliminação acidental.
                     </p>
                   </div>
@@ -211,16 +211,16 @@ export default function AzureGovernanceSimulator() {
           </div>
 
           <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500 mb-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400 mb-2">
               Resumo do cenário
             </p>
-            <p className="text-[13px] text-slate-300 leading-relaxed">
+            <p className="text-base text-slate-300 leading-relaxed">
               {summary}
             </p>
           </div>
         </div>
 
-        <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+        <div className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6">
           <div className="flex items-center gap-2 mb-5">
             <ShieldCheck size={16} className="text-slate-400" />
             <h3 className="text-sm font-semibold text-white">Visualização de herança</h3>
@@ -301,9 +301,9 @@ function TopMetric({
 
   return (
     <div className={`rounded-2xl border p-4 ${styles[tone]}`}>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] opacity-75">{label}</p>
-      <p className="mt-2 text-[18px] font-semibold leading-tight">{value}</p>
-      <p className="mt-1 text-[12px] opacity-70">{hint}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.12em] opacity-75">{label}</p>
+      <p className="mt-2 text-xl font-semibold leading-tight">{value}</p>
+      <p className="mt-1 text-sm opacity-70">{hint}</p>
     </div>
   );
 }
@@ -332,7 +332,7 @@ function HierarchyCard({
           ? 'border-violet-500/30 bg-violet-500/10 shadow-lg shadow-violet-950/20'
           : affected
           ? 'border-rose-500/15 bg-slate-900/70'
-          : 'border-slate-800 bg-slate-950/50'
+          : 'border-slate-800 bg-[#181926]/50'
       }`}
     >
       <div className="flex items-start gap-4">
@@ -342,7 +342,7 @@ function HierarchyCard({
               ? 'border-violet-500/20 bg-violet-500/10 text-violet-300'
               : affected
               ? 'border-rose-500/15 bg-rose-500/5 text-rose-300'
-              : 'border-slate-800 bg-slate-900 text-slate-500'
+              : 'border-slate-800 bg-slate-900 text-slate-400'
           }`}
         >
           {icon}
@@ -350,32 +350,32 @@ function HierarchyCard({
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h4 className="text-[16px] font-semibold text-white">{label}</h4>
+            <h4 className="text-lg font-semibold text-white">{label}</h4>
             {active && (
-              <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-2.5 py-1 text-[11px] text-violet-200">
+              <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-2.5 py-1 text-xs text-violet-200">
                 Escopo selecionado
               </span>
             )}
             {!active && affected && (
-              <span className="rounded-full border border-rose-500/20 bg-rose-500/10 px-2.5 py-1 text-[11px] text-rose-200">
+              <span className="rounded-full border border-rose-500/20 bg-rose-500/10 px-2.5 py-1 text-xs text-rose-200">
                 Herança ativa
               </span>
             )}
           </div>
 
-          <p className="mt-2 text-[13px] text-slate-400 leading-relaxed">
+          <p className="mt-2 text-base text-slate-400 leading-relaxed">
             {subtitle}
           </p>
 
           {(hasPolicy || hasLock) && (
             <div className="mt-4 flex flex-wrap gap-2">
               {hasPolicy && (
-                <span className="rounded-full border border-rose-500/20 bg-rose-500/10 px-2.5 py-1 text-[11px] font-medium text-rose-200">
+                <span className="rounded-full border border-rose-500/20 bg-rose-500/10 px-2.5 py-1 text-xs font-medium text-rose-200">
                   Policy aplicada
                 </span>
               )}
               {hasLock && (
-                <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-[11px] font-medium text-amber-200">
+                <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-200">
                   Lock aplicado
                 </span>
               )}
@@ -412,15 +412,15 @@ function RuleCard({
   };
 
   return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
+    <div className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5">
       <div className="flex items-start gap-3">
         <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border ${styles[tone]}`}>
           {icon}
         </div>
 
         <div>
-          <h4 className="text-[15px] font-semibold text-white">{title}</h4>
-          <p className="mt-2 text-[13px] text-slate-400 leading-relaxed">
+          <h4 className="text-lg font-semibold text-white">{title}</h4>
+          <p className="mt-2 text-base text-slate-400 leading-relaxed">
             {text}
           </p>
         </div>

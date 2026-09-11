@@ -3,7 +3,7 @@ import type { Domain } from './platform';
 export type CertStatus = 'active' | 'coming-soon' | 'achieved';
 
 export interface CertificationMeta {
-  id: string;                   // e.g. "az-104", "az-305", "aws-saa-c03", "gcp-ace"
+  id: string;                   // e.g. "az-104", "az-305", "aws-saa-c03"
   domain: Domain;               // parent cloud domain
   code: string;                  // "AZ-104"
   label: string;                 // "Azure Administrator"
@@ -37,6 +37,16 @@ export const AZURE_CERTS: CertificationMeta[] = [
     moduleCount: 0,
     status: 'coming-soon',
   },
+  {
+    id: 'az-400',
+    domain: 'azure',
+    code: 'AZ-400',
+    label: 'Azure DevOps Engineer Expert',
+    subtitle: 'Pipelines · Repositórios · Boards · Segurança · Artefatos · Ambientes',
+    totalQuestions: 35,
+    moduleCount: 6,
+    status: 'active',
+  },
 ];
 
 // ── AWS certifications ──────────────────────────────────────────────────
@@ -47,42 +57,15 @@ export const AWS_CERTS: CertificationMeta[] = [
     code: 'SAA-C03',
     label: 'AWS Solutions Architect Associate',
     subtitle: 'EC2 · VPC · S3 · RDS · IAM · Well-Architected',
-    totalQuestions: 118,
+    totalQuestions: 98,
     moduleCount: 6,
     status: 'active',
-  },
-];
-
-// ── GCP certifications ──────────────────────────────────────────────────
-export const GCP_CERTS: CertificationMeta[] = [
-  {
-    id: 'gcp-ace',
-    domain: 'gcp',
-    code: 'ACE',
-    label: 'Associate Cloud Engineer',
-    subtitle: 'GCE · GKE · IAM · Cloud Storage · gcloud CLI · Deployment Manager',
-    totalQuestions: 0,
-    moduleCount: 0,
-    status: 'achieved',
-    achievedDate: 'Jan 2026',
-    validUntil: 'Jan 2029',
-  },
-  {
-    id: 'gcp-pca',
-    domain: 'gcp',
-    code: 'PCA',
-    label: 'Professional Cloud Architect',
-    subtitle: 'Design de sistemas · Migração · Compliance · Operações',
-    totalQuestions: 0,
-    moduleCount: 0,
-    status: 'coming-soon',
   },
 ];
 
 export const CERTS_BY_DOMAIN: Partial<Record<Domain, CertificationMeta[]>> = {
   azure: AZURE_CERTS,
   aws: AWS_CERTS,
-  gcp: GCP_CERTS,
 };
 
 export function getCertsFor(domain: Domain): CertificationMeta[] {
@@ -90,5 +73,5 @@ export function getCertsFor(domain: Domain): CertificationMeta[] {
 }
 
 export function findCert(certId: string): CertificationMeta | undefined {
-  return [...AZURE_CERTS, ...AWS_CERTS, ...GCP_CERTS].find(c => c.id === certId);
+  return [...AZURE_CERTS, ...AWS_CERTS].find(c => c.id === certId);
 }

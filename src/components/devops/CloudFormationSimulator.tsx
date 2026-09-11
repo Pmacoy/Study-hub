@@ -8,13 +8,13 @@ function Code({ code, lang = '' }: { code: string; lang?: string }) {
   return (
     <div className="rounded-xl border border-slate-800 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="text-[10px] font-mono text-slate-500">{lang}</span>
+        <span className="text-2xs font-mono text-slate-400">{lang}</span>
         <button onClick={() => { navigator.clipboard.writeText(code); setC(true); setTimeout(() => setC(false), 1400); }}
-          className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-slate-300">
+          className="flex items-center gap-1 text-2xs text-slate-400 hover:text-slate-300">
           {c ? <><Check size={10} className="text-emerald-400" /><span className="text-emerald-400">Copiado</span></> : <><Copy size={10} />Copiar</>}
         </button>
       </div>
-      <pre className="p-4 text-[11px] font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 text-xs font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => (
           <div key={i} className={
             line.trim().startsWith('#') ? 'text-slate-600'
@@ -32,15 +32,15 @@ function Code({ code, lang = '' }: { code: string; lang?: string }) {
 function QA({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-950/60 overflow-hidden">
+    <div className="rounded-xl border border-slate-800 bg-[#181926]/60 overflow-hidden">
       <button onClick={() => setOpen(!open)}
         className="w-full flex items-start gap-3 p-3 text-left hover:bg-slate-900/50 transition-colors">
-        <ChevronDown size={14} className={`shrink-0 mt-0.5 text-slate-500 transition-transform ${open ? 'rotate-180' : ''}`} />
-        <span className="text-[12px] font-semibold text-slate-200">{q}</span>
+        <ChevronDown size={14} className={`shrink-0 mt-0.5 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`} />
+        <span className="text-sm font-semibold text-slate-200">{q}</span>
       </button>
       {open && (
         <div className="px-3 pb-3 pl-10">
-          <p className="text-[12px] text-slate-400 leading-relaxed">{a}</p>
+          <p className="text-sm text-slate-400 leading-relaxed">{a}</p>
         </div>
       )}
     </div>
@@ -456,11 +456,11 @@ export default function CloudFormationSimulator() {
         <div className="flex items-center gap-3">
           <Layers size={22} className="text-orange-400" />
           <div>
-            <div className="text-[10px] font-black text-orange-400 uppercase tracking-widest">Infrastructure as Code · AWS</div>
+            <div className="text-2xs font-black text-orange-400 uppercase tracking-widest">Infrastructure as Code · AWS</div>
             <h2 className="text-lg font-bold text-white">AWS CloudFormation</h2>
           </div>
         </div>
-        <p className="mt-3 text-[13px] text-slate-400 leading-relaxed">
+        <p className="mt-3 text-base text-slate-400 leading-relaxed">
           O serviço nativo de IaC da AWS. Modelas os recursos em templates declarativos (YAML ou JSON),
           e o CloudFormation trata das dependências, da ordem de criação, do rollback e do estado —
           sem state file para gerir.
@@ -471,7 +471,7 @@ export default function CloudFormationSimulator() {
       <div className="flex flex-wrap gap-2">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setView(t.id)}
-            className={`px-3 py-1.5 rounded-2xl border text-[12px] font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-2xl border text-sm font-semibold transition-all ${
               view === t.id
                 ? 'border-orange-500/40 bg-orange-500/10 text-orange-300'
                 : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'
@@ -484,8 +484,8 @@ export default function CloudFormationSimulator() {
       {/* ── Fundamentos ─────────────────────────────────────── */}
       {view === 'basics' && (
         <div className="space-y-5">
-          <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
-            <h3 className="text-[14px] font-bold text-white mb-3">Os quatro componentes</h3>
+          <section className="rounded-2xl border border-slate-800 bg-[#181926]/60 p-5">
+            <h3 className="text-md font-bold text-white mb-3">Os quatro componentes</h3>
             <div className="space-y-2">
               {[
                 ['Template', 'O ficheiro YAML/JSON que descreve a infraestrutura desejada. É código — versiona-se em Git.'],
@@ -494,19 +494,19 @@ export default function CloudFormationSimulator() {
                 ['Change Set', 'Pré-visualização das mudanças antes de as aplicar. O "terraform plan" do CloudFormation.'],
               ].map(([term, desc]) => (
                 <div key={term} className="flex gap-3 p-3 rounded-xl bg-slate-900">
-                  <span className="shrink-0 text-[12px] font-bold text-orange-300 w-24">{term}</span>
-                  <span className="text-[12px] text-slate-400">{desc}</span>
+                  <span className="shrink-0 text-sm font-bold text-orange-300 w-24">{term}</span>
+                  <span className="text-sm text-slate-400">{desc}</span>
                 </div>
               ))}
             </div>
           </section>
 
-          <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
-            <h3 className="text-[14px] font-bold text-white mb-3">CloudFormation vs Terraform</h3>
+          <section className="rounded-2xl border border-slate-800 bg-[#181926]/60 p-5">
+            <h3 className="text-md font-bold text-white mb-3">CloudFormation vs Terraform</h3>
             <div className="grid md:grid-cols-2 gap-3">
               <div className="p-4 rounded-2xl border border-orange-500/20 bg-orange-500/5">
-                <div className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-2">CloudFormation</div>
-                <ul className="space-y-1.5 text-[12px] text-slate-400">
+                <div className="text-2xs font-black text-orange-400 uppercase tracking-widest mb-2">CloudFormation</div>
+                <ul className="space-y-1.5 text-sm text-slate-400">
                   <li>· Nativo AWS, gratuito</li>
                   <li>· Estado gerido pela AWS (sem state file)</li>
                   <li>· Só recursos AWS</li>
@@ -516,8 +516,8 @@ export default function CloudFormationSimulator() {
                 </ul>
               </div>
               <div className="p-4 rounded-2xl border border-violet-500/20 bg-violet-500/5">
-                <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-2">Terraform</div>
-                <ul className="space-y-1.5 text-[12px] text-slate-400">
+                <div className="text-2xs font-black text-violet-400 uppercase tracking-widest mb-2">Terraform</div>
+                <ul className="space-y-1.5 text-sm text-slate-400">
                   <li>· Multi-cloud, 200+ providers</li>
                   <li>· State file para gerir (S3 + DynamoDB lock)</li>
                   <li>· Linguagem HCL</li>
@@ -527,7 +527,7 @@ export default function CloudFormationSimulator() {
                 </ul>
               </div>
             </div>
-            <p className="mt-3 text-[12px] text-slate-500 leading-relaxed">
+            <p className="mt-3 text-sm text-slate-400 leading-relaxed">
               Na prática: se és só-AWS e valorizas integração nativa e zero gestão de estado, CloudFormation.
               Se tens multi-cloud ou queres reutilizar módulos da comunidade, Terraform.
               Muitas equipas usam ambos — CloudFormation para landing zones e Service Catalog, Terraform para aplicações.
@@ -535,13 +535,13 @@ export default function CloudFormationSimulator() {
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Esqueleto de um template</h3>
+            <h3 className="text-md font-bold text-white mb-2">Esqueleto de um template</h3>
             <Code code={TEMPLATE_SKELETON} lang="yaml" />
           </section>
 
           <div className="rounded-2xl border border-sky-500/25 bg-sky-500/5 p-4">
-            <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-1">Nota</div>
-            <p className="text-[12px] text-sky-100 leading-relaxed">
+            <div className="text-2xs font-black text-sky-400 uppercase tracking-widest mb-1">Nota</div>
+            <p className="text-sm text-sky-100 leading-relaxed">
               O <code className="text-sky-300">AWSTemplateFormatVersion</code> tem sempre o valor{' '}
               <code className="text-sky-300">2010-09-09</code>. Nunca mudou desde o lançamento e é a única versão válida —
               é uma pergunta clássica de entrevista.
@@ -554,23 +554,23 @@ export default function CloudFormationSimulator() {
       {view === 'template' && (
         <div className="space-y-5">
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Parameters — inputs do template</h3>
+            <h3 className="text-md font-bold text-white mb-2">Parameters — inputs do template</h3>
             <Code code={PARAMETERS_EXAMPLE} lang="yaml" />
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Mappings e Conditions — configuração por ambiente</h3>
+            <h3 className="text-md font-bold text-white mb-2">Mappings e Conditions — configuração por ambiente</h3>
             <Code code={MAPPINGS_CONDITIONS} lang="yaml" />
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Outputs e cross-stack references</h3>
+            <h3 className="text-md font-bold text-white mb-2">Outputs e cross-stack references</h3>
             <Code code={OUTPUTS_EXAMPLE} lang="yaml" />
           </section>
 
           <div className="rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4">
-            <div className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">Armadilha</div>
-            <p className="text-[12px] text-amber-100 leading-relaxed">
+            <div className="text-2xs font-black text-amber-400 uppercase tracking-widest mb-1">Armadilha</div>
+            <p className="text-sm text-amber-100 leading-relaxed">
               Exportar outputs cria acoplamento forte. Se a StackA exporta um VPCId e três stacks o importam,
               não consegues alterar nem apagar esse output enquanto elas existirem. Para composição de aplicações,
               nested stacks costumam ser melhor escolha.
@@ -582,8 +582,8 @@ export default function CloudFormationSimulator() {
       {/* ── Intrinsic functions ─────────────────────────────── */}
       {view === 'functions' && (
         <div className="space-y-5">
-          <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
-            <h3 className="text-[14px] font-bold text-white mb-3">Referência rápida</h3>
+          <section className="rounded-2xl border border-slate-800 bg-[#181926]/60 p-5">
+            <h3 className="text-md font-bold text-white mb-3">Referência rápida</h3>
             <div className="grid md:grid-cols-2 gap-2">
               {[
                 ['!Ref', 'Valor de um parâmetro ou ID físico de um recurso'],
@@ -600,25 +600,25 @@ export default function CloudFormationSimulator() {
                 ['!Base64', 'Codificar (usado para UserData)'],
               ].map(([fn, desc]) => (
                 <div key={fn} className="flex gap-2 p-2.5 rounded-xl bg-slate-900">
-                  <code className="shrink-0 text-[11px] font-bold text-violet-300 w-24">{fn}</code>
-                  <span className="text-[11px] text-slate-400">{desc}</span>
+                  <code className="shrink-0 text-xs font-bold text-violet-300 w-24">{fn}</code>
+                  <span className="text-xs text-slate-400">{desc}</span>
                 </div>
               ))}
             </div>
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">!Ref e !GetAtt</h3>
+            <h3 className="text-md font-bold text-white mb-2">!Ref e !GetAtt</h3>
             <Code code={FUNCTIONS_REF} lang="yaml" />
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">!Sub, !Join, !Select, !Cidr</h3>
+            <h3 className="text-md font-bold text-white mb-2">!Sub, !Join, !Select, !Cidr</h3>
             <Code code={FUNCTIONS_SUB_JOIN} lang="yaml" />
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Dynamic references — secrets fora do template</h3>
+            <h3 className="text-md font-bold text-white mb-2">Dynamic references — secrets fora do template</h3>
             <Code code={DYNAMIC_REFS} lang="yaml" />
           </section>
         </div>
@@ -628,32 +628,32 @@ export default function CloudFormationSimulator() {
       {view === 'operations' && (
         <div className="space-y-5">
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Operações de stack</h3>
+            <h3 className="text-md font-bold text-white mb-2">Operações de stack</h3>
             <Code code={STACK_OPS} lang="bash" />
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Change Sets — o "plan" do CloudFormation</h3>
+            <h3 className="text-md font-bold text-white mb-2">Change Sets — o "plan" do CloudFormation</h3>
             <Code code={CHANGE_SETS} lang="bash" />
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Drift detection</h3>
+            <h3 className="text-md font-bold text-white mb-2">Drift detection</h3>
             <Code code={DRIFT_DETECTION} lang="bash" />
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Proteger recursos críticos</h3>
+            <h3 className="text-md font-bold text-white mb-2">Proteger recursos críticos</h3>
             <Code code={PROTECTION} lang="yaml + json" />
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Nested stacks</h3>
+            <h3 className="text-md font-bold text-white mb-2">Nested stacks</h3>
             <Code code={NESTED_STACKS} lang="yaml" />
           </section>
 
-          <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
-            <h3 className="text-[14px] font-bold text-white mb-3">Troubleshooting rápido</h3>
+          <section className="rounded-2xl border border-slate-800 bg-[#181926]/60 p-5">
+            <h3 className="text-md font-bold text-white mb-3">Troubleshooting rápido</h3>
             <div className="space-y-2">
               {[
                 ['Stack creation failed', 'describe-stack-events e procura o primeiro CREATE_FAILED — os seguintes são consequência.'],
@@ -664,8 +664,8 @@ export default function CloudFormationSimulator() {
                 ['Circular dependency', 'Recurso A depende de B e B de A. Quebra com DependsOn explícito ou repensa a estrutura.'],
               ].map(([issue, fix]) => (
                 <div key={issue} className="p-3 rounded-xl bg-slate-900">
-                  <div className="text-[12px] font-semibold text-rose-300">{issue}</div>
-                  <div className="text-[12px] text-slate-400 mt-1">{fix}</div>
+                  <div className="text-sm font-semibold text-rose-300">{issue}</div>
+                  <div className="text-sm text-slate-400 mt-1">{fix}</div>
                 </div>
               ))}
             </div>
@@ -676,8 +676,8 @@ export default function CloudFormationSimulator() {
       {/* ── Entrevista ──────────────────────────────────────── */}
       {view === 'interview' && (
         <div className="space-y-4">
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-            <p className="text-[12px] text-slate-400 leading-relaxed">
+          <div className="rounded-2xl border border-slate-800 bg-[#181926]/60 p-4">
+            <p className="text-sm text-slate-400 leading-relaxed">
               {INTERVIEW_QUESTIONS.length} perguntas frequentes em entrevistas de CloudFormation.
               Clica para revelar a resposta — tenta responder mentalmente primeiro.
             </p>

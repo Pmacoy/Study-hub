@@ -1,5 +1,6 @@
+import React from 'react';
 import { useState } from 'react';
-import { ChevronDown, ChevronRight, ArrowRight, X } from 'lucide-react';
+import { BookOpen, RefreshCw, Rocket, Users, Cog, Target, Beaker, Building2, ChevronDown, ChevronRight, ArrowRight, X, ShieldCheck } from 'lucide-react';
 
 type View = 'concepts' | 'lifecycle' | 'deploy' | 'teams';
 
@@ -65,26 +66,26 @@ const LIFECYCLE_DETAILS: Record<string, { why: string; howto: string[]; devops: 
 };
 
 const CONCEPTS = [
-  { title: 'DevOps vs DevSecOps', icon: '🔄', content: [
+  { title: 'DevOps vs DevSecOps', icon: RefreshCw, content: [
     'DevOps une Dev + Ops com foco em velocidade e automação.',
     'DevSecOps adiciona Security como responsabilidade partilhada — "shift-left security".',
     'Em DevSecOps, segurança é verificada em cada stage do pipeline (SAST, DAST, image scanning).',
     'O objetivo não é bloquear deploys, mas detetar vulnerabilidades o mais cedo possível.',
   ]},
-  { title: 'CI vs CD vs CD', icon: '⚙️', content: [
+  { title: 'CI vs CD vs CD', icon: Cog, content: [
     'CI (Continuous Integration): merge frequente para main + build + testes automáticos.',
     'Continuous Delivery: o código está sempre em estado deployável (deploy manual).',
     'Continuous Deployment: cada commit que passa no pipeline vai automaticamente para produção.',
     'A diferença entre Delivery e Deployment é uma aprovação manual.',
   ]},
-  { title: 'Shift-Left Security', icon: '🔐', content: [
+  { title: 'Shift-Left Security', icon: ShieldCheck, content: [
     'Mover os controlos de segurança para o início do SDLC, não só no final.',
     'SAST (Static Analysis): analisa código fonte — SonarQube, Checkmarx.',
     'SCA (Software Composition Analysis): vulnerabilidades em dependências — Trivy, Snyk.',
     'DAST (Dynamic Analysis): testa a app em execução — OWASP ZAP.',
     'Image scanning: Trivy no Dockerfile antes de publicar no registry.',
   ]},
-  { title: 'Team Topologies', icon: '👥', content: [
+  { title: 'Team Topologies', icon: Users, content: [
     'Stream-Aligned Team: equipa que entrega valor para um produto/serviço.',
     'Platform Team: fornece capacidades internas (IDP, CI/CD, observabilidade).',
     'Enabling Team: ajuda outras equipas a adotar novas tecnologias ou práticas.',
@@ -110,11 +111,11 @@ export default function DevOpsIntroSimulator() {
     slate: 'text-slate-400 border-slate-500/30 bg-slate-500/8',
   };
 
-  const views: { id: View; label: string }[] = [
-    { id: 'concepts', label: '📚 Conceitos' },
-    { id: 'lifecycle', label: '🔄 Ciclo de Vida' },
-    { id: 'deploy', label: '🚀 Deploy Strategies' },
-    { id: 'teams', label: '👥 Estrutura de Equipa' },
+  const views: { id: View; label: string | JSX.Element }[] = [
+    { id: 'concepts', label: <><BookOpen size={14} className="mr-1 inline" /> Conceitos</> },
+    { id: 'lifecycle', label: <><RefreshCw size={14} className="mr-1 inline" /> Ciclo de Vida</> },
+    { id: 'deploy', label: <><Rocket size={14} className="mr-1 inline" /> Deploy Strategies</> },
+    { id: 'teams', label: <><Users size={14} className="mr-1 inline" /> Estrutura de Equipa</> },
   ];
 
   return (
@@ -122,7 +123,7 @@ export default function DevOpsIntroSimulator() {
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
-            className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${view === v.id ? 'bg-violet-500/20 border border-violet-500/40 text-violet-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300 hover:border-slate-700'}`}>
+            className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${view === v.id ? 'bg-violet-500/20 border border-violet-500/40 text-violet-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300 hover:border-slate-700'}`}>
             {v.label}
           </button>
         ))}
@@ -133,15 +134,15 @@ export default function DevOpsIntroSimulator() {
           {CONCEPTS.map((c, i) => (
             <div key={i} className="rounded-2xl border border-slate-800 overflow-hidden">
               <button onClick={() => setOpen(open === i ? null : i)}
-                className="w-full flex items-center gap-3 px-5 py-4 bg-slate-950/70 hover:bg-slate-900 transition-colors text-left">
-                <span className="text-xl">{c.icon}</span>
-                <span className="flex-1 text-[14px] font-semibold text-slate-200">{c.title}</span>
-                {open === i ? <ChevronDown size={15} className="text-violet-400" /> : <ChevronRight size={15} className="text-slate-500" />}
+                className="w-full flex items-center gap-3 px-5 py-4 bg-[#181926]/70 hover:bg-slate-900 transition-colors text-left">
+                <span className="text-xl">{React.createElement(c.icon, { size: 20 })}</span>
+                <span className="flex-1 text-md font-semibold text-slate-200">{c.title}</span>
+                {open === i ? <ChevronDown size={15} className="text-violet-400" /> : <ChevronRight size={15} className="text-slate-400" />}
               </button>
               {open === i && (
                 <div className="px-5 py-4 bg-slate-900/50 border-t border-slate-800 space-y-2">
                   {c.content.map((line, j) => (
-                    <div key={j} className="flex items-start gap-2 text-[13px] text-slate-300">
+                    <div key={j} className="flex items-start gap-2 text-base text-slate-300">
                       <ArrowRight size={12} className="text-violet-400 mt-0.5 shrink-0" />
                       {line}
                     </div>
@@ -155,7 +156,7 @@ export default function DevOpsIntroSimulator() {
 
       {view === 'lifecycle' && (
         <div className="space-y-4">
-          <p className="text-[12px] text-slate-500">Clica em cada stage para ver detalhes.</p>
+          <p className="text-sm text-slate-400">Clica em cada stage para ver detalhes.</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {LIFECYCLE_STAGES.map((s, i) => (
               <button
@@ -167,13 +168,13 @@ export default function DevOpsIntroSimulator() {
                     : colorMap[s.color]
                 }`}
               >
-                <div className={`text-[11px] font-black uppercase tracking-widest mb-2 ${colorMap[s.color].split(' ')[0]}`}>{s.stage}</div>
+                <div className={`text-xs font-black uppercase tracking-widest mb-2 ${colorMap[s.color].split(' ')[0]}`}>{s.stage}</div>
                 <div className="space-y-1 mb-3">
                   {s.tools.map(t => (
-                    <span key={t} className="block text-[10px] font-mono text-slate-400">{t}</span>
+                    <span key={t} className="block text-2xs font-mono text-slate-400">{t}</span>
                   ))}
                 </div>
-                <p className="text-[10px] text-slate-500 leading-relaxed">{s.desc}</p>
+                <p className="text-2xs text-slate-400 leading-relaxed">{s.desc}</p>
               </button>
             ))}
           </div>
@@ -182,7 +183,7 @@ export default function DevOpsIntroSimulator() {
           {selectedStage && LIFECYCLE_DETAILS[selectedStage] && (
             <div className="rounded-2xl border border-violet-500/25 bg-violet-500/5 p-5 space-y-4">
               <div className="flex items-center justify-between">
-                <div className={`text-[13px] font-black uppercase tracking-widest ${colorMap[LIFECYCLE_STAGES.find(s => s.stage === selectedStage)?.color ?? 'slate'].split(' ')[0]}`}>
+                <div className={`text-base font-black uppercase tracking-widest ${colorMap[LIFECYCLE_STAGES.find(s => s.stage === selectedStage)?.color ?? 'slate'].split(' ')[0]}`}>
                   {selectedStage}
                 </div>
                 <button onClick={() => setSelectedStage(null)} className="text-slate-600 hover:text-slate-400 transition-colors">
@@ -190,25 +191,25 @@ export default function DevOpsIntroSimulator() {
                 </button>
               </div>
 
-              <p className="text-[13px] text-slate-300 leading-relaxed">
+              <p className="text-base text-slate-300 leading-relaxed">
                 {LIFECYCLE_DETAILS[selectedStage].why}
               </p>
 
               <div>
-                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Como fazer</div>
+                <div className="text-2xs font-bold text-slate-400 uppercase tracking-widest mb-2">Como fazer</div>
                 <div className="space-y-1.5">
                   {LIFECYCLE_DETAILS[selectedStage].howto.map((step, i) => (
-                    <div key={i} className="flex items-start gap-2 text-[12px] text-slate-300">
+                    <div key={i} className="flex items-start gap-2 text-sm text-slate-300">
                       <span className="text-violet-400 shrink-0 font-bold">{i + 1}.</span>
-                      <code className="font-mono text-[11px] text-emerald-300">{step}</code>
+                      <code className="font-mono text-xs text-emerald-300">{step}</code>
                     </div>
                   ))}
                 </div>
               </div>
 
               <div className="p-3 rounded-xl bg-amber-500/8 border border-amber-500/20">
-                <span className="text-[10px] font-bold text-amber-400 uppercase">DevOps tip: </span>
-                <span className="text-[11px] text-slate-400">{LIFECYCLE_DETAILS[selectedStage].devops}</span>
+                <span className="text-2xs font-bold text-amber-400 uppercase">DevOps tip: </span>
+                <span className="text-xs text-slate-400">{LIFECYCLE_DETAILS[selectedStage].devops}</span>
               </div>
             </div>
           )}
@@ -220,13 +221,13 @@ export default function DevOpsIntroSimulator() {
           <div className="space-y-2">
             {DEPLOY_STRATEGIES.map((d, i) => (
               <button key={i} onClick={() => setSelectedDeploy(i)}
-                className={`w-full p-4 rounded-2xl border text-left transition-all ${selectedDeploy === i ? `${colorMap[d.color]} border-2` : 'border-slate-800 bg-slate-950/50 hover:border-slate-700'}`}>
-                <div className={`text-[13px] font-bold ${selectedDeploy === i ? colorMap[d.color].split(' ')[0] : 'text-slate-300'}`}>{d.name}</div>
-                <div className="text-[10px] text-slate-500 mt-1">Rollback: {d.rollback}</div>
+                className={`w-full p-4 rounded-2xl border text-left transition-all ${selectedDeploy === i ? `${colorMap[d.color]} border-2` : 'border-slate-800 bg-[#181926]/50 hover:border-slate-700'}`}>
+                <div className={`text-base font-bold ${selectedDeploy === i ? colorMap[d.color].split(' ')[0] : 'text-slate-300'}`}>{d.name}</div>
+                <div className="text-2xs text-slate-400 mt-1">Rollback: {d.rollback}</div>
               </button>
             ))}
           </div>
-          <div className="lg:col-span-2 p-5 rounded-2xl border border-slate-800 bg-slate-950/70 space-y-4">
+          <div className="lg:col-span-2 p-5 rounded-2xl border border-slate-800 bg-[#181926]/70 space-y-4">
             {(() => {
               const d = DEPLOY_STRATEGIES[selectedDeploy];
               return (
@@ -235,15 +236,15 @@ export default function DevOpsIntroSimulator() {
                   <div className="grid grid-cols-3 gap-3">
                     {[['Risco', d.risk], ['Downtime', d.downtime], ['Rollback', d.rollback]].map(([k, v]) => (
                       <div key={k} className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-center">
-                        <div className="text-[10px] text-slate-500 uppercase">{k}</div>
-                        <div className="text-[13px] font-bold text-slate-200 mt-1">{v}</div>
+                        <div className="text-2xs text-slate-400 uppercase">{k}</div>
+                        <div className="text-base font-bold text-slate-200 mt-1">{v}</div>
                       </div>
                     ))}
                   </div>
-                  <p className="text-[13px] text-slate-300 leading-relaxed">{d.desc}</p>
+                  <p className="text-base text-slate-300 leading-relaxed">{d.desc}</p>
                   <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">
-                    <span className="text-[11px] font-bold text-violet-400">Quando usar: </span>
-                    <span className="text-[11px] text-slate-400">{d.use}</span>
+                    <span className="text-xs font-bold text-violet-400">Quando usar: </span>
+                    <span className="text-xs text-slate-400">{d.use}</span>
                   </div>
                 </>
               );
@@ -255,20 +256,20 @@ export default function DevOpsIntroSimulator() {
       {view === 'teams' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
-            { type: 'Stream-Aligned', emoji: '🎯', color: 'sky', desc: 'Alinhada ao fluxo de valor. Entrega features diretamente ao utilizador. Tem autonomia para build, test e deploy do seu produto.', resp: ['Desenvolvimento de features', 'Manutenção do pipeline CI/CD', 'Ownership do produto em produção'] },
-            { type: 'Platform', emoji: '🏗️', color: 'violet', desc: 'Fornece capacidades internas como serviço (IaC, CI/CD templates, observabilidade). Reduz carga cognitiva das stream-aligned teams.', resp: ['Internal Developer Platform (IDP)', 'Golden path templates', 'Gestão de Kubernetes e Terraform'] },
-            { type: 'Enabling', emoji: '🔬', color: 'amber', desc: 'Especialistas temporários que ajudam outras equipas a adotar novas tecnologias. Não ficam permanentemente — transferem conhecimento.', resp: ['Workshops e mentoria', 'Proof of concepts', 'Adoção de novas práticas (DevSecOps, SRE)'] },
-            { type: 'Complicated Subsystem', emoji: '⚙️', color: 'rose', desc: 'Gere componentes técnicos que requerem expertise muito especializado (ML models, processamento de vídeo, compliance engines).', resp: ['Componentes de alta complexidade', 'APIs internas para outras equipas', 'Documentação e SLAs do componente'] },
+            { type: 'Stream-Aligned', emoji: <Target size={16} className="text-sky-400" />, color: 'sky', desc: 'Alinhada ao fluxo de valor. Entrega features diretamente ao utilizador. Tem autonomia para build, test e deploy do seu produto.', resp: ['Desenvolvimento de features', 'Manutenção do pipeline CI/CD', 'Ownership do produto em produção'] },
+            { type: 'Platform', emoji: <Building2 size={16} className="text-violet-400" />, color: 'violet', desc: 'Fornece capacidades internas como serviço (IaC, CI/CD templates, observabilidade). Reduz carga cognitiva das stream-aligned teams.', resp: ['Internal Developer Platform (IDP)', 'Golden path templates', 'Gestão de Kubernetes e Terraform'] },
+            { type: 'Enabling', emoji: <Beaker size={16} className="text-amber-400" />, color: 'amber', desc: 'Especialistas temporários que ajudam outras equipas a adotar novas tecnologias. Não ficam permanentemente — transferem conhecimento.', resp: ['Workshops e mentoria', 'Proof of concepts', 'Adoção de novas práticas (DevSecOps, SRE)'] },
+            { type: 'Complicated Subsystem', emoji: <Cog size={16} className="text-rose-400" />, color: 'rose', desc: 'Gere componentes técnicos que requerem expertise muito especializado (ML models, processamento de vídeo, compliance engines).', resp: ['Componentes de alta complexidade', 'APIs internas para outras equipas', 'Documentação e SLAs do componente'] },
           ].map(t => (
             <div key={t.type} className={`p-5 rounded-2xl border ${colorMap[t.color]}`}>
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-2xl">{t.emoji}</span>
-                <span className={`text-[14px] font-bold ${colorMap[t.color].split(' ')[0]}`}>{t.type}</span>
+                <span className={`text-md font-bold ${colorMap[t.color].split(' ')[0]}`}>{t.type}</span>
               </div>
-              <p className="text-[12px] text-slate-400 leading-relaxed mb-3">{t.desc}</p>
+              <p className="text-sm text-slate-400 leading-relaxed mb-3">{t.desc}</p>
               <ul className="space-y-1">
                 {t.resp.map(r => (
-                  <li key={r} className="flex items-start gap-2 text-[11px] text-slate-400">
+                  <li key={r} className="flex items-start gap-2 text-xs text-slate-400">
                     <ArrowRight size={10} className={`${colorMap[t.color].split(' ')[0]} mt-0.5 shrink-0`} />{r}
                   </li>
                 ))}

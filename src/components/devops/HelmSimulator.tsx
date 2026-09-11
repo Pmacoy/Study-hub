@@ -8,13 +8,13 @@ function Code({ code, lang = '' }: { code: string; lang?: string }) {
   return (
     <div className="rounded-xl border border-slate-800 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="text-[10px] font-mono text-slate-500">{lang}</span>
+        <span className="text-2xs font-mono text-slate-400">{lang}</span>
         <button onClick={() => { navigator.clipboard.writeText(code); setC(true); setTimeout(() => setC(false), 1400); }}
-          className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-slate-300">
+          className="flex items-center gap-1 text-2xs text-slate-400 hover:text-slate-300">
           {c ? <><Check size={10} className="text-emerald-400" /><span className="text-emerald-400">Copiado</span></> : <><Copy size={10} />Copiar</>}
         </button>
       </div>
-      <pre className="p-4 text-[11px] font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 text-xs font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => (
           <div key={i} className={
             line.trim().startsWith('#') ? 'text-slate-600'
@@ -271,11 +271,11 @@ export default function HelmSimulator() {
         <div className="flex items-center gap-3">
           <Package size={22} className="text-violet-400" />
           <div>
-            <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest">Kubernetes</div>
+            <div className="text-2xs font-black text-violet-400 uppercase tracking-widest">Kubernetes</div>
             <h2 className="text-lg font-bold text-white">Helm — o gestor de pacotes do Kubernetes</h2>
           </div>
         </div>
-        <p className="mt-3 text-[13px] text-slate-400 leading-relaxed">
+        <p className="mt-3 text-base text-slate-400 leading-relaxed">
           O Helm está para o Kubernetes como o <code className="text-violet-300">apt</code> está para o Ubuntu.
           Empacota manifests em <strong className="text-slate-300">charts</strong> parametrizáveis, versionados e reutilizáveis —
           é assim que equipas reais escalam deployments sem copiar YAML entre ambientes.
@@ -286,7 +286,7 @@ export default function HelmSimulator() {
       <div className="flex flex-wrap gap-2">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setView(t.id)}
-            className={`px-3 py-1.5 rounded-2xl border text-[12px] font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-2xl border text-sm font-semibold transition-all ${
               view === t.id
                 ? 'border-violet-500/40 bg-violet-500/10 text-violet-300'
                 : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'
@@ -299,21 +299,21 @@ export default function HelmSimulator() {
       {/* ── Fundamentos ─────────────────────────────────────── */}
       {view === 'overview' && (
         <div className="space-y-5">
-          <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
-            <h3 className="text-[14px] font-bold text-white mb-3">O problema que o Helm resolve</h3>
+          <section className="rounded-2xl border border-slate-800 bg-[#181926]/60 p-5">
+            <h3 className="text-md font-bold text-white mb-3">O problema que o Helm resolve</h3>
             <div className="grid md:grid-cols-2 gap-3">
               <div className="p-4 rounded-2xl border border-rose-500/20 bg-rose-500/5">
-                <div className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-2">Sem Helm</div>
-                <ul className="space-y-1.5 text-[12px] text-slate-400">
+                <div className="text-2xs font-black text-rose-400 uppercase tracking-widest mb-2">Sem Helm</div>
+                <ul className="space-y-1.5 text-sm text-slate-400">
                   <li>· 3 pastas de YAML (dev, staging, prod) quase iguais</li>
                   <li>· Mudar a imagem = editar 3 ficheiros</li>
-                  <li>· Rollback = <code className="text-slate-500">git revert</code> + reaplicar à mão</li>
+                  <li>· Rollback = <code className="text-slate-400">git revert</code> + reaplicar à mão</li>
                   <li>· Nenhum conceito de "versão da aplicação instalada"</li>
                 </ul>
               </div>
               <div className="p-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5">
-                <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2">Com Helm</div>
-                <ul className="space-y-1.5 text-[12px] text-slate-400">
+                <div className="text-2xs font-black text-emerald-400 uppercase tracking-widest mb-2">Com Helm</div>
+                <ul className="space-y-1.5 text-sm text-slate-400">
                   <li>· 1 chart + 3 ficheiros de values</li>
                   <li>· Mudar a imagem = <code className="text-emerald-300">--set image.tag=x</code></li>
                   <li>· Rollback = <code className="text-emerald-300">helm rollback app 2</code></li>
@@ -323,8 +323,8 @@ export default function HelmSimulator() {
             </div>
           </section>
 
-          <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
-            <h3 className="text-[14px] font-bold text-white mb-3">Vocabulário essencial</h3>
+          <section className="rounded-2xl border border-slate-800 bg-[#181926]/60 p-5">
+            <h3 className="text-md font-bold text-white mb-3">Vocabulário essencial</h3>
             <div className="space-y-2">
               {[
                 ['Chart', 'O pacote. Uma pasta com templates + values que descreve uma aplicação Kubernetes.'],
@@ -334,21 +334,21 @@ export default function HelmSimulator() {
                 ['Revision', 'Cada upgrade cria uma revisão nova. É o que permite rollback.'],
               ].map(([term, desc]) => (
                 <div key={term} className="flex gap-3 p-3 rounded-xl bg-slate-900">
-                  <span className="shrink-0 text-[12px] font-bold text-violet-300 w-24">{term}</span>
-                  <span className="text-[12px] text-slate-400">{desc}</span>
+                  <span className="shrink-0 text-sm font-bold text-violet-300 w-24">{term}</span>
+                  <span className="text-sm text-slate-400">{desc}</span>
                 </div>
               ))}
             </div>
           </section>
 
-          <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
-            <h3 className="text-[14px] font-bold text-white mb-3">Anatomia de um chart</h3>
+          <section className="rounded-2xl border border-slate-800 bg-[#181926]/60 p-5">
+            <h3 className="text-md font-bold text-white mb-3">Anatomia de um chart</h3>
             <Code code={CHART_STRUCTURE} lang="estrutura" />
           </section>
 
           <div className="rounded-2xl border border-sky-500/25 bg-sky-500/5 p-4">
-            <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-1">Nota de entrevista</div>
-            <p className="text-[12px] text-sky-100 leading-relaxed">
+            <div className="text-2xs font-black text-sky-400 uppercase tracking-widest mb-1">Nota de entrevista</div>
+            <p className="text-sm text-sky-100 leading-relaxed">
               Uma pergunta frequente: <em>"qual a diferença entre <code>version</code> e <code>appVersion</code> no Chart.yaml?"</em>{' '}
               <code className="text-sky-300">version</code> é a versão do <strong>chart</strong> (muda quando alteras templates);{' '}
               <code className="text-sky-300">appVersion</code> é a versão da <strong>aplicação</strong> que o chart instala.
@@ -362,23 +362,23 @@ export default function HelmSimulator() {
       {view === 'commands' && (
         <div className="space-y-5">
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Instalar e listar</h3>
+            <h3 className="text-md font-bold text-white mb-2">Instalar e listar</h3>
             <Code code={BASIC_COMMANDS} lang="bash" />
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Ciclo de vida: upgrade, rollback, uninstall</h3>
+            <h3 className="text-md font-bold text-white mb-2">Ciclo de vida: upgrade, rollback, uninstall</h3>
             <Code code={LIFECYCLE_COMMANDS} lang="bash" />
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Debugging — validar antes de aplicar</h3>
+            <h3 className="text-md font-bold text-white mb-2">Debugging — validar antes de aplicar</h3>
             <Code code={DEBUG_COMMANDS} lang="bash" />
           </section>
 
           <div className="rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4">
-            <div className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">Armadilha comum</div>
-            <p className="text-[12px] text-amber-100 leading-relaxed">
+            <div className="text-2xs font-black text-amber-400 uppercase tracking-widest mb-1">Armadilha comum</div>
+            <p className="text-sm text-amber-100 leading-relaxed">
               <code className="text-amber-300">helm upgrade</code> falha se o release não existir.
               Em CI/CD usa sempre <code className="text-amber-300">helm upgrade --install</code> — funciona tanto na primeira
               instalação como nas seguintes, sem lógica condicional no pipeline.
@@ -391,28 +391,28 @@ export default function HelmSimulator() {
       {view === 'chart' && (
         <div className="space-y-5">
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Chart.yaml — os metadados</h3>
+            <h3 className="text-md font-bold text-white mb-2">Chart.yaml — os metadados</h3>
             <Code code={CHART_YAML} lang="yaml" />
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">values.yaml — a configuração</h3>
+            <h3 className="text-md font-bold text-white mb-2">values.yaml — a configuração</h3>
             <Code code={VALUES_YAML} lang="yaml" />
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">templates/ — onde acontece a magia</h3>
+            <h3 className="text-md font-bold text-white mb-2">templates/ — onde acontece a magia</h3>
             <Code code={TEMPLATE_EXAMPLE} lang="yaml + go-template" />
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Um chart, vários ambientes</h3>
+            <h3 className="text-md font-bold text-white mb-2">Um chart, vários ambientes</h3>
             <Code code={MULTI_ENV} lang="bash" />
           </section>
 
           <div className="rounded-2xl border border-sky-500/25 bg-sky-500/5 p-4">
-            <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest mb-1">Sobre indentação</div>
-            <p className="text-[12px] text-sky-100 leading-relaxed">
+            <div className="text-2xs font-black text-sky-400 uppercase tracking-widest mb-1">Sobre indentação</div>
+            <p className="text-sm text-sky-100 leading-relaxed">
               <code className="text-sky-300">nindent</code> adiciona uma nova linha e indenta;{' '}
               <code className="text-sky-300">indent</code> só indenta. O <code className="text-sky-300">{'{{-'}</code> remove
               espaço em branco antes. Erros de indentação são a causa nº1 de charts que não renderizam —
@@ -426,17 +426,17 @@ export default function HelmSimulator() {
       {view === 'production' && (
         <div className="space-y-5">
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Padrões de produção</h3>
+            <h3 className="text-md font-bold text-white mb-2">Padrões de produção</h3>
             <Code code={PROD_PATTERNS} lang="bash" />
           </section>
 
           <section>
-            <h3 className="text-[14px] font-bold text-white mb-2">Hooks — migrations e tarefas do ciclo de vida</h3>
+            <h3 className="text-md font-bold text-white mb-2">Hooks — migrations e tarefas do ciclo de vida</h3>
             <Code code={HOOKS} lang="yaml" />
           </section>
 
-          <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
-            <h3 className="text-[14px] font-bold text-white mb-3">Checklist antes de ir para produção</h3>
+          <section className="rounded-2xl border border-slate-800 bg-[#181926]/60 p-5">
+            <h3 className="text-md font-bold text-white mb-3">Checklist antes de ir para produção</h3>
             <div className="space-y-2">
               {[
                 ['Versão do chart fixada', 'Nunca instales sem --version em produção. "latest" muda debaixo dos teus pés.'],
@@ -449,8 +449,8 @@ export default function HelmSimulator() {
                 <div key={title} className="flex gap-3 p-3 rounded-xl bg-slate-900">
                   <span className="text-emerald-400 shrink-0">✓</span>
                   <div>
-                    <div className="text-[12px] font-semibold text-slate-200">{title}</div>
-                    <div className="text-[11px] text-slate-500 mt-0.5">{desc}</div>
+                    <div className="text-sm font-semibold text-slate-200">{title}</div>
+                    <div className="text-xs text-slate-400 mt-0.5">{desc}</div>
                   </div>
                 </div>
               ))}
@@ -458,8 +458,8 @@ export default function HelmSimulator() {
           </section>
 
           <div className="rounded-2xl border border-violet-500/25 bg-violet-500/5 p-4">
-            <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-1">Helm + GitOps</div>
-            <p className="text-[12px] text-violet-100 leading-relaxed">
+            <div className="text-2xs font-black text-violet-400 uppercase tracking-widest mb-1">Helm + GitOps</div>
+            <p className="text-sm text-violet-100 leading-relaxed">
               Em GitOps (ArgoCD/Flux) não corres <code className="text-violet-300">helm install</code> à mão.
               Declaras o chart e os values num repositório Git, e o ArgoCD faz o rendering e aplica.
               O Helm passa a ser o motor de templating; o Git é a fonte de verdade.

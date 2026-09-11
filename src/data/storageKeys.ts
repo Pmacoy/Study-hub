@@ -1,22 +1,21 @@
-export const STORAGE_KEYS = {
-  activeTab: 'devops_hub_active_tab',
-  visitedTabs: 'devops_hub_visited_tabs',
-  lastStudyDate: 'devops_hub_last_study_date',
-} as const;
-
-export const AZURE_STORAGE_KEYS = {
-  activeTab: 'az104_active_tab',
-  visitedTabs: 'az104_visited_tabs',
-  lastStudyDate: 'az104_last_study_date',
-} as const;
-
 export const PLATFORM_STORAGE_KEYS = {
   activeDomain: 'platform_active_domain',
 } as const;
 
-export const DAILY_STORAGE_KEY = 'platform_daily_state';
+export const STORAGE_KEYS = {
+  activeTab: 'devops_active_tab',
+  visitedTabs: 'devops_visited_tabs',
+} as const;
 
-export const ACTIVITY_LOG_STORAGE_KEY = 'platform_activity_log';
+export const AZURE_STORAGE_KEYS = {
+  activeTab: 'azure_active_tab',
+  visitedTabs: 'azure_visited_tabs',
+} as const;
+
+export const NETWORKING_STORAGE_KEYS = {
+  activeTab: 'networking_active_tab',
+  visitedTabs: 'networking_visited_tabs',
+} as const;
 
 export const PYTHON_STORAGE_KEYS = {
   activeTab: 'python_active_tab',
@@ -24,14 +23,29 @@ export const PYTHON_STORAGE_KEYS = {
 } as const;
 
 export const AWS_STORAGE_KEYS = {
-  activeTab: 'aws_saa_active_tab',
-  visitedTabs: 'aws_saa_visited_tabs',
+  activeTab: 'aws_active_tab',
+  visitedTabs: 'aws_visited_tabs',
 } as const;
 
-export const PROJECT_PROGRESS_STORAGE_KEY = 'project_progress_v1';
+export const SYSTEM_DESIGN_STORAGE_KEYS = {
+  activeTab: 'system_design_active_tab',
+  visitedTabs: 'system_design_visited_tabs',
+} as const;
 
-export const DIAGNOSTIC_STORAGE_KEY = 'diagnostic_results_v1';
+export const DISTRIBUTED_SYSTEMS_STORAGE_KEYS = {
+  activeTab: 'distributed_systems_active_tab',
+  visitedTabs: 'distributed_systems_visited_tabs',
+} as const;
 
-export const SCENARIO_ATTEMPTS_STORAGE_KEY = 'platform_scenario_attempts';
+export const ALGORITHMS_STORAGE_KEYS = {
+  activeTab: 'algorithms_active_tab',
+  visitedTabs: 'algorithms_visited_tabs',
+} as const;
 
-export const TERMINAL_ATTEMPTS_STORAGE_KEY = 'platform_terminal_attempts';
+export const DAILY_STORAGE_KEY = 'daily_state';
+export const ACTIVITY_LOG_STORAGE_KEY = 'activity_log';
+export const PROJECT_PROGRESS_STORAGE_KEY = 'project_progress';
+export const SCENARIO_ATTEMPTS_STORAGE_KEY = 'scenario_attempts';
+export const CHALLENGE_ATTEMPTS_STORAGE_KEY = 'challenge_attempts';
+export const TERMINAL_ATTEMPTS_STORAGE_KEY = 'terminal_attempts';
+export const WEAK_POINTS_STORAGE_KEY = 'weak_points';

@@ -1,150 +1,235 @@
-import { useState, useCallback } from 'react';
-import { CheckCircle2, XCircle, RotateCcw, Trophy } from 'lucide-react';
+import { RotateCcw, Trophy, Brain } from 'lucide-react';
+import { useQuizEngine, type Question } from '../../hooks/useQuizEngine';
+import QuizRunner from '../shared/QuizRunner';
 
-const QUESTIONS = [
-  { q: 'Qual a diferença entre uma lista e uma tuple em Python?', opts: ['Não há diferença, são sinónimos', 'Lista é mutável; tuple é imutável', 'Tuple é mutável; lista é imutável', 'Lista só guarda números; tuple guarda qualquer tipo'], a: 1, exp: 'Listas podem ser modificadas após criação (append, remove, etc.). Tuples são imutáveis — uma vez criadas, não podem mudar. Por isso tuples podem ser chaves de dict.', mod: 'Data Structures' },
-  { q: 'O que faz o operador // em Python?', opts: ['Comentário de linha', 'Divisão float', 'Divisão inteira (floor division)', 'Potenciação'], a: 2, exp: '// é a divisão inteira — descarta a parte decimal. 10 // 3 = 3. Para divisão normal usa-se /, que retorna sempre float.', mod: 'Fundamentos' },
-  { q: 'Qual a vantagem principal de um generator sobre uma lista para um conjunto de 10 milhões de elementos?', opts: ['Generators são sempre mais rápidos a processar', 'Generators usam muito menos memória — computam valores lazy, um de cada vez', 'Generators suportam mais operações que listas', 'Não há vantagem real'], a: 1, exp: 'Generators computam cada valor sob demanda (yield), sem armazenar tudo em memória. Uma lista de 10M quadrados usa ~80MB; um generator equivalente usa ~200 bytes.', mod: 'Avançado' },
-  { q: 'O que faz o decorador @functools.wraps(func) num wrapper?', opts: ['Acelera a execução da função', 'Preserva o __name__ e __doc__ da função original', 'Converte a função em assíncrona', 'Adiciona logging automático'], a: 1, exp: 'Sem @functools.wraps, o wrapper substitui os metadados (nome, docstring) da função original, dificultando debugging e introspecção.', mod: 'Control Flow' },
-  { q: 'Qual o resultado de list(range(2, 10, 3))?', opts: ['[2, 5, 8]', '[2, 3, 4, 5, 6, 7, 8, 9]', '[2, 5, 8, 11]', '[3, 6, 9]'], a: 0, exp: 'range(start, stop, step) começa em 2, incrementa 3, e pára antes de chegar a 10: resulta em [2, 5, 8].', mod: 'Control Flow' },
-  { q: 'Em Python, qual a regra de scope LEGB?', opts: ['Local → Enclosing → Global → Built-in, ordem de procura de variáveis', 'Apenas se aplica a classes', 'Define a ordem de execução de loops', 'É um padrão de logging'], a: 0, exp: 'LEGB é a ordem em que o Python procura por uma variável: primeiro no escopo Local, depois Enclosing (funções externas), depois Global (módulo), e por fim Built-in (print, len, etc.).', mod: 'Control Flow' },
-  { q: 'O que acontece quando fazes super().__init__(...) numa subclasse?', opts: ['Cria uma nova instância da classe pai', 'Chama o construtor da classe pai para inicializar atributos herdados', 'Remove os atributos da classe pai', 'É opcional e nunca necessário'], a: 1, exp: 'super().__init__() invoca o construtor da classe pai, garantindo que os atributos definidos lá (ex: self.name) também sejam inicializados na subclasse.', mod: 'OOP' },
-  { q: 'Qual a diferença entre __str__ e __repr__ numa classe?', opts: ['São idênticos, apenas convenção de nome diferente', '__str__ é para o utilizador final (print); __repr__ é para debugging/desenvolvedores', '__repr__ só funciona em listas', '__str__ é obsoleto no Python 3'], a: 1, exp: '__str__ define a representação "amigável" (usada por print/str()). __repr__ define a representação não-ambígua, útil para debugging (usada por repr() e no REPL).', mod: 'OOP' },
-  { q: 'Para que serve o context manager "with open(...) as f:"?', opts: ['Acelera a leitura de ficheiros grandes', 'Garante que o ficheiro é fechado automaticamente, mesmo se ocorrer uma excepção', 'Converte o ficheiro para JSON automaticamente', 'Só funciona com ficheiros binários'], a: 1, exp: 'O context manager "with" garante que o método __exit__ (que fecha o ficheiro) é sempre chamado, mesmo que uma excepção ocorra dentro do bloco — evita file handles soltos.', mod: 'OOP & File I/O' },
-  { q: 'Qual excepção é lançada ao aceder a uma chave inexistente num dict?', opts: ['IndexError', 'AttributeError', 'KeyError', 'ValueError'], a: 2, exp: 'KeyError é lançado quando se tenta aceder a dict["chave_inexistente"]. Para evitar, usa-se dict.get("chave", default).', mod: 'OOP & File I/O' },
-  { q: 'O que faz *args numa definição de função?', opts: ['Limita a função a um único argumento', 'Recebe um número variável de argumentos posicionais como tuple', 'É sintaxe inválida em Python', 'Só funciona com strings'], a: 1, exp: '*args recolhe argumentos posicionais extra numa tuple. def add(*numbers): permite chamar add(1,2,3,4) — numbers será (1,2,3,4).', mod: 'Control Flow' },
-  { q: 'O que faz **kwargs numa definição de função?', opts: ['É equivalente a *args', 'Recebe argumentos nomeados extra como dicionário', 'Só aceita 2 argumentos', 'Lança uma excepção se usado incorrectamente'], a: 1, exp: '**kwargs recolhe argumentos keyword extra num dict. def f(**info): permite chamar f(name="Alice", age=30) — info será {"name": "Alice", "age": 30}.', mod: 'Control Flow' },
-  { q: 'Qual a diferença entre um set e uma list em Python?', opts: ['Set não existe em Python', 'Set não permite duplicados e não é ordenado; list permite duplicados e é ordenada', 'List não permite duplicados', 'São intercambiáveis em qualquer contexto'], a: 1, exp: 'Set armazena elementos únicos sem ordem garantida, com lookup O(1). List mantém ordem de inserção e permite duplicados, com lookup O(n).', mod: 'Data Structures' },
-  { q: 'O que é uma list comprehension?', opts: ['Uma função built-in para comprimir listas', 'Uma forma concisa de criar listas a partir de um iterável, opcionalmente filtrando', 'Um tipo de generator obrigatório', 'Um método exclusivo de tuples'], a: 1, exp: '[x**2 for x in range(10) if x % 2 == 0] cria uma lista dos quadrados dos números pares — mais pythónico e legível que um loop equivalente.', mod: 'Data Structures' },
-  { q: 'Para que serve o pytest.mark.parametrize?', opts: ['Marca testes como obsoletos', 'Permite correr o mesmo teste com múltiplos conjuntos de inputs/outputs', 'Só funciona com unittest, não com pytest', 'Desactiva um teste'], a: 1, exp: '@pytest.mark.parametrize("a,b,expected", [(2,3,5), (0,0,0)]) corre o teste uma vez para cada tuple de valores, evitando duplicação de código de teste.', mod: 'Python DevOps' },
-  { q: 'Qual o propósito de response.raise_for_status() na biblioteca requests?', opts: ['Imprime o status code no terminal', 'Lança uma excepção HTTPError se a resposta for 4xx ou 5xx', 'Converte a resposta para JSON', 'É obrigatório em todos os pedidos GET'], a: 1, exp: 'raise_for_status() verifica o status code da resposta e lança requests.exceptions.HTTPError automaticamente se for um erro de cliente (4xx) ou servidor (5xx).', mod: 'Python DevOps' },
-  { q: 'O que faz argparse.add_argument("--dry-run", action="store_true")?', opts: ['Define um argumento obrigatório com valor string', 'Cria uma flag booleana — True se presente na linha de comandos, False caso contrário', 'Faz parsing de ficheiros JSON', 'Só funciona com Python 2'], a: 1, exp: 'action="store_true" cria uma flag que não precisa de valor — se o utilizador escrever --dry-run, args.dry_run será True; se omitir, será False.', mod: 'Python DevOps' },
-  { q: 'Em logging, qual a ordem correcta de severidade (do menos ao mais grave)?', opts: ['CRITICAL < ERROR < WARNING < INFO < DEBUG', 'DEBUG < INFO < WARNING < ERROR < CRITICAL', 'INFO < DEBUG < ERROR < WARNING < CRITICAL', 'Todos têm a mesma prioridade'], a: 1, exp: 'A ordem é DEBUG < INFO < WARNING < ERROR < CRITICAL. Se o logger está configurado para nível INFO, mensagens DEBUG não aparecem, mas WARNING/ERROR/CRITICAL sim.', mod: 'Avançado' },
-  { q: 'Qual a vantagem de usar pathlib em vez de os.path?', opts: ['pathlib é mais lento mas mais seguro', 'API orientada a objectos, mais legível, com o operador / para juntar paths', 'os.path está deprecado e não funciona', 'Não há vantagem real'], a: 1, exp: 'pathlib.Path oferece uma API orientada a objectos: Path("/app") / "config.json" é mais legível que os.path.join("/app", "config.json"), além de métodos como .exists(), .glob(), .read_text().', mod: 'OOP & File I/O' },
-  { q: 'O que faz o type hint Optional[dict] no retorno de uma função?', opts: ['A função deve sempre retornar um dict vazio', 'Indica que a função pode retornar um dict ou None', 'Torna o parâmetro opcional na chamada da função', 'É sintaxe inválida'], a: 1, exp: 'Optional[dict] é equivalente a Union[dict, None] — comunica que a função pode retornar um dicionário ou None, ajudando ferramentas como mypy a detectar erros.', mod: 'Avançado' },
+type PythonModule =
+  | 'Fundamentos'
+  | 'Data Structures'
+  | 'Control Flow'
+  | 'OOP'
+  | 'OOP & File I/O'
+  | 'Advanced'
+  | 'Async & Concurrency'
+  | 'Error Handling'
+  | 'Typing & Type Hints'
+  | 'Packaging & Tooling'
+  | 'Subprocess & OS'
+  | 'Requests & APIs'
+  | 'Logging & Config'
+  | 'Testing'
+  | 'Python DevOps';
+
+export const QUESTIONS: Question<PythonModule>[] = [
+  // ─── FUNDAMENTOS ────────────────────────────────────────────────────────
+  { q: 'Qual a diferença entre uma lista e uma tuple em Python?', opts: ['Não há diferença, são sinónimos', 'Lista é mutável; tuple é imutável', 'Tuple é mutável; lista é imutável', 'Lista só guarda números; tuple guarda qualquer tipo'], a: 1, exp: 'Listas podem ser modificadas após criação (append, remove, etc.). Tuples são imutáveis — uma vez criadas, não podem mudar. Por isso tuples podem ser chaves de dict.', mod: 'Fundamentos', diff: 'easy' },
+  { q: 'O que faz o operador // em Python?', opts: ['Comentário de linha', 'Divisão float', 'Divisão inteira (floor division)', 'Potenciação'], a: 2, exp: '// é a divisão inteira — descarta a parte decimal. 10 // 3 = 3. Para divisão normal usa-se /, que retorna sempre float.', mod: 'Fundamentos', diff: 'easy' },
+  { q: 'Qual é o resultado de type(3.14)?', opts: ["<class 'int'>", "<class 'float'>", "<class 'decimal'>", "<class 'double'>"], a: 1, exp: '3.14 é um literal float (ponto flutuante de precisão dupla, IEEE 754). int representa números inteiros.', mod: 'Fundamentos', diff: 'easy' },
+  { q: 'O que faz o operador "is" em Python?', opts: ['Compara valores entre dois objetos', 'Compara se dois nomes referenciam o mesmo objeto na memória', 'Converte um tipo para outro', 'Cria uma cópia superficial de um objeto'], a: 1, exp: '"is" faz identity comparison (mesmo objeto na memória). "==" faz equality comparison (mesmo valor). Ex: a = [1,2]; b = [1,2]; a == b é True, mas a is b é False.', mod: 'Fundamentos', diff: 'medium' },
+  { q: 'Qual a saída de print(True + True + False)?', opts: ['TrueTrueFalse', '3', '1', 'Erro de tipo'], a: 1, exp: 'bool é subclass de int em Python: True==1, False==0. True+True+False = 1+1+0 = 3. A print mostra o valor numérico.', mod: 'Fundamentos', diff: 'easy' },
+  { q: 'O que faz o construtor int("42", base=10)?', opts: ['Converte a string "42" para inteiro 42', 'Converte a string para binário', 'Lança ValueError', 'Retorna a string original'], a: 0, exp: 'int(string, base) converte uma string numa base especificada para int decimal. int("42", 10) = 42. int("1010", 2) = 10 (binário).', mod: 'Fundamentos', diff: 'easy' },
+  { q: 'O que é "duck typing" em Python?', opts: ['Um tipo de dado que imita patos', 'Um estilo de tipagem onde a adequação de um objeto é determinada pelos seus métodos/propriedades, não pela sua classe', 'Uma técnica de serialização', 'Um padrão de design para criar subclasses'], a: 1, exp: '"Se caminha como pato e faz quack como pato, então é um pato." Duck typing foca no comportamento (métodos) em vez do tipo declarado. Ex: any object with .read() can be used as a file-like object.', mod: 'Fundamentos', diff: 'medium' },
+  { q: 'O que faz o operador "in" quando usado num dict?', opts: ['Verifica se um valor existe no dict', 'Verifica se uma chave existe no dict', 'Cria uma nova entrada no dict', 'Conta o número de chaves'], a: 1, exp: '"in" em dicts verifica existência de chaves, não valores. Para verificar valores usa-se "value in d.values()". "key in d" é O(1) porque usa hash table.', mod: 'Fundamentos', diff: 'easy' },
+  { q: 'Qual a diferença entre list.copy() e list[:]?', opts: ['São idênticos em comportamento', 'list.copy() é mais rápido; list[:] é mais legível', 'list[:] cria deepcopy; list.copy() cria shallow copy', 'list.copy() é método novo do Python 3.10'], a: 0, exp: 'list.copy() e list[:] produzem ambos uma shallow copy — uma nova lista com referências aos mesmos elementos. Para deep copy usa-se copy.deepcopy().', mod: 'Fundamentos', diff: 'medium' },
+  { q: 'O que é um "f-string" em Python?', opts: ['Uma string que forma um ciclo', 'Uma string literal com interpolacao de expressões usando f"texto {expressao}"', 'Uma string codificada em UTF-8', 'Uma regular expression'], a: 1, exp: 'f-strings (formatted string literals) permitem embedar expressões Python dentro de strings: name = "João"; f"Olá, {name}!" → "Olá, João!" . São avaliadas em tempo de execução e são a forma mais rápida de formatar strings em Python.', mod: 'Fundamentos', diff: 'easy' },
+
+  // ─── DATA STRUCTURES ────────────────────────────────────────────────────
+  { q: 'Qual a vantagem de usar um set em vez de uma list para verificar existência?', opts: ['Sets são mais legíveis', 'Sets têm lookup O(1) em média; lists têm O(n)', 'Sets são ordenados; lists não são', 'Não há diferença de performance'], a: 1, exp: 'Sets usam hash tables — lookup por pertenca é O(1) em média. Lists precisam de scan sequencial O(n). Para verificações frequentes de existência, sets são drasticamente mais rápidos.', mod: 'Data Structures', diff: 'medium' },
+  { q: 'O que faz collections.Counter()?', opts: ['Cria um contador para loops for', 'Conta ocorrências de elementos numa iterable, retornando um dict-like', 'Limita o tamanho de uma lista', 'Cria um iterador com contador embutido'], a: 1, exp: 'Counter é um dict subclass que conta hashable objects. Ex: Counter(["a","b","a","c"]) → {"a":2, "b":1, "c":1}. Tem métodos como most_common(n) para os n mais frequentes.', mod: 'Data Structures', diff: 'easy' },
+  { q: 'Qual a diferença entre dict.keys(), dict.values() e dict.items()?', opts: ['São idênticos; apenas nomes diferentes', 'keys() retorna chaves; values() retorna valores; items() retorna pares (chave, valor) como tuples', 'keys() retorna tuples; values() retorna dicts', 'items() é obsoleto em Python 3'], a: 1, exp: 'keys() → dict_keys([k1,k2,...]), values() → dict_values([v1,v2,...]), items() → dict_items([(k1,v1),(k2,v2),...]). Todos são view objects — refletem mudanças no dict original.', mod: 'Data Structures', diff: 'easy' },
+  { q: 'O que é uma "deque" e quando é preferível a uma list?', opts: ['É um tipo de string; preferível para texto grande', 'É uma double-ended queue; eficiente para append/pop nas duas extremidades (O(1) vs O(n) da list)', 'É uma deque de caracteres; usada em regex', 'É equivalente a uma list mas com ordenação automática'], a: 1, exp: 'collections.deque tem append/popleft O(1). Lists têm append O(1) mas pop(0) é O(n) porque requer deslocamento de todos os elementos. Deque é ideal para queues, BFS, e sliding windows.', mod: 'Data Structures', diff: 'medium' },
+  { q: 'O que faz o método list.sort() vs a função sorted()?', opts: ['São idênticos', 'list.sort() ordena in-place e retorna None; sorted() retorna uma nova lista ordenada', 'sorted() é mais rápido para lists grandes', 'list.sort() só funciona com strings'], a: 1, exp: 'list.sort() modifie a lista original (in-place) e retorna None. sorted() cria uma nova lista e não altera a original. Ambos aceitam key= e reverse=.', mod: 'Data Structures', diff: 'easy' },
+  { q: 'Como se converte uma string "a,b,c" numa list ["a","b","c"]?', opts: ['string.split(",")', 'string.split()', 'string.split("")', 'string.partition(",")'], a: 0, exp: 'str.split(sep) parte a string pelo separador. "a,b,c".split(",") → ["a","b","c"]. split() sem args parte por whitespace e remove strings vazias.', mod: 'Data Structures', diff: 'easy' },
+
+  // ─── CONTROL FLOW ───────────────────────────────────────────────────────
+  { q: 'Qual o resultado de list(range(2, 10, 3))?', opts: ['[2, 5, 8]', '[2, 3, 4, 5, 6, 7, 8, 9]', '[2, 5, 8, 11]', '[3, 6, 9]'], a: 0, exp: 'range(start, stop, step) começa em 2, incrementa 3, pára antes de 10: [2, 5, 8].', mod: 'Control Flow', diff: 'easy' },
+  { q: 'Em Python, qual a regra de scope LEGB?', opts: ['Local → Enclosing → Global → Built-in, ordem de procura de variáveis', 'Apenas se aplica a classes', 'Define a ordem de execução de loops', 'É um padrão de logging'], a: 0, exp: 'LEGB: Local (função), Enclosing (funções externas), Global (módulo), Built-in (print, len, etc.). Python procura nesta ordem ao resolver nomes.', mod: 'Control Flow', diff: 'medium' },
+  { q: 'O que faz o decorador @functools.wraps(func) num wrapper?', opts: ['Acelera a execução da função', 'Preserva o __name__ e __doc__ da função original', 'Converte a função em assíncrona', 'Adiciona logging automático'], a: 1, exp: 'Sem @functools.wraps, o wrapper substitui os metadados da função original, dificultando debugging e introspecção. wraps copia __name__, __doc__, __module__ do original.', mod: 'Control Flow', diff: 'medium' },
+  { q: 'O que faz *args numa definição de função?', opts: ['Limita a função a um único argumento', 'Recebe um número variável de argumentos posicionais como tuple', 'É sintaxe inválida em Python', 'Só funciona com strings'], a: 1, exp: '*args recolhe argumentos posicionais extra numa tuple. def add(*numbers): permite chamar add(1,2,3,4) — numbers será (1,2,3,4).', mod: 'Control Flow', diff: 'easy' },
+  { q: 'O que faz **kwargs numa definição de função?', opts: ['É equivalente a *args', 'Recebe argumentos nomeados extra como dicionário', 'Só aceita 2 argumentos', 'Lança uma excepção se usado incorrectamente'], a: 1, exp: '**kwargs recolhe argumentos keyword extra num dict. def f(**info): permite chamar f(name="Alice", age=30) — info será {"name": "Alice", "age": 30}.', mod: 'Control Flow', diff: 'easy' },
+  { q: 'O que é uma "generator expression" e qual a diferença para uma list comprehension?', opts: ['São idênticas', 'Generator expressions usam parênteses e são lazy (computam valores sob demanda); list comprehensions usam colchetes e criam a lista inteira em memória', 'Generator expressions são mais rápidas em todos os casos', 'List comprehensions não existem em Python'], a: 1, exp: '(x**2 for x in range(1000000)) é um generator — produz valores um a um, usando ~200 bytes. [x**2 for x in range(1000000)] cria uma lista de 8MB+. Generator expressions são preferidas para iteráveis grandes.', mod: 'Control Flow', diff: 'medium' },
+  { q: 'O que faz o operador de unpacking "*rest" numa atribuição de lista?', opts: ['Cria uma cópia da lista', 'Recolhe elementos extras numa nova lista', 'Converte a lista para tuple', 'É sintaxe inválida'], a: 1, exp: '*rest recolhe elementos excedentes. Ex: first, *rest, last = [1,2,3,4,5] → first=1, rest=[2,3,4], last=5. Funções também aceitam *args para unpacking posicional.', mod: 'Control Flow', diff: 'medium' },
+  { q: 'Qual a diferença entre "break" e "continue" num loop?', opts: ['São idênticos', 'break sai do loop; continue salta para a próxima iteração', 'break salta iteração; continue sai do loop', 'break só funciona em while; continue só em for'], a: 1, exp: 'break termina completamente o loop. continue pula o resto da iteração actual e vai para a próxima. Ex: para ignorar valores negativos num loop mas continuar a processar o resto.', mod: 'Control Flow', diff: 'easy' },
+
+  // ─── OOP ────────────────────────────────────────────────────────────────
+  { q: 'O que acontece quando fazes super().__init__(...) numa subclasse?', opts: ['Cria uma nova instância da classe pai', 'Chama o construtor da classe pai para inicializar atributos herdados', 'Remove os atributos da classe pai', 'É opcional e nunca necessário'], a: 1, exp: 'super().__init__() invoca o construtor da classe pai, garantindo que os atributos definidos lá (ex: self.name) também sejam inicializados na subclasse.', mod: 'OOP', diff: 'easy' },
+  { q: 'Qual a diferença entre __str__ e __repr__ numa classe?', opts: ['São idênticos, apenas convenção de nome diferente', '__str__ é para o utilizador final (print); __repr__ é para debugging/desenvolvedores', '__repr__ só funciona em listas', '__str__ é obsoleto no Python 3'], a: 1, exp: '__str__ define representação "amigável" (usada por print/str()). __repr__ define representação não-ambígua para debugging (usada por repr() e no REPL). Ideal: repr() deveria ser código Python válido.', mod: 'OOP', diff: 'medium' },
+  { q: 'O que é "data classes" (dataclass) em Python?', opts: ['Classes que só guardam dados numéricos', 'Decorador que gera automaticamente __init__, __repr__, __eq__ a partir de annotateções de campo', 'Classes abstractas para dados', 'Um tipo de interface'], a: 1, exp: '@dataclass elimina boilerplate: em vez de escrever __init__ com self.x=x, self.y=y manualmente, o dataclass gera automaticamente. Também gera __repr__ e __eq__ por padrão. Ex: @dataclass class Point: x: float; y: float.', mod: 'OOP', diff: 'medium' },
+  { q: 'O que é um "property" (propriedade) em Python e para que serve?', opts: ['Uma variável de instância pública', 'Um método que pode ser acessado como atributo, permitindo computação lazy e validação', 'Uma propriedade CSS aplicada a widgets', 'Uma metaclass'], a: 1, exp: '@property permite definir getters/setters como atributos normais: self.area em vez de self.area(). Permite validação em setters, computação lazy, e manter interface pública estável durante refactoring.', mod: 'OOP', diff: 'medium' },
+  { q: 'O que é "mixin" em Python?', opts: ['Uma classe que não pode ser instanciada', 'Uma classe que fornece métodos para outras classes via herança múltipla, sem representar um tipo próprio', 'Um mixin de cocktails (não relacionado)', 'Uma interface obrigatória'], a: 1, exp: 'Mixin é uma classe que não pretende ser instanciada sozinha, mas cuja funcionalidade é "misturada" noutras classes. Ex: LoggingMixin adiciona métodos de log a qualquer classe que o herde. Python não tem interfaces obrigatórias (use abc.ABC para isso).', mod: 'OOP', diff: 'hard' },
+  { q: 'O que faz o decorador @classmethod?', opts: ['Torna o método estático (não recebe self)', 'Torna o método receptor da classe (recebe cls) em vez de uma instância', 'Torna o método privado', 'Converte o método numa propriedade'], a: 1, exp: '@classmethod recebe a classe como primeiro argumento (cls). Usado para factory methods: @classmethod def from_string(cls, s): return cls(*map(int, s.split(","))). Diferente de @staticmethod que não recebe nem self nem cls.', mod: 'OOP', diff: 'medium' },
+  { q: 'O que é "overloading" de métodos em Python e como se simula?', opts: ['Python suporta overloading nativamente como Java/C++', 'Python não tem overloading de signatures — usa defaults, *args, **kwargs, ou @singledispatch para comportamento similar', 'Overloading só funciona em classes abstractas', 'É uma feature adicionada no Python 3.11'], a: 1, exp: 'Em Python, definições posteriores de métodos com o mesmo nome sobrescrevem as anteriores. Para múltiplos comportamentos: use defaults (def f(a, b=None)), *args/**kwargs, ou @functools.singledispatch para dispatch baseado no tipo do primeiro argumento.', mod: 'OOP', diff: 'hard' },
+
+  // ─── OOP & FILE I/O ─────────────────────────────────────────────────────
+  { q: 'Para que serve o context manager "with open(...) as f:"?', opts: ['Acelera a leitura de ficheiros grandes', 'Garante que o ficheiro é fechado automaticamente, mesmo se ocorrer uma excepção', 'Converte o ficheiro para JSON automaticamente', 'Só funciona com ficheiros binários'], a: 1, exp: 'O context manager "with" garante que o método __exit__ (que fecha o ficheiro) é sempre chamado, mesmo que uma excepção ocorra dentro do bloco — evita file handles soltos.', mod: 'OOP & File I/O', diff: 'easy' },
+  { q: 'Qual excepção é lançada ao aceder a uma chave inexistente num dict?', opts: ['IndexError', 'AttributeError', 'KeyError', 'ValueError'], a: 2, exp: 'KeyError é lançado quando se tenta aceder a dict["chave_inexistente"]. Para evitar, usa-se dict.get("chave", default).', mod: 'OOP & File I/O', diff: 'easy' },
+  { q: 'Qual a vantagem de usar pathlib em vez de os.path?', opts: ['pathlib é mais lento mas mais seguro', 'API orientada a objectos, mais legível, com o operador / para juntar paths', 'os.path está deprecado e não funciona', 'Não há vantagem real'], a: 1, exp: 'pathlib.Path oferece API orientada a objectos: Path("/app") / "config.json" é mais legível que os.path.join("/app", "config.json"), além de métodos como .exists(), .glob(), .read_text().', mod: 'OOP & File I/O', diff: 'easy' },
+  { q: 'Qual a diferença entre open("file.txt", "r") e open("file.txt", "rb")?', opts: ['São idênticos', '"r" lê texto (str); "rb" lê bytes (bytes), necessário para ficheiros binários', '"r" é mais rápido', '"rb" é para ficheiros de backup'], a: 1, exp: '"r" (text mode) lê strings com decodificação (default UTF-8). "rb" (binary mode) lê bytes brutos — necessário para imagens, PDFs, ficheiros comprimidos, etc.', mod: 'OOP & File I/O', diff: 'easy' },
+  { q: 'O que faz json.dumps() vs json.loads()?', opts: ['Ambos fazem a mesma coisa', 'dumps converte dict/list para string JSON; loads converte string JSON para dict/list', 'dumps lê de ficheiro; loads escreve para ficheiro', 'dumps é para Python 2; loads é para Python 3'], a: 1, exp: 'dumps = "dump string" (serializa objecto Python → string JSON). loads = "load string" (desserializa string JSON → objecto Python). Dump/dump to file usam fp parameter.', mod: 'OOP & File I/O', diff: 'easy' },
+  { q: 'O que é "CSV dialect" e para que serve?', opts: ['Um tipo de base de dados', 'Uma configuração de parsing para ficheiros CSV (separador, quotechar, etc.)', 'Um framework de visualização de dados', 'Um tipo de compressão de ficheiros'], a: 1, exp: 'csv.Dialect define parâmetros como delimiter (,;|), quotechar, escapechar. csv.register_dialect() permite criar formatos personalizados. O módulo csv lida automaticamente com quotes e escapes.', mod: 'OOP & File I/O', diff: 'hard' },
+
+  // ─── ADVANCED ───────────────────────────────────────────────────────────
+  { q: 'Qual a vantagem principal de um generator sobre uma lista para 10M elementos?', opts: ['Generators são sempre mais rápidos a processar', 'Generators usam muito menos memória — computam valores lazy, um de cada vez', 'Generators suportam mais operações que listas', 'Não há vantagem real'], a: 1, exp: 'Generators computam cada valor sob demanda (yield), sem armazenar tudo em memória. Lista de 10M quadrados usa ~80MB; generator equivalente usa ~200 bytes.', mod: 'Advanced', diff: 'medium' },
+  { q: 'O que é "metaclass" em Python?', opts: ['Uma classe que herda de todas as outras', 'A "classe de uma classe" — controla como as classes são criadas', 'Uma classe com métodos abstractos', 'Uma classe que não pode ser instanciada'], a: 1, exp: 'Metaclass é o que cria classes, assim como classes criam instâncias. type é a metaclass padrão. Metaclasses personalizadas permitem modificar comportamento de criação de classes (ex: automaticamente registrar subclasses, adicionar métodos). Usado em ORM (Django), singleton patterns.', mod: 'Advanced', diff: 'hard' },
+  { q: 'O que é "descriptor" em Python?', opts: ['Um objeto que descreve outro objeto', 'Um objeto que define como um atributo é acessado (get/set/delete) numa classe', 'Um tipo de logging', 'Um padrão de serialização'], a: 1, exp: 'Descriptors implementam __get__, __set__, __delete__. São usados internamente por properties, methods, classmethods. Permitem controlar acesso a atributos: validação, computação lazy, armazenamento em structs C.', mod: 'Advanced', diff: 'hard' },
+  { q: 'O que faz o módulo itertools.groupby()?', opts: ['Agrupa elementos iguais consecutivos', 'Conta elementos por grupo', 'Cria grupos aleatórios', 'Filtra elementos por predicado'], a: 0, exp: 'groupby(agrupador, chave) agrupa elementos CONSECUTIVOS com a mesma chave. Importante: os dados devem estar ordenados pela mesma chave para grupos corretos. Retorna (chave, iterador) pares.', mod: 'Advanced', diff: 'hard' },
+  { q: 'O que é "operator overloading" em Python?', opts: ['Não existe em Python', 'Permitir redefinir operadores (+, -, ==, etc.) para tipos definidos pelo utilizador via métodos especiais (__add__, __eq__, etc.)', 'Só funciona com números', 'É uma feature de Python 3.10+'], a: 1, exp: 'Python permite definir comportamento de operadores via métodos especiais: __add__ (+), __eq__ (==), __lt__ (<), __len__ (len()), __iter__ (for x in obj), etc. Ex: class Vector: def __add__(self, other): return Vector(self.x+other.x, ...).', mod: 'Advanced', diff: 'medium' },
+  { q: 'O que é "monkey patching" e quando deve ser usado?', opts: ['Um tipo de patch de segurança', 'Alterar comportamento de módulos/classes em runtime — útil para testing/mocking, mas perigoso em produção', 'Um padrão de design para patchs de bugs', 'Uma técnica de compilação'], a: 1, exp: 'Monkey patching altera módulos em runtime: ex: import module; module.func = new_func. Muito usado em testes (mocking) mas perigoso em produção porque torna código imprevisível e difícil de debuggar.', mod: 'Advanced', diff: 'medium' },
+  { q: 'Qual a diferença entre __new__ e __init__?', opts: ['São idênticos', '__new__ cria a instância (static method); __init__ inicializa a instância (instance method)', '__new__ é para classes abstractas; __init__ para concretas', '__init__ é mais rápido que __new__'], a: 1, exp: '__new__(cls, ...) cria e retorna a instância (objetivo). __init__(self, ...) inicializa atributos. __new__ é chamado primeiro. Para a maioria das classes, só __init__ é necessário. __new__ é usado em metaclasses e singletons.', mod: 'Advanced', diff: 'hard' },
+  { q: 'O que faz o módulo functools.lru_cache()?', opts: ['Faz cache de resultados de funções (memoização)', 'Limita o tamanho de listas', 'Faz cache de ficheiros abertos', 'Limita recalls de API'], a: 0, exp: 'lru_cache(maxsize=128) guarda os resultados de chamadas anteriores de função. Se a função for chamada com os mesmos argumentos novamente, retorna o resultado em cache em vez de recalcular. Ideal para funções puras com cálculo custoso (ex: Fibonacci recursivo).', mod: 'Advanced', diff: 'medium' },
+
+  // ─── ASYNC & CONCURRENCY ────────────────────────────────────────────────
+  { q: 'O que é "asyncio" em Python?', opts: ['Uma biblioteca para assincronia via single-threaded event loop', 'Um framework web assíncrono', 'Uma alternativa ao multithreading', 'Uma biblioteca de machine learning'], a: 0, exp: 'asyncio implementa concurrency assíncrona com async/await e event loop. Permite múltiplas I/O operations concurrentes sem multithreading. Usado por asyncio.run(), async def, await. Frameworks como FastAPI e aiohttp usam asyncio.', mod: 'Async & Concurrency', diff: 'medium' },
+  { q: 'Qual a diferença entre async def e def normal?', opts: ['Não há diferença', 'async def retorna um coroutine object; def normal retorna o valor diretamente', 'async def é mais lento', 'async def só funciona com funções sem argumento'], a: 1, exp: 'async def define uma função assíncrona que retorna um coroutine object. Precisa de await para ser executado: async def fetch(): return 42 → fetch() retorna <coroutine>. Para executar: await fetch() dentro de outra async def, ou asyncio.run(fetch()).', mod: 'Async & Concurrency', diff: 'medium' },
+  { q: 'O que é "threading" vs "multiprocessing" em Python?', opts: ['São idênticos', 'Threading compartilha memória (GIL limita CPU-bound); multiprocessing usa processos separados (sem GIL, ideal para CPU-bound)', 'Threading é mais rápido que multiprocessing em todos os casos', 'Multiprocessing não existe em Python'], a: 1, exp: 'Threading: threads no mesmo processo, partilham memória. GIL (Global Interpreter Lock) faz com que threads não corram em parallel real em CPU-bound. Multiprocessing: processos separados, cada um com seu GIL — ideal para CPU-bound. Threading é bom para I/O-bound (network, file).', mod: 'Async & Concurrency', diff: 'hard' },
+  { q: 'O que é o GIL (Global Interpreter Lock) e qual o seu impacto?', opts: ['Um mecanismo de segurança para threads', 'Um lock que permite apenas uma thread executar bytecode Python por vez, limitando parallelismo real em CPU-bound', 'Um lock para ficheiros', 'Um padrão de design para singletons'], a: 1, exp: 'GIL é um mutex que protege o acesso a objetos Python, permitindo apenas uma thread executar bytecode por vez. Impacto: multithreading não acelera CPU-bound tasks. Soluções: multiprocessing, asyncio (I/O-bound), ou C-extensions que libertam o GIL.', mod: 'Async & Concurrency', diff: 'hard' },
+  { q: 'O que faz asyncio.gather(*coroutines)?', opts: ['Executa coroutines sequencialmente', 'Executa múltiplos coroutines em parallel e retorna resultados na ordem original', 'Cancela todos os coroutines', 'Cria um único coroutine a partir de vários'], a: 1, exp: 'gather() executa múltiplos coroutines concorrentemente no mesmo event loop e retorna uma lista de resultados. Use return_exceptions=True para capturar erros em vez de lançar. Equivalente a Promise.all do JavaScript.', mod: 'Async & Concurrency', diff: 'hard' },
+  { q: 'Quando usar ThreadPoolExecutor vs ProcessPoolExecutor?', opts: ['São intercambiáveis', 'ThreadPoolExecutor para I/O-bound (network, disk); ProcessPoolExecutor para CPU-bound (cálculo intensivo)', 'ProcessPoolExecutor é sempre mais rápido', 'ThreadPoolExecutor não existe'], a: 1, exp: 'ThreadPoolExecutor: threads partilham memória, bom para I/O wait (network requests, file reads). ProcessPoolExecutor: processos separados, sem GIL, bom para CPU-bound (image processing, data crunching). Concurrency.futures提供统一的接口。', mod: 'Async & Concurrency', diff: 'hard' },
+
+  // ─── ERROR HANDLING ─────────────────────────────────────────────────────
+  { q: 'Qual a diferença entre raise e assert?', opts: ['São idênticos', 'raise lança explicitamente uma excepção; assert verifica condições e lança AssertionError (desactivável com -O)', 'assert é mais rápido que raise', 'raise só funciona com exceptions built-in'], a: 1, exp: 'raise excecao() lança uma excepção explicitamente. assert condicao, "mensagem" lança AssertionError se condicao for False — mas é desactivável com python -O (optimize), por isso não use para validação de segurança.', mod: 'Error Handling', diff: 'easy' },
+  { q: 'O que faz "except Exception as e:" e qual a diferença para "except:"?', opts: ['São idênticos', 'except Exception as e captura exceptions específica e dá acesso ao objeto; except: captura TUDO包括KeyboardInterrupt e SystemExit', 'except Exception é mais rápido', 'except: é preferível em produção'], a: 1, exp: 'except: captura todas exceptions包括SystemExit e KeyboardInterrupt (Ctrl+C), o que é perigoso. except Exception captura a maioria mas não estas duas especiais. Sempre prefira except Exception as e: para logging.', mod: 'Error Handling', diff: 'medium' },
+  { q: 'Para que serve o bloco "else" em try/except/else?', opts: ['Para tratar exceptions do except', 'O else corre quando NENHUMA exception foi levantada — ideal para código que depende do try ter successo', 'O else é opcional e nunca usado', 'O else funciona como finally'], a: 1, exp: 'try/except/else/finally: try executa o código principal; except trata exceptions; else corre se NENHUMA exception ocorreu; finally corre SEMPRE. Ex: try: conn.connect() except: handle_error() else: conn.query() — só query se connect succeed.', mod: 'Error Handling', diff: 'medium' },
+  { q: 'O que é "custom exception" e quando deve ser criada?', opts: ['Exceptions built-in não existem; todas precisam ser criadas manualmente', 'Uma classe que herda de Exception; usada para representar erros específicos do domínio da aplicação', 'Exceptions personalizadas são más práticas', 'Exceptions customizadas são mais lentas'], a: 1, exp: 'class InsufficientFundsError(Exception): pass. Custom exceptions permitem catching específico por domínio: try: withdraw() except InsufficientFundsError: ... except NetworkError: ... Isso melhora clareza e manutenção vs usar genéricos ValueError.', mod: 'Error Handling', diff: 'medium' },
+  { q: 'O que faz o contexto manager "contextlib.contextmanager" com @decorator?', opts: ['Cria classes de contexto manualmente', 'Permite criar context managers a partir de generators com yield', 'Cria locks para threads', 'Gerencia exceções automaticamente'], a: 1, exp: '@contextmanager def transaction(): conn = get_conn(); try: yield conn; conn.commit() except: conn.rollback() raise. O yield devolve o recurso ao bloco with. É a forma mais simples de criar context managers sem definir classes com __enter__/__exit__.', mod: 'Error Handling', diff: 'hard' },
+  { q: 'Qual a diferença entre SystemExit, KeyboardInterrupt e BaseException?', opts: ['São todos iguais', 'BaseException é a raiz de todas exceptions; SystemExit e KeyboardInterrupt herdam directamente de BaseException (não de Exception)', 'Exception herda de BaseException; SystemExit e KeyboardInterrupt também', 'KeyboardInterrupt não é uma exception'], a: 0, exp: 'Hierarquia: BaseException → Exception → ... ; BaseException → SystemExit, KeyboardInterrupt, GeneratorExit. Except: captura todas incluindo SystemExit (Ctrl+C). Except Exception: não captura SystemExit/KeyboardInterrupt — o comportamento correto para a maioria dos casos.', mod: 'Error Handling', diff: 'hard' },
+
+  // ─── TYPING & TYPE HINTS ────────────────────────────────────────────────
+  { q: 'O que faz o type hint Optional[dict] no retorno de uma função?', opts: ['A função deve sempre retornar um dict vazio', 'Indica que a função pode retornar um dict ou None', 'Torna o parâmetro opcional na chamada da função', 'É sintaxe inválida'], a: 1, exp: 'Optional[dict] é equivalente a Union[dict, None] — comunica que a função pode retornar um dicionário ou None, ajudando ferramentas como mypy a detectar erros.', mod: 'Typing & Type Hints', diff: 'easy' },
+  { q: 'Qual a diferença entre list[int] e List[int] (typing module)?', opts: ['São idênticos em Python 3.9+', 'List[int] do módulo typing é para compatibilidade com Python <3.9; list[int] nativo é preferível a partir do Python 3.9', 'list[int] é mais lento', 'List[int] não existe'], a: 0, exp: 'A partir de Python 3.9, collections.abc types podem ser usados diretamente: list[int], dict[str, int], tuple[int, ...]. typing.List, typing.Dict são obsoletos mas mantidos para compatibilidade.', mod: 'Typing & Type Hints', diff: 'medium' },
+  { q: 'O que é "TypeVar" no módulo typing?', opts: ['Um tipo para variáveis dinâmicas', 'Permite definir tipos genéricos paramétricos com restrições — ex: T = TypeVar("T", int, str) permite T ser int ou str', 'Um type hint para variáveis globais', 'Uma função de conversão de tipos'], a: 1, exp: 'TypeVar permite funções genéricas com restrições: T = TypeVar("T", bound=BaseModel). def first(items: list[T]) -> T: return items[0]. MyPy rastreia o tipo ao longo do código, oferecendo type safety em generics.', mod: 'Typing & Type Hints', diff: 'hard' },
+  { q: 'O que faz "typing.Protocol"?', opts: ['Define uma interface obrigatória como em Java', 'Define structs comportamentais — classes que implementam os métodos do Protocol são consideradas compatíveis (duck typing estrutural)', 'Cria protocolos de rede', 'Definde tipos para protocolos de transporte'], a: 1, exp: 'Protocol permite structural subtyping (duck typing estrutural): class JSONEncodable(Protocol): def to_json(self) -> str: ... Qualquer classe com to_json() é considerada compatível com JSONEncodable, mesmo sem herdar explicitamente.', mod: 'Typing & Type Hints', diff: 'hard' },
+  { q: 'O que é "NewType" em typing e quando é útil?', opts: ['Cria um novo tipo de dado', 'Cria um tipo alias com verificação estática mas runtime overhead zero — útil para tipos domain-specific como UserID = NewType("UserID", int)', 'Define um tipo com validação runtime', 'É equivalente a enum'], a: 1, exp: 'UserID = NewType("UserID", int) cria um tipo distinto para mypy mas é int em runtime (zero overhead). previne erros como passar um int de quantidade onde se espera um UserID. Diferente de class UserID(int): que tem overhead de instância.', mod: 'Typing & Type Hints', diff: 'hard' },
+  { q: 'O que faz "typing.Literal["a", "b"]"?', opts: ['Permite qualquer string', 'Restringe o valor a exactamente "a" ou "b" — útil para enums tipados', 'Cria uma lista com a e b', 'É inválido em Python'], a: 1, exp: 'Literal permite restringir type hints a valores específicos: Color = Literal["red", "green", "blue"]. MyPy verifica que apenas esses valores são passados. Útil para代替 enums quando os valores são literais simples.', mod: 'Typing & Type Hints', diff: 'medium' },
+
+  // ─── PACKAGING & TOOLING ────────────────────────────────────────────────
+  { q: 'Qual a diferença entre pip, pipenv e poetry?', opts: ['São todos iguais', 'pip instala pacotes; pipenv gerencia virtualenvs + dependências com lock file; poetry gerencia projetos completos com build, versioning e publishing', 'poetry é mais velho que pip', 'pipenv não existe'], a: 1, exp: 'pip: instalador básico. pipenv: virtualenv + requirements.txt + Pipfile.lock (reprodutibilidade). poetry: tooling completo — dependencies, virtualenv, build, publish, versioning — tudo num pyproject.toml. Moderno e recomendado para novos projetos.', mod: 'Packaging & Tooling', diff: 'medium' },
+  { q: 'O que é um "virtual environment" em Python?', opts: ['Um ambiente de desenvolvimento na nuvem', 'Um isolamento de dependências Python num diretório específico, permitindo projetos com versões diferentes de pacotes coexistirem', 'Um container Docker para Python', 'Um modo de debugging'], a: 1, exp: 'python -m venv .venv cria um ambiente isolado com seu próprio site-packages e interpretador. Ativar com source .venv/bin/activate (Linux/Mac) ou .venv\\Scripts\\activate (Windows). Previne conflicts entre projetos com versões diferentes de pacotes.', mod: 'Packaging & Tooling', diff: 'easy' },
+  { q: 'O que é "pyproject.toml" e qual a sua importância?', opts: ['Um ficheiro de configuração do Python core', 'O standard moderno para configuração de build/tooling Python — substitui setup.py, setup.cfg, requirements.txt como metadata central', 'Um ficheiro de logs', 'Um formato de serialização'], a: 1, exp: 'PEP 517/518 definem pyproject.toml como central configuration. Contém [project] (deps, metadata), [tool.poetry], [tool.black], [tool.mypy], etc. build-system section define o build backend (setuptools, poetry, hatch). Ferramentas leem do mesmo ficheiro.', mod: 'Packaging & Tooling', diff: 'medium' },
+  { q: 'O que faz "pytest --cov=."?', opts: ['Executa testes com cobertura de código', 'Cria cobertura de testes para documentação', 'Instala dependências de covariância', 'Não existe esta flag'], a: 0, exp: 'pytest-cov mede percentagem de código coberto por testes. --cov=src mede cobertura do diretório src. --cov-report=html gera relatório HTML. Meta: >80% coverage é boa prática. Coverage mostra lines/branches executadas vs total.', mod: 'Packaging & Tooling', diff: 'easy' },
+  { q: 'Qual a diferença entre pip install -r requirements.txt e pip install -e .?', opts: ['São equivalentes', '-r requirements.txt instala dependências listadas; -e . instala o pacote actual em "editable mode" (links ao código fonte)', 'editable mode é mais rápido', '-e só funciona com poetry'], a: 1, exp: '-r requirements.txt: instala pacotes das linhas do ficheiro. -e . (editable): instala o pacote actual apontando para o diretório fonte — mudanças no código refletem imediatamente sem reinstall. Usado durante desenvolvimento: pip install -e ".[dev]" instala extras de desenvolvimento.', mod: 'Packaging & Tooling', diff: 'medium' },
+
+  // ─── SUBPROCESS & OS ────────────────────────────────────────────────────
+  { q: 'Qual a diferença entre subprocess.run() e subprocess.Popen()?', opts: ['São idênticos', 'run() é wrapper de alto nível que espera completion e retorna CompletedProcess; Popen() é classe base para controle fino de processo (stdin/stdout pipes, polling)', 'Popen() é mais simples que run()', 'run() não existe em Python 3'], a: 0, exp: 'subprocess.run(["ls", "-l"], capture_output=True, text=True) espera e retorna resultado. Popen() permite controle em tempo real: process.stdin.write(), process.poll(), process.wait(). Use run() para comandos simples; Popen() para pipelines e interacção.', mod: 'Subprocess & OS', diff: 'medium' },
+  { q: 'O que faz subprocess.PIPE?', opts: ['Conecta a um ficheiro de log', 'Redireciona stdin/stdout/stderr do subprocess para um pipe que o Python pode ler/escrever', 'Cria um pipe de sistema', 'Conecta a rede'], a: 1, exp: 'subprocess.PIPE cria um pipe para comunicação com o processo filho. run(["cmd"], capture_output=True) é shorthand para stdout=PIPE, stderr=PIPE. Permitem ler output do comando e passar input via process.stdin.write().', mod: 'Subprocess & OS', diff: 'medium' },
+  { q: 'O que faz os.getenv("VAR", "default") vs os.environ["VAR"]?', opts: ['São iguais', 'getenv retorna default se não existir; os.environ["VAR"] lança KeyError se a variável não existir', 'getenv é mais lento', 'os.environ não existe'], a: 0, exp: 'os.getenv("VAR") retorna None se não existir (safe). os.environ["VAR"] lança KeyError se não existir. Para default: os.getenv("VAR", "default"). Use getenv para variáveis opcionais; environ para obrigatoriedade explícita.', mod: 'Subprocess & OS', diff: 'easy' },
+  { q: 'O que faz shutil.copytree() vs os.rename()?', opts: ['São idênticos', 'copytree copia diretório recursivamente; rename renomeia/move ficheiro ou diretório', 'copytree move; rename copia', 'rename só funciona com ficheiros'], a: 0, exp: 'shutil.copytree(src, dst) copia recursivamente todo o diretório src para dst. os.rename(src, dst) renomeia ou move (se em mesmo filesystem). copytree cria dst; rename requer que dst não exista.', mod: 'Subprocess & OS', diff: 'easy' },
+
+  // ─── REQUESTS & APIs ────────────────────────────────────────────────────
+  { q: 'Qual o propósito de response.raise_for_status() na biblioteca requests?', opts: ['Imprime o status code no terminal', 'Lança uma excepção HTTPError se a resposta for 4xx ou 5xx', 'Converte a resposta para JSON', 'É obrigatório em todos os pedidos GET'], a: 1, exp: 'raise_for_status() verifica o status code da resposta e lança requests.exceptions.HTTPError automaticamente se for erro de cliente (4xx) ou servidor (5xx). Boa prática: sempre usar após request() para falhar rapidamente.', mod: 'Requests & APIs', diff: 'easy' },
+  { q: 'Qual a diferença entre requests.get() e requests.request("GET", ...)?', opts: ['São idênticos', 'get() é shorthand para request("GET", ...); request() permite qualquer método HTTP (POST, PUT, DELETE, PATCH)', 'get() não suporta headers', 'request() é mais rápido'], a: 1, exp: 'requests.get(url) é equivalente a requests.request("GET", url). request() é a função genérica: requests.request("DELETE", url, headers={...}). Use get/post/put/delete para legibilidade; request() para métodos dinâmicos.', mod: 'Requests & APIs', diff: 'easy' },
+  { q: 'O que faz o parâmetro "timeout" em requests.get(url, timeout=5)?', opts: ['Define timeout para parsing da resposta', 'Define o tempo máximo de espera para a conexão ser estabelecida E para a resposta ser recebida', 'Timeout só aplica ao DNS resolution', 'Timeout não existe em requests'], a: 0, exp: 'timeout=5 define o máximo de segundos para espera. Sem timeout, requests pode bloquear indefinidamente. tuples (connect_timeout, read_timeout) permitem separar: timeout=(3, 10) — 3s para conectar, 10s para ler resposta. Sempre use timeout!', mod: 'Requests & APIs', diff: 'medium' },
+  { q: 'Como se faz autenticação básica (Basic Auth) com requests?', opts: ['Passando header Authorization manualmente', 'Usando o parâmetro auth=(username, password) — requests codifica automaticamente para Basic Auth', 'Não é possível com requests', 'Usando sessions com cookie'], a: 1, exp: 'requests.get(url, auth=("user", "pass")) envia Authorization: Basic <base64(user:pass)>. Para token auth: requests.get(url, headers={"Authorization": f"Bearer {token}"}). Sessions geram cookies automaticamente: s = requests.Session(); s.auth = (...)', mod: 'Requests & APIs', diff: 'medium' },
+  { q: 'O que é "session" no módulo requests e qual a sua vantagem?', opts: ['Sessão de database', 'Um objeto que persiste cookies, conexões e headers entre requests — evita recriar TCP connections e mantém estado', 'Uma sessão de browser', 'Um tipo de exception'], a: 1, exp: 'session = requests.Session() persiste cookies, headers e conexões (connection pooling). Vantajoso para múltiplos requests ao mesmo servidor: menos overhead de handshake TCP, cookies mantidos entre requests. Autenticação configurada uma vez na session aplica-se a todos os requests.', mod: 'Requests & APIs', diff: 'medium' },
+
+  // ─── LOGGING & CONFIG ───────────────────────────────────────────────────
+  { q: 'Em logging, qual a ordem correcta de severidade (do menos ao mais grave)?', opts: ['CRITICAL < ERROR < WARNING < INFO < DEBUG', 'DEBUG < INFO < WARNING < ERROR < CRITICAL', 'INFO < DEBUG < ERROR < WARNING < CRITICAL', 'Todos têm a mesma prioridade'], a: 1, exp: 'A ordem é DEBUG < INFO < WARNING < ERROR < CRITICAL. Se o logger está configurado para nível INFO, mensagens DEBUG não aparecem, mas WARNING/ERROR/CRITICAL sim.', mod: 'Logging & Config', diff: 'easy' },
+  { q: 'Qual a diferença entre logging.info() e print()?', opts: ['São iguais', 'logging permite controle de nível, formatação, destinations (file, stream, remote); print é output fixo para stdout', 'print é mais rápido', 'logging não existe em Python'], a: 1, exp: 'logging é o standard para production: níveis de severidade, handlers (file, stderr, syslog), formatters, e disable com LOG_LEVEL. print é para debugging rápido mas não tem controle de output destination nem níveis. Em production, use sempre logging.', mod: 'Logging & Config', diff: 'easy' },
+  { q: 'O que faz logging.basicConfig()?', opts: ['Configura logging para output em múltiplos ficheiros', 'Configura o root logger com handler default (stderr) e formato — chamado uma vez no início da aplicação', 'Cria um logger por módulo automaticamente', 'Desactiva logging'], a: 1, exp: 'basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(name)s: %(message)s") configura o root logger. Deve ser chamado UMA vez no entrypoint. Depois, logging.getLogger(__name__) cria loggers filhos que herdam configuração.', mod: 'Logging & Config', diff: 'medium' },
+  { q: 'O que é "logging.getLogger(__name__)" e por que se usa __name__?', opts: ['Cria um logger global', 'Cria um logger nomeado com o nome do módulo — permite hierarquia de loggers e controle per-module de nível de log', 'Cria um logger para testes', '__name__ não tem importância'], a: 1, exp: '__name__ é o nome do módulo actual (ex: "myapp.services.auth"). Loggers filhos herdam configuration do root. Permite: logging.getLogger("myapp.services").setLevel(WARNING) para silenciar só services. Hierarquia: myapp → myapp.services → myapp.services.auth.', mod: 'Logging & Config', diff: 'medium' },
+
+  // ─── TESTING ────────────────────────────────────────────────────────────
+  { q: 'Para que serve o pytest.mark.parametrize?', opts: ['Marca testes como obsoletos', 'Permite correr o mesmo teste com múltiplos conjuntos de inputs/outputs', 'Só funciona com unittest, não com pytest', 'Desactiva um teste'], a: 1, exp: '@pytest.mark.parametrize("a,b,expected", [(2,3,5), (0,0,0)]) corre o teste uma vez para cada tuple de valores, evitando duplicação de código de teste.', mod: 'Testing', diff: 'medium' },
+  { q: 'Qual a diferença entre pytest fixtures e unittest setUp/tearDown?', opts: ['São idênticos', 'fixtures são mais flexíveis — scoped (function/class/module/session), autouse, parametrizeáveis, e podem ser partilhados entre módulos via conftest.py', 'fixtures são mais lentos', 'setUp/tearDown é mais moderno'], a: 0, exp: 'fixtures: @pytest.fixture def db(): ... → usamos db em testes. Scoping: function (default), class, module, session. Autouse: @pytest.fixture(autouse=True) corre antes de CADA teste. conftest.py partilha fixtures entre múltiplos ficheiros de teste.', mod: 'Testing', diff: 'hard' },
+  { q: 'O que faz pytest.raises(Exception)?', opts: ['Captura exceptions num bloco e verifica se a exception esperada foi lançada', 'Previne exceptions de ocorrerem', 'Lança exceptions automaticamente', 'São testes que não lançam exceptions'], a: 0, exp: 'with pytest.raises(ValueError): func_that_fails() — o teste PASSA se ValueError é lançada, FALLS se não for. Pode capturar mensagem: with pytest.raises(ValueError, match="expected msg"). Útil para testar caminhos de erro.', mod: 'Testing', diff: 'medium' },
+  { q: 'O que é "monkeypatch" no pytest?', opts: ['Uma técnica de testing para substituir temporariamente attributes/functions em runtime', 'Um tipo de bug', 'Uma função de logging', 'Uma feature de mocking em unittest'], a: 0, exp: 'monkeypatch é um fixture do pytest que permite trocar temporariamente attributes, funções ou environment variables durante o teste. Ex: monkeypatch.setattr("requests.get", mock_get) — o patch é revertido automaticamente após o teste. Mais seguro que monkey-patching manual.', mod: 'Testing', diff: 'hard' },
+  { q: 'Qual a diferença entre unittest.TestCase e pytest?', opts: ['São idênticos', 'unittest é do standard library com boilerplate (setUp, assertions específicas); pytest é mais conciso, suporta fixtures, parametrize, e plugins', 'pytest não suporta assertions', 'unittest é mais moderno'], a: 1, exp: 'unittest: class TestFoo(unittest.TestCase): def test_bar(self): self.assertEqual(...) — boilerplate pesado. pytest: def test_bar(): assert result == expected — assertions nativas, fixtures, parametrize, rich output. pytest é o standard moderno; unittest ainda útil para projects grandes que precisam de hereditariedade de classes.', mod: 'Testing', diff: 'medium' },
+  { q: 'O que faz "pytest -v" e "pytest --tb=short"?', opts: ['São flags inúteis', '-v aumenta verbose (mostra nomes dos testes); --tb=short mostra traceback compactado', 'v significa verbose; tb significa test benchmark', 'Ambas desactivam testes'], a: 1, exp: '-v (verbose): mostra nome de cada teste enquanto corre (FAILED/PASSED). --tb=short: traceback compactado (só linhas relevantes). Juntas: pytest -v --tb=short — output limpo para CI/CD e debugging rápido.', mod: 'Testing', diff: 'easy' },
+  { q: 'O que é "conftest.py" no pytest?', opts: ['Um ficheiro de configuração do Python', 'Um ficheiro especial que pytest deteta automaticamente — contem fixtures e hooks partilhados entre múltiplos directórios de testes', 'Um ficheiro de configuração do IDE', 'Um template para testes'], a: 1, exp: 'conftest.py não precisa de import — pytest o deteta automaticamente. Fixtures e hooks definidos nele estão disponíveis para todos os testes nos directórios abaixo. Estrutura: root conftest.py (fixtures globais), tests/unit/conftest.py (fixtures de unit tests).', mod: 'Testing', diff: 'hard' },
+
+  // ─── PYTHON DEVOPS ──────────────────────────────────────────────────────
+  { q: 'O que faz argparse.add_argument("--dry-run", action="store_true")?', opts: ['Define um argumento obrigatório com valor string', 'Cria uma flag booleana — True se presente na linha de comandos, False caso contrário', 'Faz parsing de ficheiros JSON', 'Só funciona com Python 2'], a: 1, exp: 'action="store_true" cria uma flag que não precisa de valor — se o utilizador escrever --dry-run, args.dry_run será True; se omitir, será False.', mod: 'Python DevOps', diff: 'easy' },
+  { q: 'Qual a vantagem de usar Click em vez de argparse para CLIs?', opts: ['Click é mais lento', 'Click permite composição de commands/nested commands, decorators, e type coercion automáticos de forma mais pythónica', 'argparse não existe', 'Click só funciona com Python 3.10+'], a: 1, exp: 'Click: @click.command() @click.option("--name", default="World") def cli(name): click.echo(f"Hello {name}"). Nested commands: @cli.command() def deploy(): ... argparse requer mais boilerplate para a mesma funcionalidade.', mod: 'Python DevOps', diff: 'medium' },
+  { q: 'O que faz "pip freeze > requirements.txt" e porque é útil?', opts: ['Instala todos os pacotes', 'Gera lista das versões EXACTAS dos pacotes instalados — essencial para reprodutibilidade de ambientes', 'Remove pacotes desatualizados', 'Atualiza todos os pacotes'], a: 1, exp: 'pip freeze produz: package==1.2.3 (versão exacta). requirements.txt com versões fixas garante que deploy em staging/produção usa as mesmas versões que desenvolvimento. pip install -r requirements.txt instala exactamente essas versões.', mod: 'Python DevOps', diff: 'easy' },
+  { q: 'O que é "tox" em Python?', opts: ['Um framework de testes', 'Uma ferramenta que automatiza testing em múltiplos ambientes Python (várias versões, diferentes deps) — "test in isolation"', 'Um tipo de exception', 'Um debugger'], a: 1, exp: 'tox cria virtualenvs isolados para cada environment definido em tox.ini. Ex: tox -e py39,py310 testa compatibilidade com Python 3.9 e 3.10 simultaneamente. CI tools usam tox para garantir que código funciona em múltiplas versões.', mod: 'Python DevOps', diff: 'medium' },
+  { q: 'O que faz o "venv" vs "virtualenv" package?', opts: ['São idênticos', 'venv é built-in do Python 3.3+ (python -m venv); virtualenv é package externo com mais features (templates, ativação cross-platform melhorada)', 'virtualenv é deprecated', 'venv não existe'], a: 0, exp: 'venv: built-in, simple: python -m venv .venv. virtualenv (pip install virtualenv): features extra como --python flag, template directories, melhor suporte Windows. Para projects simples, venv basta; para CI/complex, virtualenv é mais flexível.', mod: 'Python DevOps', diff: 'medium' },
+  { q: 'Como se faz logging de performance (timing) de funções em Python?', opts: ['Usando time.time() manualmente', 'Usando context manager ou decorator como contextlib.contextmanager ou functools.wraps + time.perf_counter()', 'Não é possível medir performance em Python', 'Usando print com timestamp'], a: 1, exp: 'import time; from functools import wraps; def timed(f): @wraps(f) def wrapper(*a, **kw): start=time.perf_counter(); r=f(*a,**kw); print(f"{f.__name__}: {time.perf_counter()-start:.3f}s"); return r; return wrapper. time.perf_counter() é o mais preciso para benchmarking (high-resolution timer).', mod: 'Python DevOps', diff: 'hard' },
+  { q: 'O que faz a biblioteca "pathlib.Path.glob()"?', opts: [`Busca ficheiros usando padrões glob (ex: "*.py", "**/*.py")`, 'Busca no Google Drive', 'Elimina ficheiros', 'Renomeia ficheiros'], a: 0, exp: 'Path(")").glob("*.py") encontra todos os .py no diretório actual. Path(")").glob("**/*.py") procura recursivamente. Retorna iterador de Path objects. Mais pythónico que os.walk() com string matching.', mod: 'Python DevOps', diff: 'easy' },
+  { q: 'O que é "dependency injection" em Python e como se implementa?', opts: ['Não existe em Python', 'Padrão onde dependências são passadas para funções/classes em vez de serem criadas internamente — em Python, passado como argumento ou via fixtures', 'Um padrão de locking', 'Uma técnica de multiprocessing'], a: 1, exp: 'Em vez de db = Database() dentro de uma função, passa-se db como argumento: def service(db): ... Isso permite mocking em testes e desacoplamento. Frameworks como dependency-injector automatizam. Em pytest: fixtures são forma de DI.', mod: 'Python DevOps', diff: 'hard' },
+  { q: 'O que faz "dataclasses.replace(obj, field=new_value)"?', opts: ['Substitui o objecto original', 'Cria uma cópia do dataclass com campos específicos substituídos — padrão imutável', 'Remove campos do dataclass', 'Converte dataclass para dict'], a: 1, exp: 'dataclasses.replace(person, name="New Name") retorna novo objecto com name alterado, mantendo os outros campos iguais. dataclasses são imutáveis por padrão (frozen=True) ou mutáveis. replace é útil para transforms sem modificar original.', mod: 'Python DevOps', diff: 'medium' },
+  { q: 'Qual a diferença entre __init__.py vazio e __init__.py com imports?', opts: ['Não há diferença', '__init__.py vazio marca diretório como package; com imports expõe publicamente submodules (from .submodule import Class)', '__init__.py não é necessário em Python 3', 'Imports em __init__.py causam circular dependency'], a: 1, exp: '__init__.py vazio: diretório é package mas submodules não são acessíveis diretamente. __init__.py com "from .module import Class": expõe Class como mypackage.Class. É o padrão "friendly import" — utilizadores podem importar do package root em vez de paths profundos.', mod: 'Python DevOps', diff: 'medium' },
 ];
 
 export default function PythonExamSimulator() {
-  const [started, setStarted] = useState(false);
-  const [current, setCurrent] = useState(0);
-  const [answers, setAnswers] = useState<(number | null)[]>(new Array(QUESTIONS.length).fill(null));
-  const [showExp, setShowExp] = useState(false);
-  const [finished, setFinished] = useState(false);
+  const { state, currentQuestion, score, percentage, handleStart, handleAnswer, handleNext, handleReset } =
+    useQuizEngine({ questions: QUESTIONS, autoShuffle: true });
 
-  const q = QUESTIONS[current];
-  const answered = answers[current] !== null;
-  const correct = answers[current] === q.a;
-  const score = answers.filter((a, i) => a === QUESTIONS[i].a).length;
-  const pct = Math.round((score / QUESTIONS.length) * 100);
-
-  const handleAnswer = useCallback((idx: number) => {
-    if (answered) return;
-    const newAnswers = [...answers];
-    newAnswers[current] = idx;
-    setAnswers(newAnswers);
-    setShowExp(true);
-  }, [answered, answers, current]);
-
-  const handleNext = () => {
-    if (current < QUESTIONS.length - 1) { setCurrent(c => c + 1); setShowExp(false); }
-    else setFinished(true);
-  };
-
-  const handleReset = () => {
-    setStarted(false); setCurrent(0);
-    setAnswers(new Array(QUESTIONS.length).fill(null));
-    setShowExp(false); setFinished(false);
-  };
-
-  if (!started) return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-8 text-center space-y-4">
-      <div className="text-4xl">🐍</div>
-      <h3 className="text-2xl font-bold text-white">Simulado Python</h3>
-      <p className="text-slate-400 max-w-md mx-auto">{QUESTIONS.length} questões cobrindo Fundamentos, Control Flow, Data Structures, OOP, Avançado e Python DevOps.</p>
-      <div className="grid grid-cols-3 gap-3 max-w-xs mx-auto pt-2">
-        {[['20', 'Questões'], ['60%', 'Aprovação'], ['6', 'Módulos']].map(([v, l]) => (
-          <div key={l} className="p-3 rounded-xl bg-slate-900 border border-slate-800">
-            <div className="text-xl font-black text-amber-300">{v}</div>
-            <div className="text-[10px] text-slate-500">{l}</div>
-          </div>
-        ))}
-      </div>
-      <button onClick={() => setStarted(true)} className="mt-2 px-8 py-3 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-300 font-semibold text-[14px] hover:bg-amber-500/30 transition-all">
-        Iniciar Simulado →
-      </button>
-    </div>
-  );
-
-  if (finished) return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-8 text-center space-y-5">
-      <Trophy size={40} className={pct >= 60 ? 'text-amber-400 mx-auto' : 'text-slate-600 mx-auto'} />
-      <div>
-        <div className="text-4xl font-black text-white">{pct}%</div>
-        <div className={`text-[14px] font-semibold mt-1 ${pct >= 60 ? 'text-emerald-400' : 'text-rose-400'}`}>
-          {pct >= 80 ? '🎉 Excelente!' : pct >= 60 ? '✓ Aprovado' : '✗ Precisa de mais estudo'}
+  // Menu inicial
+  if (state.mode === 'menu') {
+    return (
+      <div className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-8 text-center space-y-4">
+        <Brain size={40} className="text-amber-400 mx-auto" />
+        <h3 className="text-2xl font-bold text-white">Simulado Python</h3>
+        <p className="text-slate-400 max-w-md mx-auto">{QUESTIONS.length} questões cobrindo Fundamentos, OOP, Async, Typing, Testing, DevOps e mais.</p>
+        <div className="grid grid-cols-3 gap-3 max-w-xs mx-auto pt-2">
+          {[['50', 'Questões'], ['60%', 'Aprovação'], ['15', 'Módulos']].map(([v, l]) => (
+            <div key={l} className="p-3 rounded-xl bg-slate-900 border border-slate-800">
+              <div className="text-xl font-black text-amber-300">{v}</div>
+              <div className="text-2xs text-slate-400">{l}</div>
+            </div>
+          ))}
         </div>
-        <div className="text-slate-500 text-[13px] mt-1">{score}/{QUESTIONS.length} respostas correctas</div>
+        <button
+          onClick={handleStart}
+          className="mt-2 px-8 py-3 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-300 font-semibold text-md hover:bg-amber-500/30 transition-all"
+        >
+          Iniciar Simulado →
+        </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-left max-w-lg mx-auto">
-        {QUESTIONS.map((q, i) => (
-          <div key={i} className={`flex items-start gap-2 p-2 rounded-lg text-[11px] ${answers[i] === q.a ? 'bg-emerald-500/10 text-emerald-300' : 'bg-rose-500/10 text-rose-300'}`}>
-            {answers[i] === q.a ? <CheckCircle2 size={12} className="shrink-0 mt-0.5" /> : <XCircle size={12} className="shrink-0 mt-0.5" />}
-            <span className="truncate">{q.mod}: {q.q.substring(0, 50)}...</span>
-          </div>
-        ))}
-      </div>
-      <button onClick={handleReset} className="flex items-center gap-2 mx-auto px-6 py-3 rounded-2xl bg-slate-900 border border-slate-700 text-slate-300 font-semibold text-[13px] hover:border-slate-600 transition-all">
-        <RotateCcw size={14} />Tentar de novo
-      </button>
-    </div>
-  );
+    );
+  }
 
+  // Resultado final
+  if (state.mode === 'finished') {
+    const pass = percentage >= 60;
+    return (
+      <div className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-8 text-center space-y-5">
+        <Trophy size={40} className={pass ? 'text-amber-400 mx-auto' : 'text-slate-600 mx-auto'} />
+        <div>
+          <div className="text-4xl font-black text-white">{percentage}%</div>
+          <div className={`text-md font-semibold mt-1 ${pass ? 'text-emerald-400' : 'text-rose-400'}`}>
+            {percentage >= 80 ? 'Excelente!' : percentage >= 60 ? 'Aprovado' : 'Precisa de mais estudo'}
+          </div>
+          <div className="text-slate-400 text-base mt-1">{score}/{QUESTIONS.length} respostas correctas</div>
+        </div>
+        <button
+          onClick={handleReset}
+          className="flex items-center gap-2 mx-auto px-6 py-3 rounded-2xl bg-slate-900 border border-slate-700 text-slate-300 font-semibold text-base hover:border-slate-600 transition-all"
+        >
+          <RotateCcw size={14} />Tentar de novo
+        </button>
+      </div>
+    );
+  }
+
+  // Quiz em progresso
   return (
     <div className="space-y-4">
+      {/* Header com módulo e progresso */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-[12px] text-slate-500">{current + 1} / {QUESTIONS.length}</span>
-          <span className="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 text-[10px] font-bold">{q.mod}</span>
+          <span className="text-sm text-slate-400">{state.current + 1} / {QUESTIONS.length}</span>
+          <span className="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 text-2xs font-bold">
+            {currentQuestion.mod}
+          </span>
         </div>
         <div className="w-32 h-1.5 rounded-full bg-slate-800 overflow-hidden">
-          <div className="h-full rounded-full bg-amber-500 transition-all" style={{ width: `${((current + 1) / QUESTIONS.length) * 100}%` }} />
+          <div
+            className="h-full rounded-full bg-amber-500 transition-all"
+            style={{ width: `${((state.current + 1) / QUESTIONS.length) * 100}%` }}
+          />
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-6">
-        <p className="text-[15px] font-semibold text-white leading-relaxed mb-5">{q.q}</p>
-        <div className="space-y-2">
-          {q.opts.map((opt, i) => {
-            let style = 'border-slate-800 bg-slate-900/50 text-slate-300 hover:border-slate-700';
-            if (answered) {
-              if (i === q.a) style = 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300';
-              else if (i === answers[current]) style = 'border-rose-500/50 bg-rose-500/10 text-rose-300';
-              else style = 'border-slate-800 bg-slate-900/30 text-slate-600';
-            }
-            return (
-              <button key={i} onClick={() => handleAnswer(i)}
-                className={`w-full text-left flex items-center gap-3 p-4 rounded-xl border transition-all text-[13px] ${style} ${!answered ? 'cursor-pointer' : 'cursor-default'}`}>
-                <span className="shrink-0 w-6 h-6 rounded-full border border-current flex items-center justify-center text-[11px] font-bold">
-                  {answered && i === q.a ? '✓' : answered && i === answers[current] && i !== q.a ? '✗' : String.fromCharCode(65 + i)}
-                </span>
-                {opt}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {showExp && (
-        <div className={`p-4 rounded-2xl border ${correct ? 'border-emerald-500/30 bg-emerald-500/8' : 'border-rose-500/30 bg-rose-500/8'}`}>
-          <div className={`text-[11px] font-black uppercase mb-1 ${correct ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {correct ? '✓ Correcto!' : '✗ Incorreto'}
-          </div>
-          <p className="text-[12px] text-slate-300 leading-relaxed">{q.exp}</p>
-          <button onClick={handleNext} className="mt-3 px-5 py-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 font-semibold text-[12px] hover:bg-amber-500/30 transition-all">
-            {current < QUESTIONS.length - 1 ? 'Próxima questão →' : 'Ver resultados →'}
-          </button>
-        </div>
-      )}
+      <QuizRunner
+        state={state}
+        question={currentQuestion}
+        onAnswer={handleAnswer}
+        onNext={handleNext}
+        score={score}
+        total={QUESTIONS.length}
+        percentage={percentage}
+        accentColor="amber"
+      />
     </div>
   );
 }

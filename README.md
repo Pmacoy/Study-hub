@@ -1,121 +1,100 @@
-# 🧠 Study Hub — Learn by solving
+# 🧠 Study Hub — Aprender resolvendo
 
-*[Versão em português](README.pt.md)*
+Uma plataforma interactiva para engenheiros de Platform, DevOps e Cloud aprenderem através de **cenários reais** — não flashcards, não quizzes. Depurar pods em CrashLoopBackOff, investigar rotas BGP, escrever comandos num terminal simulado.
 
-An interactive platform for Platform, DevOps and Cloud engineers who learn by **debugging real problems** — not by answering multiple-choice quizzes. Investigate pods stuck in CrashLoopBackOff, trace BGP routes that won't propagate, type real commands in a simulated terminal.
+Feito para **quem aprende a fazer**, não a decorar.
 
-Built for people who learn by **doing**, not memorising.
+![Zero errors](https://img.shields.io/badge/typescript-strict-blue) ![Vite](https://img.shields.io/badge/vite-6.0-purple) ![Tailwind](https://img.shields.io/badge/tailwind-3.4-06B6D4) ![React](https://img.shields.io/badge/react-18-61DAFB)
 
-![TypeScript strict](https://img.shields.io/badge/typescript-strict-blue) ![Vite](https://img.shields.io/badge/vite-6.0-purple) ![Tailwind](https://img.shields.io/badge/tailwind-3.4-06B6D4) ![React](https://img.shields.io/badge/react-18-61DAFB)
+## O que tem
 
-> **Language note:** the interface is available in English and Portuguese.
-> Study modules, scenarios and question banks are currently written in Portuguese —
-> translation is in progress.
+### 🎯 Cenários guiados
+Problemas reais que aparecem em produção. Recebes o contexto (logs, `describe`, métricas), decides o próximo passo, recebes feedback imediato e um post-mortem no fim com prevenções.
 
----
+- **Pod em CrashLoopBackOff** (Kubernetes · mid) — investigar OOMKilled
+- **VPN Gateway BGP não propaga rotas** (Azure · senior) — troubleshoot híbrido
+- **DNS interno resolve, externo não** (Redes · mid) — CoreDNS + Azure Private Resolver
+- **Script Python subprocess pendurado** (Python · mid) — pipe deadlock
 
-## What's inside
+### 🖥️ Terminal simulado
+Shell interactivo com parser flexível que aceita variações (`kubectl get pods` = `kubectl get po`) e sugere se te aproximares (`kubectl get pd` → "Talvez quisesses dizer: kubectl get pods?").
 
-### 🎯 Guided scenarios
-Real production incidents. You get the context — logs, `kubectl describe`, Grafana metrics — decide the next step, and receive immediate feedback. Each ends with a post-mortem covering root cause and preventions.
+- **kubectl** — investigar CrashLoopBackOff (get → describe → logs → top)
+- **bash** — disco a 98%, achar o culpado sem `rm -rf` cego
+- **az CLI** — quem tem acesso ao Key Vault via RBAC?
 
-Eleven scenarios, including eight Kubernetes ones built from documented production failures: CrashLoopBackOff with OOMKilled, ImagePullBackOff on a private registry, PVC stuck Pending, Ingress 502, RBAC Forbidden, liveness probe loops, node disk pressure evictions, and a full 2 AM incident-response drill.
+Tem histórico com `↑`/`↓`, comandos `hint`, `help`, `objectives`, teaching notes contextuais e um debrief no fim.
 
-### 🖥️ Simulated terminal
-An interactive shell with a forgiving parser: `kubectl get pods`, `kubectl get po` and `--namespace` vs `-n` all work. Miss slightly and it suggests. Type `hint` for progressive hints.
+### 🔥 Gamificação
+- **Streak diário** (Duolingo-style) com calendário semanal
+- **Sessão Diária** com 3 passos: Questões do Dia, Cartões Relâmpago, Estudo Livre
+- **Índice de Progresso** — score composto (Cobertura + Consistência + Desempenho)
+- Progresso persistido em `localStorage`
 
-Eight sessions covering Linux troubleshooting (disk full, OOM, disk I/O saturation, port not listening, DNS failure, high CPU), kubectl debugging, and Azure CLI RBAC investigation.
+### 📚 6 domínios de conteúdo
 
-### 🎯 Skill diagnostic
-Twelve self-assessment questions across the competencies that hold up a Platform Engineer. Produces a radar map, identifies your four priority gaps, and links each one directly to the relevant module. Every area includes a concrete *mastery signal* — a testable criterion, not a vague goal.
-
-### 🗺️ Learning paths
-Five certification paths with real progress tracking. A node only turns green when you've visited the module **and** completed its scenarios and terminal sessions above threshold.
-
-### 🚀 Portfolio track
-Fifty DevOps projects organised in five sections, from a shell-script website monitor to end-to-end DevSecOps pipelines. Track status and store your repo link for each.
-
-### 💬 Interview preparation
-Two levels: 100 quick-revision questions, and 303 in-depth questions across 27 modules. Plus a technique section covering how to answer — golden rules, mistakes to avoid across six dimensions, phrases that hurt vs phrases that help, and a pre-interview checklist.
-
-### 📚 Curated library
-Thirty-three GitHub repositories worth your time, organised by category, each with why it matters and who it's for.
-
-### 🔥 Daily streak
-Duolingo-style consistency tracking with a composite progress index.
-
----
-
-## Domains covered
-
-| Domain | Content |
-|---|---|
-| **Platform & DevOps** | 16 modules — Linux, Docker, Kubernetes, Helm, CI/CD, Terraform, CloudFormation, monitoring, DevSecOps, FinOps, MLOps, IDP/Backstage, DORA/DevEx |
-| **Microsoft Azure** | AZ-104 with 507 questions and 16 official Microsoft lab links · AZ-305 planned |
-| **AWS** | SAA-C03 with 6 modules and 118 questions (20 scenario-based) |
-| **Google Cloud** | ACE achieved · PCA planned |
-| **Networking** | 6 modules — OSI, TCP/IP, DNS, VPN, routing, security |
-| **Python for DevOps** | 6 modules — fundamentals through boto3 and azure-sdk |
-
----
+| Domínio | Módulos | Simulados |
+|---|---|---|
+| **Platform & DevOps Engineering** | 12 (Linux, Docker, K8s, CI/CD, Terraform, IDP/Backstage, Golden Paths, DORA/DevEx…) | 20Q exam |
+| **Microsoft Azure** | AZ-104 (8 módulos, 507 questões) · AZ-305 em construção | ✓ |
+| **AWS** | SAA-C03 em construção | soon |
+| **Google Cloud** | ACE · PCA em construção | soon |
+| **Redes** | 6 módulos (OSI, TCP/IP, DNS, VPN, routing, security) | — |
+| **Python para DevOps** | 6 módulos (fundamentos → OOP → generators → boto3/azure-sdk) | ✓ |
 
 ## Stack
 
-React 18 · TypeScript (strict) · Vite · Tailwind CSS · lucide-react
+- **React 18** + **TypeScript** (strict) + **Vite**
+- **Tailwind CSS** com dark theme custom
+- **lucide-react** para ícones
+- Zero backend, zero tracking — tudo em `localStorage`
 
-No backend. No tracking. Everything persists in `localStorage`.
-
-## Running locally
+## Correr localmente
 
 ```bash
-git clone https://github.com/Pmacoy/Study-hub
-cd Study-hub
+git clone https://github.com/YOUR_USERNAME/study-hub
+cd study-hub
 npm install
 npm run dev
+# abre http://localhost:5173
 ```
 
-Open http://localhost:5173
-
-## Deploying
+## Deploy
 
 ```bash
 npm run build
+# dist/ pode ir directo para Vercel, Netlify, GitHub Pages, S3+CloudFront...
 ```
 
-The `dist/` folder is static — deploy it to Vercel, Netlify, GitHub Pages, S3 + CloudFront, or anywhere else.
-
----
-
-## Project structure
+## Arquitectura
 
 ```
 src/
-├── App.tsx                 # domain routing + gamification state
-├── i18n/                   # language context and dictionary
-├── types/                  # domain models
+├── App.tsx                          # router de domínios + gamificação
+├── types/                           # domain models (Scenario, TerminalSession, ...)
 ├── data/
-│   ├── scenarios/          # 11 guided scenarios
-│   ├── terminal/           # 8 terminal sessions
-│   ├── azure/              # AZ-104 content, 507 questions, official labs
-│   ├── aws/                # SAA-C03 content and question bank
-│   ├── projects.ts         # 50 portfolio projects
-│   ├── advancedInterview.ts # 303 in-depth interview questions
-│   └── curatedRepos.ts     # 33 recommended repositories
-├── hooks/                  # persistence and progress tracking
+│   ├── scenarios/                   # 4 cenários guiados
+│   ├── terminal/                    # 3 sessões de terminal
+│   ├── flashcards/                  # ~119 cartões cross-domain
+│   ├── azure/                       # knowledgeBase + 507 questões AZ-104
+│   └── ...
+├── hooks/                           # useDailyState, useActivityLog, useScenarioAttempts, ...
 ├── components/
-│   ├── scenarios/          # guided scenario player
-│   ├── terminal/           # terminal with flexible command parser
-│   ├── diagnostic/         # skill self-assessment
-│   ├── interview/          # question banks and technique
-│   └── ...                 # per-domain module simulators
+│   ├── scenarios/GuidedScenarioPlayer.tsx
+│   ├── terminal/TerminalPlayer.tsx  # parser flexível + histórico
+│   ├── shared/                      # DailySessionCard, ProgressIndexCard, ...
+│   ├── devops/                      # 12 simuladores de módulo
+│   ├── azure/                       # 8 simuladores AZ-104
+│   ├── networking/                  # 6 módulos com IP calc, subnet tree, TCP...
+│   └── python/                      # 6 módulos Python
 └── utils/
-    ├── commandParser.ts    # tokenizer, flag parsing, fuzzy matching
-    └── ip-math.ts          # subnet and CIDR helpers
+    ├── commandParser.ts             # tokenizer + flag parser + fuzzy match
+    └── ip-math.ts                   # subnet, CIDR, broadcast helpers
 ```
 
-## Adding a guided scenario
+## Como adicionar um cenário guiado
 
-Create `src/data/scenarios/myScenario.ts`:
+Cria `src/data/scenarios/myScenario.ts`:
 
 ```ts
 import type { Scenario } from '../../types/scenario';
@@ -124,43 +103,54 @@ export const myScenario: Scenario = {
   id: 'my-scenario',
   domain: 'devops',
   format: 'guided',
-  title: 'Short title',
-  hook: 'The story — "it is 3 AM and Slack is on fire..."',
+  title: 'O título curto',
+  hook: 'A história — "são 3 da manhã, o Slack explode..."',
   difficulty: 'mid',
   timeEstimateMin: 6,
   tags: ['kubernetes', 'debug'],
-  contextArtifacts: [/* what you see up front */],
-  progressiveArtifacts: [/* revealed by correct decisions */],
+  contextArtifacts: [/* … */],
+  progressiveArtifacts: [/* logs, outputs revelados por decisões */],
   steps: [
     {
       id: 'step-1',
-      prompt: 'What is your first command?',
+      prompt: 'Qual é o primeiro comando?',
       options: [
         { id: 'a', label: 'kubectl get pods', correct: true, feedback: '...' },
-        { id: 'b', label: 'kubectl delete pod', correct: false, feedback: '...' },
+        { id: 'b', label: 'kubectl delete', correct: false, feedback: '...' },
       ],
-      teachingNote: 'The principle behind the right answer.',
     },
   ],
   resolution: { rootCause: '…', fix: '…', preventions: ['…'] },
 };
 ```
 
-Register it in `src/data/scenarios/index.ts` and it appears in the hub.
+Adiciona ao `src/data/scenarios/index.ts` e está.
 
-## Contributing
+## Como adicionar uma sessão de terminal
 
-Pull requests welcome. Particularly useful:
+Igual estrutura em `src/data/terminal/myShellSession.ts` — cada `handler` define aliases de tokens e um output (estático ou função dos flags). O parser encontra melhor match ou sugere se estiver perto.
 
-- New scenarios, especially AWS, GCP, and networking incidents you've actually hit
-- New terminal sessions (git workflows, jq pipelines, aws CLI)
-- Translations — the interface is bilingual, the content is not yet
-- Technical corrections — if a simulated command doesn't match real behaviour, open an issue
+## Contribuir
 
-## Licence
+PRs são bem-vindos! Boas contribuições:
 
-MIT.
+- Novos cenários (especialmente AWS, GCP, redes, incidentes históricos famosos)
+- Novas sessões de terminal (git flow complicado, jq/kubectl combos, aws CLI)
+- Traduções (só existe pt-PT actualmente)
+- Correcções técnicas — se um comando `kubectl` no simulador não bate com o real, abre issue
+
+## Licença
+
+MIT — vai fazer bom uso.
+
+## Roadmap
+
+- [ ] Arquitectura interactiva (drag-and-drop de componentes cloud)
+- [ ] Post-mortem / incident investigation (logs completos, achar a causa)
+- [ ] Mais cenários AWS e GCP
+- [ ] Modo colaborativo (partilhar progresso com um team)
+- [ ] Export do progresso em Markdown (portfolio)
 
 ---
 
-*Built by engineers who learn better from a terminal and a real problem than from slides.*
+*Feito por engenheiros que aprendem melhor com um terminal e um problema real do que com slides.*

@@ -1,20 +1,18 @@
 import { useState } from 'react';
-import { useLang } from '../../i18n/LangContext';
-import { PLATFORM_EN, tr } from '../../i18n/modulesEn';
-import { Copy, Check, Gauge, Brain, Users, TrendingUp } from 'lucide-react';
+import { Copy, Check, Gauge, Brain, Users, TrendingUp, Rocket, Clock, Zap, ArrowRight, BarChart3, Activity, Wrench } from 'lucide-react';
 
 function Code({ code, lang = 'yaml' }: { code: string; lang?: string }) {
   const [copied, setCopied] = useState(false);
   return (
-    <div className="rounded-xl border border-slate-800 overflow-hidden text-[11px]">
+    <div className="rounded-xl border border-slate-800 overflow-hidden text-xs">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="font-mono text-slate-500">{lang}</span>
+        <span className="font-mono text-slate-400">{lang}</span>
         <button onClick={() => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1400); }}
-          className="flex items-center gap-1 text-slate-500 hover:text-slate-300">
+          className="flex items-center gap-1 text-slate-400 hover:text-slate-300">
           {copied ? <Check size={10} className="text-emerald-400" /> : <Copy size={10} />}
         </button>
       </div>
-      <pre className="p-4 font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => (
           <div key={i} className={line.trim().startsWith('#') || line.trim().startsWith('//') ? 'text-slate-600' : /^\s*(metric|name|query|target|source):/.test(line) ? 'text-violet-400' : 'text-slate-300'}>{line}</div>
         ))}
@@ -26,7 +24,7 @@ function Code({ code, lang = 'yaml' }: { code: string; lang?: string }) {
 const DORA_METRICS = [
   {
     name: 'Deployment Frequency',
-    icon: '🚀',
+    icon: <Rocket size={16} className="text-emerald-400" />,
     def: 'Com que frequência a equipa faz deploy para produção',
     elite: 'On demand (várias vezes/dia)',
     high: '1x/dia até 1x/semana',
@@ -36,7 +34,7 @@ const DORA_METRICS = [
   },
   {
     name: 'Lead Time for Changes',
-    icon: '⏱️',
+    icon: <Clock size={16} className="text-sky-400" />,
     def: 'Tempo entre commit e código em produção',
     elite: '< 1 hora',
     high: '1 dia até 1 semana',
@@ -46,7 +44,7 @@ const DORA_METRICS = [
   },
   {
     name: 'Change Failure Rate',
-    icon: '💥',
+    icon: <Zap size={16} className="text-rose-400" />,
     def: '% de deploys que causam falha em produção (rollback, hotfix)',
     elite: '0 - 15%',
     high: '16 - 30%',
@@ -56,7 +54,7 @@ const DORA_METRICS = [
   },
   {
     name: 'MTTR (Mean Time to Restore)',
-    icon: '🔧',
+    icon: <Wrench size={16} className="text-amber-400" />,
     def: 'Tempo médio para recuperar de um incidente em produção',
     elite: '< 1 hora',
     high: '< 1 dia',
@@ -67,7 +65,6 @@ const DORA_METRICS = [
 ];
 
 export default function DoraDevexSimulator() {
-  const { lang } = useLang();
   const [view, setView] = useState<'dora' | 'devex' | 'topologies' | 'space'>('dora');
   const [selectedMetric, setSelectedMetric] = useState<number>(0);
 
@@ -83,8 +80,8 @@ export default function DoraDevexSimulator() {
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-[11px] font-semibold transition-all border ${view === v.id ? 'border-violet-500/40 bg-violet-500/15 text-violet-300' : 'border-slate-800 text-slate-500 hover:text-slate-300'}`}>
-            <v.icon size={12} />{tr(PLATFORM_EN.views, v.label, lang)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-semibold transition-all border ${view === v.id ? 'border-violet-500/40 bg-violet-500/15 text-violet-300' : 'border-slate-800 text-slate-400 hover:text-slate-300'}`}>
+            <v.icon size={12} />{v.label}
           </button>
         ))}
       </div>
@@ -92,8 +89,8 @@ export default function DoraDevexSimulator() {
       {view === 'dora' && (
         <div className="space-y-4">
           <div className="p-4 rounded-2xl bg-violet-500/5 border border-violet-500/20">
-            <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-2">DORA 4 · o padrão da indústria</div>
-            <p className="text-[13px] text-slate-300 leading-relaxed">
+            <div className="text-2xs font-black text-violet-400 uppercase tracking-widest mb-2">DORA 4 · o padrão da indústria</div>
+            <p className="text-base text-slate-300 leading-relaxed">
               As 4 métricas do <span className="text-violet-300 font-bold">DevOps Research and Assessment</span> (Google Cloud) medem a performance de entrega de software. Depois de 6 anos de estudo e 32.000 respondentes, dividem equipas em 4 níveis: <span className="text-emerald-300 font-bold">Elite</span>, <span className="text-sky-300 font-bold">High</span>, <span className="text-amber-300 font-bold">Medium</span>, <span className="text-rose-300 font-bold">Low</span>.
             </p>
           </div>
@@ -103,7 +100,7 @@ export default function DoraDevexSimulator() {
               <button key={m.name} onClick={() => setSelectedMetric(i)}
                 className={`p-3 rounded-2xl border text-left transition-all ${selectedMetric === i ? 'border-violet-500/40 bg-violet-500/10' : 'border-slate-800 bg-slate-900 hover:border-slate-700'}`}>
                 <div className="text-2xl">{m.icon}</div>
-                <div className="text-[11px] font-bold text-slate-200 mt-1">{m.name}</div>
+                <div className="text-xs font-bold text-slate-200 mt-1">{m.name}</div>
               </button>
             ))}
           </div>
@@ -112,8 +109,8 @@ export default function DoraDevexSimulator() {
             <div className="flex items-start gap-3 mb-4">
               <div className="text-3xl">{DORA_METRICS[selectedMetric].icon}</div>
               <div>
-                <div className="text-[13px] font-bold text-white">{DORA_METRICS[selectedMetric].name}</div>
-                <div className="text-[11px] text-slate-400 mt-1">{DORA_METRICS[selectedMetric].def}</div>
+                <div className="text-base font-bold text-white">{DORA_METRICS[selectedMetric].name}</div>
+                <div className="text-xs text-slate-400 mt-1">{DORA_METRICS[selectedMetric].def}</div>
               </div>
             </div>
 
@@ -130,20 +127,20 @@ export default function DoraDevexSimulator() {
                   l.color === 'amber' ? 'border-amber-500/30 bg-amber-500/5' :
                   'border-rose-500/30 bg-rose-500/5'
                 }`}>
-                  <div className={`text-[10px] font-black uppercase ${
+                  <div className={`text-2xs font-black uppercase ${
                     l.color === 'emerald' ? 'text-emerald-400' :
                     l.color === 'sky' ? 'text-sky-400' :
                     l.color === 'amber' ? 'text-amber-400' :
                     'text-rose-400'
                   }`}>{l.level}</div>
-                  <div className="text-[10px] text-slate-300 mt-1">{l.value}</div>
+                  <div className="text-2xs text-slate-300 mt-1">{l.value}</div>
                 </div>
               ))}
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
-              <div className="text-[10px] font-black text-amber-400 uppercase mb-1">Como medir</div>
-              <div className="text-[11px] text-slate-300">{DORA_METRICS[selectedMetric].how}</div>
+            <div className="p-3 rounded-xl bg-[#181926] border border-slate-800">
+              <div className="text-2xs font-black text-amber-400 uppercase mb-1">Como medir</div>
+              <div className="text-xs text-slate-300">{DORA_METRICS[selectedMetric].how}</div>
             </div>
           </div>
 
@@ -166,8 +163,8 @@ avg(incident_resolved_ts - incident_created_ts)`} />
       {view === 'devex' && (
         <div className="space-y-4">
           <div className="p-4 rounded-2xl bg-violet-500/5 border border-violet-500/20">
-            <div className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-2">Cognitive Load · o inimigo escondido</div>
-            <p className="text-[13px] text-slate-300 leading-relaxed">
+            <div className="text-2xs font-black text-violet-400 uppercase tracking-widest mb-2">Cognitive Load · o inimigo escondido</div>
+            <p className="text-base text-slate-300 leading-relaxed">
               <span className="text-violet-300 font-bold">Cognitive Load</span> é o "peso mental" que um developer carrega para fazer o seu trabalho. Se um dev precisa de conhecer 15 ferramentas para fazer deploy, o Platform Engineering falhou. O IDP existe para reduzir isto.
             </p>
           </div>
@@ -198,22 +195,22 @@ avg(incident_resolved_ts - incident_created_ts)`} />
                 c.color === 'rose' ? 'border-rose-500/30 bg-rose-500/5' :
                 'border-emerald-500/30 bg-emerald-500/5'
               }`}>
-                <div className={`text-[11px] font-black uppercase mb-2 ${
+                <div className={`text-xs font-black uppercase mb-2 ${
                   c.color === 'sky' ? 'text-sky-400' :
                   c.color === 'rose' ? 'text-rose-400' :
                   'text-emerald-400'
                 }`}>{c.type}</div>
-                <div className="text-[11px] text-slate-300 leading-relaxed">{tr(PLATFORM_EN.descs, c.desc, lang)}</div>
-                <div className="mt-3 pt-3 border-t border-slate-800 text-[10px] text-slate-400 italic">{c.action}</div>
+                <div className="text-xs text-slate-300 leading-relaxed">{c.desc}</div>
+                <div className="mt-3 pt-3 border-t border-slate-800 text-2xs text-slate-400 italic">{c.action}</div>
               </div>
             ))}
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
-            <div className="text-[11px] font-bold text-amber-400 mb-3">📋 Team Cognitive Load Assessment · Team Topologies</div>
-            <div className="space-y-2 text-[11px] text-slate-300">
+            <div className="text-xs font-bold text-amber-400 mb-3">📋 Team Cognitive Load Assessment · Team Topologies</div>
+            <div className="space-y-2 text-xs text-slate-300">
               <div>Pergunta a cada dev, escala 1-5:</div>
-              <ul className="space-y-1 pl-4 text-[11px] text-slate-400">
+              <ul className="space-y-1 pl-4 text-xs text-slate-400">
                 <li>1. "Sei quais serviços a minha equipa é dona?"</li>
                 <li>2. "Consigo fazer deploy sem pedir ajuda?"</li>
                 <li>3. "Percebo como funciona o CI/CD que uso?"</li>
@@ -231,7 +228,7 @@ avg(incident_resolved_ts - incident_created_ts)`} />
       {view === 'space' && (
         <div className="space-y-4">
           <div className="p-4 rounded-2xl bg-violet-500/5 border border-violet-500/20">
-            <p className="text-[13px] text-slate-300 leading-relaxed">
+            <p className="text-base text-slate-300 leading-relaxed">
               <span className="text-violet-300 font-bold">SPACE</span> (Microsoft Research + GitHub) é o complemento ao DORA. Enquanto DORA mede o output do sistema, SPACE mede a <span className="text-violet-300 font-bold">experiência do developer</span>.
             </p>
           </div>
@@ -246,16 +243,16 @@ avg(incident_resolved_ts - incident_created_ts)`} />
             ].map(s => (
               <div key={s.letter} className="p-3 rounded-xl bg-slate-900 border border-slate-800">
                 <div className="text-2xl font-black text-violet-400">{s.letter}</div>
-                <div className="text-[11px] font-bold text-slate-200 mt-1">{s.name}</div>
-                <div className="text-[10px] text-slate-500 mt-1 leading-relaxed">{tr(PLATFORM_EN.descs, s.desc, lang)}</div>
-                <div className="text-[10px] text-emerald-400 mt-2 italic">{s.ex}</div>
+                <div className="text-xs font-bold text-slate-200 mt-1">{s.name}</div>
+                <div className="text-2xs text-slate-400 mt-1 leading-relaxed">{s.desc}</div>
+                <div className="text-2xs text-emerald-400 mt-2 italic">{s.ex}</div>
               </div>
             ))}
           </div>
 
           <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20">
-            <div className="text-[10px] font-black text-amber-400 uppercase mb-2">Anti-pattern crítico</div>
-            <p className="text-[12px] text-slate-300 leading-relaxed">
+            <div className="text-2xs font-black text-amber-400 uppercase mb-2">Anti-pattern crítico</div>
+            <p className="text-sm text-slate-300 leading-relaxed">
               <span className="text-rose-300 font-bold">Nunca medir só Activity.</span> "Commits por dia" ou "linhas de código" são métricas de vaidade que penalizam refactoring e code review. SPACE existe para forçar as equipas a olhar para as 5 dimensões em conjunto.
             </p>
           </div>
@@ -265,7 +262,7 @@ avg(incident_resolved_ts - incident_created_ts)`} />
       {view === 'topologies' && (
         <div className="space-y-4">
           <div className="p-4 rounded-2xl bg-violet-500/5 border border-violet-500/20">
-            <p className="text-[13px] text-slate-300 leading-relaxed">
+            <p className="text-base text-slate-300 leading-relaxed">
               <span className="text-violet-300 font-bold">Team Topologies</span> (Skelton & Pais) define 4 tipos de equipa e 3 modos de interacção. Essencial para desenhar uma organização Platform Engineering saudável.
             </p>
           </div>
@@ -303,21 +300,21 @@ avg(incident_resolved_ts - incident_created_ts)`} />
                 t.color === 'emerald' ? 'border-emerald-500/30 bg-emerald-500/5' :
                 'border-amber-500/30 bg-amber-500/5'
               }`}>
-                <div className={`text-[11px] font-black uppercase mb-2 ${
+                <div className={`text-xs font-black uppercase mb-2 ${
                   t.color === 'sky' ? 'text-sky-400' :
                   t.color === 'violet' ? 'text-violet-400' :
                   t.color === 'emerald' ? 'text-emerald-400' :
                   'text-amber-400'
                 }`}>{t.type}</div>
-                <div className="text-[11px] text-slate-300 leading-relaxed">{t.desc}</div>
-                <div className="mt-2 pt-2 border-t border-slate-800 text-[10px] text-slate-400 italic">{t.ex}</div>
+                <div className="text-xs text-slate-300 leading-relaxed">{t.desc}</div>
+                <div className="mt-2 pt-2 border-t border-slate-800 text-2xs text-slate-400 italic">{t.ex}</div>
               </div>
             ))}
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
-            <div className="text-[11px] font-bold text-violet-300 mb-3">3 Modos de Interacção</div>
-            <div className="space-y-3 text-[11px] text-slate-300">
+            <div className="text-xs font-bold text-violet-300 mb-3">3 Modos de Interacção</div>
+            <div className="space-y-3 text-xs text-slate-300">
               <div className="flex gap-3">
                 <span className="text-emerald-400 font-bold w-32 shrink-0">X-as-a-Service</span>
                 <span className="text-slate-400">Uma equipa consome o serviço da outra self-service (ex: stream-aligned usa a Platform).</span>

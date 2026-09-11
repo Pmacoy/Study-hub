@@ -79,7 +79,7 @@ export default function AzureComputeSimulator() {
 
   return (
     <div className="w-full space-y-6 animate-in fade-in duration-500 text-slate-200">
-      <section className="overflow-hidden rounded-3xl border border-sky-500/15 bg-slate-950/80 shadow-2xl shadow-black/10">
+      <section className="overflow-hidden rounded-3xl border border-sky-500/15 bg-[#181926]/80 shadow-2xl shadow-black/10">
         <div className="border-b border-slate-800/80 px-6 py-5 md:px-8">
           <div className="flex items-start gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-sky-500/20 bg-sky-500/10 text-sky-300">
@@ -87,13 +87,13 @@ export default function AzureComputeSimulator() {
             </div>
 
             <div className="min-w-0">
-              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-sky-300">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-sky-300">
                 Computação no Azure
               </p>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white leading-tight">
                 Compute & High Availability
               </h2>
-              <p className="mt-2 max-w-2xl text-[15px] text-slate-400 leading-relaxed">
+              <p className="mt-2 max-w-2xl text-lg text-slate-400 leading-relaxed">
                 Compara isolamento, alta disponibilidade, escalonamento automático e serviços de aplicação com foco nas decisões que mais aparecem na prova AZ-104.
               </p>
             </div>
@@ -123,14 +123,14 @@ export default function AzureComputeSimulator() {
       </section>
 
       <section className="grid grid-cols-1 xl:grid-cols-[360px_minmax(0,1fr)] gap-6">
-        <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+        <div className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6">
           <div className="flex items-center gap-2 mb-5">
             <Sparkles size={16} className="text-sky-300" />
             <h3 className="text-sm font-semibold text-white">Configurar arquitetura</h3>
           </div>
 
           <div>
-            <label className="mb-3 block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+            <label className="mb-3 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
               1. Escolhe o cenário
             </label>
 
@@ -170,7 +170,7 @@ export default function AzureComputeSimulator() {
 
           {mode === 'HA' && (
             <div className="mt-6 border-t border-slate-800 pt-6 space-y-4">
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+              <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                 2. Tipo de isolamento
               </label>
 
@@ -183,8 +183,8 @@ export default function AzureComputeSimulator() {
                       : 'border-slate-800 bg-slate-900/60 hover:border-slate-700'
                   }`}
                 >
-                  <p className="text-[14px] font-semibold text-white">Availability Set</p>
-                  <p className="mt-1 text-[12px] text-slate-500">
+                  <p className="text-md font-semibold text-white">Availability Set</p>
+                  <p className="mt-1 text-sm text-slate-400">
                     Protege contra falha de host, rack e manutenção simultânea.
                   </p>
                 </button>
@@ -197,8 +197,8 @@ export default function AzureComputeSimulator() {
                       : 'border-slate-800 bg-slate-900/60 hover:border-slate-700'
                   }`}
                 >
-                  <p className="text-[14px] font-semibold text-white">Availability Zone</p>
-                  <p className="mt-1 text-[12px] text-slate-500">
+                  <p className="text-md font-semibold text-white">Availability Zone</p>
+                  <p className="mt-1 text-sm text-slate-400">
                     Protege contra perda de um data center inteiro dentro da região.
                   </p>
                 </button>
@@ -218,17 +218,17 @@ export default function AzureComputeSimulator() {
 
           {mode === 'VMSS' && (
             <div className="mt-6 border-t border-slate-800 pt-6 space-y-4">
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+              <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                 2. Simular carga
               </label>
 
               <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
                 <div className="flex items-center justify-between gap-3 mb-3">
                   <div>
-                    <p className="text-[14px] font-semibold text-white">CPU média do cluster</p>
-                    <p className="text-[12px] text-slate-500">Acima de 75% provoca scale-out</p>
+                    <p className="text-md font-semibold text-white">CPU média do cluster</p>
+                    <p className="text-sm text-slate-400">Acima de 75% provoca scale-out</p>
                   </div>
-                  <span className={`text-[18px] font-semibold font-mono ${cpuLoad > 75 ? 'text-rose-300' : 'text-emerald-300'}`}>
+                  <span className={`text-xl font-semibold font-mono ${cpuLoad > 75 ? 'text-rose-300' : 'text-emerald-300'}`}>
                     {cpuLoad}%
                   </span>
                 </div>
@@ -257,7 +257,7 @@ export default function AzureComputeSimulator() {
 
           {mode === 'PaaS' && (
             <div className="mt-6 border-t border-slate-800 pt-6 space-y-4">
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+              <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                 2. Leitura arquitetural
               </label>
 
@@ -277,11 +277,11 @@ export default function AzureComputeSimulator() {
         </div>
 
         <div className="space-y-6">
-          <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6 min-h-[420px] overflow-hidden">
+          <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6 min-h-[420px] overflow-hidden">
             {mode === 'HA' && (
               <div className="w-full space-y-6 animate-in fade-in duration-300">
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                     Disponibilidade
                   </p>
                   <h3 className="mt-1 text-sm font-semibold text-white">
@@ -311,12 +311,12 @@ export default function AzureComputeSimulator() {
                         </div>
 
                         <div>
-                          <p className="text-[13px] font-semibold text-white">
+                          <p className="text-base font-semibold text-white">
                             {haType === 'AvailabilitySet'
                               ? `Fault Domain ${item - 1}`
                               : `Zone ${item}`}
                           </p>
-                          <p className="mt-1 text-[11px] text-slate-500">
+                          <p className="mt-1 text-xs text-slate-400">
                             {haType === 'AvailabilitySet'
                               ? 'Mesmo data center lógico'
                               : 'Infraestrutura física separada'}
@@ -327,10 +327,10 @@ export default function AzureComputeSimulator() {
                           <div className={`rounded-2xl border px-3 py-3 flex items-center justify-center gap-2 ${
                             item <= 2
                               ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-200'
-                              : 'border-slate-800 bg-slate-950 text-slate-600'
+                              : 'border-slate-800 bg-[#181926] text-slate-600'
                           }`}>
                             <Server size={14} />
-                            <span className="text-[11px] font-medium">VM 0{item}</span>
+                            <span className="text-xs font-medium">VM 0{item}</span>
                           </div>
                         </div>
                       </div>
@@ -339,7 +339,7 @@ export default function AzureComputeSimulator() {
                 </div>
 
                 <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-5">
-                  <p className="text-[13px] leading-relaxed text-slate-300">
+                  <p className="text-base leading-relaxed text-slate-300">
                     {haType === 'AvailabilitySet'
                       ? 'Availability Sets distribuem VMs por fault domains e update domains para reduzir impacto de falha física e manutenção de host.'
                       : 'Availability Zones distribuem workloads por data centers fisicamente distintos na mesma região, oferecendo maior resiliência e SLA superior.'}
@@ -357,7 +357,7 @@ export default function AzureComputeSimulator() {
             {mode === 'VMSS' && (
               <div className="w-full space-y-6 animate-in fade-in duration-300">
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                     Escalonamento
                   </p>
                   <h3 className="mt-1 text-sm font-semibold text-white">Virtual Machine Scale Set</h3>
@@ -370,7 +370,7 @@ export default function AzureComputeSimulator() {
                       className="w-28 rounded-3xl border border-sky-500/20 bg-sky-500/10 p-4 flex flex-col items-center gap-3 shadow-[0_0_18px_rgba(56,189,248,0.08)]"
                     >
                       <Server size={24} className="text-sky-300" />
-                      <span className="text-[11px] font-medium text-sky-100">Instância {id}</span>
+                      <span className="text-xs font-medium text-sky-100">Instância {id}</span>
 
                       <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
                         <div
@@ -383,8 +383,8 @@ export default function AzureComputeSimulator() {
 
                   {cpuLoad > 75 && instances.length < 5 && (
                     <div className="w-28 rounded-3xl border-2 border-dashed border-slate-700 bg-slate-900/50 p-4 flex flex-col items-center justify-center gap-3 animate-pulse">
-                      <Activity size={20} className="text-slate-500" />
-                      <span className="text-[10px] font-medium text-slate-500 text-center">
+                      <Activity size={20} className="text-slate-400" />
+                      <span className="text-2xs font-medium text-slate-400 text-center">
                         Provisionando...
                       </span>
                     </div>
@@ -393,7 +393,7 @@ export default function AzureComputeSimulator() {
 
                 <div className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 inline-flex items-center gap-2 self-center">
                   <ArrowUpRight size={14} className="text-emerald-300" />
-                  <span className="text-[12px] font-medium text-emerald-200">
+                  <span className="text-sm font-medium text-emerald-200">
                     Scale-out horizontal automático
                   </span>
                 </div>
@@ -409,7 +409,7 @@ export default function AzureComputeSimulator() {
             {mode === 'PaaS' && (
               <div className="w-full space-y-6 animate-in fade-in duration-300">
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                     Aplicação
                   </p>
                   <h3 className="mt-1 text-sm font-semibold text-white">PaaS, App Service e containers</h3>
@@ -420,8 +420,8 @@ export default function AzureComputeSimulator() {
                     <div className="flex flex-col items-center text-center gap-4">
                       <Globe size={38} className="text-indigo-300" />
                       <div>
-                        <h4 className="text-[15px] font-semibold text-white">App Service</h4>
-                        <p className="mt-2 text-[12px] leading-relaxed text-slate-300">
+                        <h4 className="text-lg font-semibold text-white">App Service</h4>
+                        <p className="mt-2 text-sm leading-relaxed text-slate-300">
                           PaaS para apps web e APIs HTTP, com menos preocupação com sistema operativo e infraestrutura subjacente.
                         </p>
                       </div>
@@ -432,8 +432,8 @@ export default function AzureComputeSimulator() {
                     <div className="flex flex-col items-center text-center gap-4">
                       <Box size={38} className="text-emerald-300" />
                       <div>
-                        <h4 className="text-[15px] font-semibold text-white">ACI / AKS</h4>
-                        <p className="mt-2 text-[12px] leading-relaxed text-slate-300">
+                        <h4 className="text-lg font-semibold text-white">ACI / AKS</h4>
+                        <p className="mt-2 text-sm leading-relaxed text-slate-300">
                           ACI é rápido para executar um container isolado; AKS entra quando o cenário exige orquestração de cluster.
                         </p>
                       </div>
@@ -527,9 +527,9 @@ function TopMetric({
 
   return (
     <div className={`rounded-2xl border p-4 ${styles[tone]}`}>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] opacity-75">{label}</p>
-      <p className="mt-2 text-[18px] font-semibold leading-tight">{value}</p>
-      <p className="mt-1 text-[12px] opacity-70">{hint}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.12em] opacity-75">{label}</p>
+      <p className="mt-2 text-xl font-semibold leading-tight">{value}</p>
+      <p className="mt-1 text-sm opacity-70">{hint}</p>
     </div>
   );
 }
@@ -557,12 +557,12 @@ function ModeButton({
       }`}
     >
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-800 bg-slate-950 text-slate-300">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-800 bg-[#181926] text-slate-300">
           {icon}
         </div>
         <div>
-          <p className="text-[14px] font-semibold text-white">{title}</p>
-          <p className="mt-1 text-[12px] text-slate-500 leading-relaxed">{desc}</p>
+          <p className="text-md font-semibold text-white">{title}</p>
+          <p className="mt-1 text-sm text-slate-400 leading-relaxed">{desc}</p>
         </div>
       </div>
     </button>
@@ -586,8 +586,8 @@ function StatusCard({
 
   return (
     <div className={`rounded-2xl border p-4 ${styles[tone]}`}>
-      <p className="text-[14px] font-semibold text-white">{title}</p>
-      <p className="mt-1 text-[12px] text-slate-300 leading-relaxed">{text}</p>
+      <p className="text-md font-semibold text-white">{title}</p>
+      <p className="mt-1 text-sm text-slate-300 leading-relaxed">{text}</p>
     </div>
   );
 }
@@ -608,10 +608,10 @@ function CapabilityCard({
           <XCircle size={18} className="text-slate-600" />
         )}
         <div>
-          <p className={`text-[14px] font-medium ${active ? 'text-emerald-100' : 'text-slate-300'}`}>
+          <p className={`text-md font-medium ${active ? 'text-emerald-100' : 'text-slate-300'}`}>
             {title}
           </p>
-          <p className="mt-1 text-[12px] text-slate-500">
+          <p className="mt-1 text-sm text-slate-400">
             {active ? 'Ativo neste cenário' : 'Não dominante neste cenário'}
           </p>
         </div>
@@ -638,14 +638,14 @@ function RuleCard({
   };
 
   return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
+    <div className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5">
       <div className="flex items-start gap-3">
         <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border ${styles[tone]}`}>
           {icon}
         </div>
         <div>
-          <h4 className="text-[15px] font-semibold text-white">{title}</h4>
-          <p className="mt-2 text-[13px] text-slate-400 leading-relaxed">{text}</p>
+          <h4 className="text-lg font-semibold text-white">{title}</h4>
+          <p className="mt-2 text-base text-slate-400 leading-relaxed">{text}</p>
         </div>
       </div>
     </div>

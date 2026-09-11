@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { Domain } from './platform';
 
 export type PathNodeStatus = 'done' | 'in-progress' | 'todo';
@@ -7,7 +8,7 @@ export interface PathNode {
   id: string;                // matches the tab id in the domain (e.g. 'iam', 'linux')
   label: string;
   subtitle: string;
-  emoji: string;
+  icon: ReactNode;
   estimatedMin: number;
   /** goalTag to match against completed scenarios/terminal sessions */
   scenarioIds?: string[];
@@ -21,7 +22,7 @@ export interface LearningPath {
   title: string;
   subtitle: string;
   goal: string;               // "Passar o exame AZ-104"
-  icon: string;
+  icon: ReactNode;
   colorAccent: string;         // "sky", "orange", "emerald", "amber", "violet"
   totalHours: number;
   nodes: PathNode[];

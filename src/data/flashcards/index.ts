@@ -3,20 +3,24 @@ import type { Domain } from '../../types/platform';
 import { devopsFlashcards } from './devopsFlashcards';
 import { networkingFlashcards } from './networkingFlashcards';
 import { azureFlashcards } from '../azure/flashcards';
+import { azureFlashcards as azureStaticFlashcards } from './azureFlashcards';
 import { pythonFlashcards } from './pythonFlashcards';
 
 export const ALL_FLASHCARDS: Flashcard[] = [
   ...devopsFlashcards,
   ...azureFlashcards,
+  ...azureStaticFlashcards,
   ...networkingFlashcards,
   ...pythonFlashcards,
 ];
 
 export const FLASHCARDS_BY_DOMAIN: Record<Domain, Flashcard[]> = {
   devops: devopsFlashcards,
-  azure: azureFlashcards,
+  azure: [...azureFlashcards, ...azureStaticFlashcards],
   networking: networkingFlashcards,
   python: pythonFlashcards,
   aws: [],
-  gcp: [],
+  'system-design': [],
+  'distributed-systems': [],
+  'algorithms': [],
 };

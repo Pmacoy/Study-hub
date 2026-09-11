@@ -47,9 +47,4 @@ export const TAB_META: Record<StudyTab, TabMeta> = {
     subtitle: 'KQL, alerts, backup e ASR',
     group: 'Operações',
   },
-  architecture: {
-    label: 'Arquitectura',
-    subtitle: 'Como os serviços se ligam · entrega · identidade · desenho',
-    group: 'Operações',
-  },
 };

@@ -8,7 +8,6 @@ export const ALL_AZURE_TABS = [
   'containers',
   'vnet',
   'monitor',
-  'architecture',
   'exam',
 ] as const;
 
@@ -23,7 +22,6 @@ export const STUDY_TABS = [
   'containers',
   'vnet',
   'monitor',
-  'architecture',
 ] as const;
 
 export type StudyTab = (typeof STUDY_TABS)[number];

@@ -50,7 +50,7 @@ export default function Module5Application() {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-slate-950 text-slate-50 rounded-xl shadow-2xl border border-slate-800 space-y-6">
+    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-[#181926] text-slate-50 rounded-xl shadow-2xl border border-slate-800 space-y-6">
       
       {/* CABEÇALHO */}
       <div>
@@ -68,7 +68,7 @@ export default function Module5Application() {
         <button
           onClick={() => setActiveTab('dns')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-md font-bold text-xs sm:text-sm transition-all duration-300 ${
-            activeTab === 'dns' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/30 shadow-md' : 'text-slate-500 hover:text-slate-300'
+            activeTab === 'dns' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/30 shadow-md' : 'text-slate-400 hover:text-slate-300'
           }`}
         >
           <Search size={16} /> DNS (Resolução)
@@ -76,7 +76,7 @@ export default function Module5Application() {
         <button
           onClick={() => setActiveTab('http')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-md font-bold text-xs sm:text-sm transition-all duration-300 ${
-            activeTab === 'http' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/30 shadow-md' : 'text-slate-500 hover:text-slate-300'
+            activeTab === 'http' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/30 shadow-md' : 'text-slate-400 hover:text-slate-300'
           }`}
         >
           <Send size={16} /> HTTP (APIs)
@@ -102,7 +102,7 @@ export default function Module5Application() {
                   type="text" 
                   value={domain}
                   onChange={(e) => setDomain(e.target.value)}
-                  className="flex-1 bg-slate-950 text-purple-400 border border-slate-700 p-3 rounded-md focus:outline-none focus:border-purple-500 font-mono"
+                  className="flex-1 bg-[#181926] text-purple-400 border border-slate-700 p-3 rounded-md focus:outline-none focus:border-purple-500 font-mono"
                   placeholder="ex: github.com"
                 />
                 <button 
@@ -123,8 +123,8 @@ export default function Module5Application() {
             </div>
 
             {/* A Jornada do DNS */}
-            <div className="flex-[1.5] bg-slate-950 p-6 rounded-lg border border-slate-800">
-              <h3 className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-4">A Jornada da Resolução DNS</h3>
+            <div className="flex-[1.5] bg-[#181926] p-6 rounded-lg border border-slate-800">
+              <h3 className="text-xs text-slate-400 uppercase font-bold tracking-wider mb-4">A Jornada da Resolução DNS</h3>
               
               <div className="space-y-3 relative">
                 {/* Linha vertical conectora */}
@@ -138,11 +138,11 @@ export default function Module5Application() {
                   { step: 5, title: 'Servidor Autoritativo (Route53/Cloudflare)', desc: 'A fonte da verdade! Ele diz: "Sim, o IP do api.meubanco.com é 192.0.2.146".' }
                 ].map((item) => (
                   <div key={item.step} className={`relative z-10 flex gap-4 items-start p-3 rounded-lg transition-all duration-500 ${dnsStep >= item.step ? 'bg-slate-900 border border-slate-700' : 'opacity-40'}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 transition-colors duration-500 ${dnsStep === item.step ? 'bg-purple-500 text-white shadow-[0_0_15px_rgba(168,85,247,0.5)]' : dnsStep > item.step ? 'bg-slate-700 text-slate-300' : 'bg-slate-800 text-slate-500'}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 transition-colors duration-500 ${dnsStep === item.step ? 'bg-purple-500 text-white shadow-[0_0_15px_rgba(168,85,247,0.5)]' : dnsStep > item.step ? 'bg-slate-700 text-slate-300' : 'bg-slate-800 text-slate-400'}`}>
                       {item.step}
                     </div>
                     <div>
-                      <h4 className={`font-bold text-sm ${dnsStep >= item.step ? 'text-slate-200' : 'text-slate-500'}`}>{item.title}</h4>
+                      <h4 className={`font-bold text-sm ${dnsStep >= item.step ? 'text-slate-200' : 'text-slate-400'}`}>{item.title}</h4>
                       <p className="text-xs text-slate-400 mt-1 leading-relaxed">{item.desc}</p>
                     </div>
                   </div>
@@ -163,7 +163,7 @@ export default function Module5Application() {
                 A camada HTTP define não apenas o transporte, mas a <strong>semântica</strong> das operações. Uma API bem desenhada usa os verbos e status corretamente.
               </p>
 
-              <label className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-2">Escolha um Método HTTP:</label>
+              <label className="text-xs text-slate-400 uppercase font-bold tracking-wider mb-2">Escolha um Método HTTP:</label>
               <div className="grid grid-cols-2 gap-2 mb-6">
                 {(['GET', 'POST', 'PUT', 'DELETE'] as const).map((method) => (
                   <button
@@ -172,7 +172,7 @@ export default function Module5Application() {
                     className={`py-2 px-3 rounded text-sm font-bold border transition-all ${
                       httpMethod === method 
                         ? httpConcepts[method].bg + ' ' + httpConcepts[method].color 
-                        : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700'
+                        : 'bg-[#181926] border-slate-800 text-slate-400 hover:border-slate-700'
                     }`}
                   >
                     {method}
@@ -190,11 +190,11 @@ export default function Module5Application() {
                 </div>
               </div>
 
-              <label className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-2 mt-auto">Simular Resposta do Servidor:</label>
+              <label className="text-xs text-slate-400 uppercase font-bold tracking-wider mb-2 mt-auto">Simular Resposta do Servidor:</label>
               <select 
                 value={httpStatus}
                 onChange={(e) => setHttpStatus(e.target.value as any)}
-                className="w-full bg-slate-950 text-slate-300 border border-slate-700 p-3 rounded-md focus:outline-none focus:border-sky-500 font-mono text-sm"
+                className="w-full bg-[#181926] text-slate-300 border border-slate-700 p-3 rounded-md focus:outline-none focus:border-sky-500 font-mono text-sm"
               >
                 <option value="200">200 OK (Sucesso)</option>
                 <option value="201">201 Created (Recurso Criado)</option>
@@ -205,7 +205,7 @@ export default function Module5Application() {
             </div>
 
             {/* Visualizador de Resposta */}
-            <div className="flex-[1.5] bg-slate-950 rounded-lg border border-slate-800 overflow-hidden flex flex-col">
+            <div className="flex-[1.5] bg-[#181926] rounded-lg border border-slate-800 overflow-hidden flex flex-col">
               {/* Header do Request/Response */}
               <div className="bg-slate-900 border-b border-slate-800 p-4 flex items-center gap-3">
                 <span className={`px-3 py-1 rounded text-xs font-bold font-mono ${httpConcepts[httpMethod].bg} ${httpConcepts[httpMethod].color}`}>
@@ -233,8 +233,8 @@ export default function Module5Application() {
               </div>
 
               {/* Payload (Mock) */}
-              <div className="p-4 bg-slate-950/80 flex-1">
-                <div className="flex items-center gap-2 text-xs text-slate-500 uppercase font-bold tracking-wider mb-2">
+              <div className="p-4 bg-[#181926]/80 flex-1">
+                <div className="flex items-center gap-2 text-xs text-slate-400 uppercase font-bold tracking-wider mb-2">
                   <FileJson size={14} /> Body (Response Payload)
                 </div>
                 <pre className="text-sm font-mono text-slate-300 p-4 bg-slate-900 rounded-md overflow-x-auto border border-slate-800">

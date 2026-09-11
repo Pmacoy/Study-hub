@@ -1,4 +1,5 @@
 import { ArrowLeft, Clock, Sparkles } from 'lucide-react';
+import type { ReactNode } from 'react';
 import { findCert } from '../../types/certification';
 
 export default function ComingSoonCert({
@@ -6,7 +7,7 @@ export default function ComingSoonCert({
 }: {
   certId: string;
   domainLabel: string;
-  domainIcon: string;
+  domainIcon: ReactNode;
   onBack: () => void;
 }) {
   const cert = findCert(certId);
@@ -15,29 +16,29 @@ export default function ComingSoonCert({
   return (
     <div className="space-y-4">
       <button onClick={onBack}
-        className="flex items-center gap-2 text-[12px] text-slate-500 hover:text-slate-300 transition-colors">
+        className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-300 transition-colors font-mono">
         <ArrowLeft size={14} /> Voltar às certificações {domainLabel}
       </button>
 
-      <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-8 text-center">
+      <section className="border border-slate-800 bg-[#181926]/80 p-8 text-center">
         <div className="text-5xl mb-4">{domainIcon}</div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] font-black uppercase tracking-widest mb-4">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 border border-amber-500/30 bg-amber-500/15 text-amber-300 text-2xs font-black uppercase tracking-widest mb-4 font-mono">
           <Clock size={11} />
           <span>Em construção</span>
         </div>
-        <h2 className="text-2xl font-bold text-white mb-2">{cert.code} · {cert.label}</h2>
-        <p className="text-[13px] text-slate-400 max-w-md mx-auto">{cert.subtitle}</p>
+        <h2 className="text-xl font-bold text-white font-display">{cert.code} · {cert.label}</h2>
+        <p className="text-sm text-slate-400 max-w-md mx-auto mt-2">{cert.subtitle}</p>
 
         <div className="mt-6 grid grid-cols-2 gap-3 max-w-md mx-auto">
-          <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
+          <div className="p-4 border border-slate-800 bg-slate-900/60">
             <Sparkles size={14} className="text-violet-400 mx-auto mb-2" />
-            <div className="text-[10px] font-black uppercase text-slate-500 mb-1">O que vem aí</div>
-            <div className="text-[11px] text-slate-300">Módulos interactivos alinhados ao syllabus oficial</div>
+            <div className="text-2xs font-black uppercase text-slate-500 mb-1 font-mono">O que vem aí</div>
+            <div className="text-xs text-slate-300">Módulos interactivos alinhados ao syllabus oficial</div>
           </div>
-          <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
+          <div className="p-4 border border-slate-800 bg-slate-900/60">
             <Sparkles size={14} className="text-emerald-400 mx-auto mb-2" />
-            <div className="text-[10px] font-black uppercase text-slate-500 mb-1">E também</div>
-            <div className="text-[11px] text-slate-300">Simulado, flashcards e integração com o streak diário</div>
+            <div className="text-2xs font-black uppercase text-slate-500 mb-1 font-mono">E também</div>
+            <div className="text-xs text-slate-300">Simulado, flashcards e integração com o streak diário</div>
           </div>
         </div>
       </section>

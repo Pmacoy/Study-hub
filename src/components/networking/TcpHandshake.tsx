@@ -123,7 +123,7 @@ export default function TcpHandshake() {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-slate-950 text-slate-50 rounded-xl shadow-2xl border border-slate-800">
+    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-[#181926] text-slate-50 rounded-xl shadow-2xl border border-slate-800">
       
       {/* Cabeçalho Alinhado com o restante do App */}
       <div className="mb-6">
@@ -141,7 +141,7 @@ export default function TcpHandshake() {
         <button
           onClick={() => changeScenario('handshake')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-md font-bold text-xs sm:text-sm transition-all duration-300 ${
-            activeScenario === 'handshake' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/30 shadow-md' : 'text-slate-500 hover:text-slate-300'
+            activeScenario === 'handshake' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/30 shadow-md' : 'text-slate-400 hover:text-slate-300'
           }`}
         >
           <Power size={16} /> <span className="hidden sm:inline">Conexão</span> (3-Way)
@@ -149,7 +149,7 @@ export default function TcpHandshake() {
         <button
           onClick={() => changeScenario('teardown')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-md font-bold text-xs sm:text-sm transition-all duration-300 ${
-            activeScenario === 'teardown' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30 shadow-md' : 'text-slate-500 hover:text-slate-300'
+            activeScenario === 'teardown' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30 shadow-md' : 'text-slate-400 hover:text-slate-300'
           }`}
         >
           <Unplug size={16} /> <span className="hidden sm:inline">Encerramento</span> (4-Way)
@@ -157,7 +157,7 @@ export default function TcpHandshake() {
         <button
           onClick={() => changeScenario('timeout')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-md font-bold text-xs sm:text-sm transition-all duration-300 ${
-            activeScenario === 'timeout' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30 shadow-md' : 'text-slate-500 hover:text-slate-300'
+            activeScenario === 'timeout' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30 shadow-md' : 'text-slate-400 hover:text-slate-300'
           }`}
         >
           <Clock size={16} /> <span className="hidden sm:inline">Perda de Pacote</span>
@@ -170,7 +170,7 @@ export default function TcpHandshake() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end border-b border-slate-800 pb-4 gap-4">
           <div>
             <h3 className="text-xl font-bold text-slate-200">{currentScenario.title}</h3>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-sm text-slate-400 mt-1">
               Passo {step} de {currentScenario.steps.length - 1}
             </p>
           </div>
@@ -192,7 +192,7 @@ export default function TcpHandshake() {
             <button 
               onClick={() => setStep(0)}
               title="Resetar"
-              className="px-3 py-2 border border-slate-700 text-slate-500 rounded-md hover:bg-slate-800 hover:text-slate-300 transition-all ml-1"
+              className="px-3 py-2 border border-slate-700 text-slate-400 rounded-md hover:bg-slate-800 hover:text-slate-300 transition-all ml-1"
             >
               <RefreshCcw size={16} />
             </button>
@@ -208,7 +208,7 @@ export default function TcpHandshake() {
               💻
             </div>
             <span className="font-bold text-slate-200 text-sm">Cliente</span>
-            <span className={`text-[10px] sm:text-xs mt-1.5 px-2.5 py-1 rounded-full font-mono font-semibold tracking-wider transition-colors duration-300
+            <span className={`text-2xs sm:text-xs mt-1.5 px-2.5 py-1 rounded-full font-mono font-semibold tracking-wider transition-colors duration-300
               ${currentStep.clientState.includes('ESTABLISHED') ? 'bg-emerald-500/20 text-emerald-400' : 
                 currentStep.clientState.includes('WAIT') ? 'bg-rose-500/20 text-rose-400' :
                 currentStep.clientState.includes('SENT') ? 'bg-sky-500/20 text-sky-400' : 
@@ -226,7 +226,7 @@ export default function TcpHandshake() {
             {currentStep.message ? (
               <div 
                 key={`${activeScenario}-${step}`} // Força re-render da animação no React
-                className={`px-4 sm:px-5 py-2 border-2 rounded-full font-bold text-xs sm:text-sm font-mono shadow-xl bg-slate-950 transition-all duration-500 
+                className={`px-4 sm:px-5 py-2 border-2 rounded-full font-bold text-xs sm:text-sm font-mono shadow-xl bg-[#181926] transition-all duration-500 
                   ${currentStep.message.color} 
                   ${currentStep.message.direction === 'right' ? 'animate-slide-right' : 
                     currentStep.message.direction === 'left' ? 'animate-slide-left' : 'animate-drop'}
@@ -248,7 +248,7 @@ export default function TcpHandshake() {
               🖥️
             </div>
             <span className="font-bold text-slate-200 text-sm">Servidor</span>
-            <span className={`text-[10px] sm:text-xs mt-1.5 px-2.5 py-1 rounded-full font-mono font-semibold tracking-wider transition-colors duration-300
+            <span className={`text-2xs sm:text-xs mt-1.5 px-2.5 py-1 rounded-full font-mono font-semibold tracking-wider transition-colors duration-300
               ${currentStep.serverState.includes('ESTABLISHED') ? 'bg-emerald-500/20 text-emerald-400' : 
                 currentStep.serverState.includes('WAIT') || currentStep.serverState.includes('ACK') ? 'bg-rose-500/20 text-rose-400' :
                 currentStep.serverState.includes('RCVD') ? 'bg-amber-500/20 text-amber-400' : 

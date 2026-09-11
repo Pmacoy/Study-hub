@@ -63,7 +63,7 @@ export default function PacketViewer() {
   const businessData = casosDeUso[protocol];
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-slate-950 text-slate-50 rounded-xl shadow-2xl border border-slate-800 space-y-8 animate-in fade-in duration-300">
+    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-[#181926] text-slate-50 rounded-xl shadow-2xl border border-slate-800 space-y-8 animate-in fade-in duration-300">
       
       {/* CABEÇALHO E TOGGLE */}
       <div>
@@ -76,7 +76,7 @@ export default function PacketViewer() {
           <button
             onClick={() => handleProtocolChange('tcp')}
             className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md font-bold text-sm transition-all duration-300 ${
-              protocol === 'tcp' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-md border' : 'text-slate-500 hover:text-slate-300 border border-transparent'
+              protocol === 'tcp' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-md border' : 'text-slate-400 hover:text-slate-300 border border-transparent'
             }`}
           >
             <ShieldCheck size={18} /> TCP
@@ -84,7 +84,7 @@ export default function PacketViewer() {
           <button
             onClick={() => handleProtocolChange('udp')}
             className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md font-bold text-sm transition-all duration-300 ${
-              protocol === 'udp' ? 'bg-sky-500/10 border-sky-500/30 text-sky-400 shadow-md border' : 'text-slate-500 hover:text-slate-300 border border-transparent'
+              protocol === 'udp' ? 'bg-sky-500/10 border-sky-500/30 text-sky-400 shadow-md border' : 'text-slate-400 hover:text-slate-300 border border-transparent'
             }`}
           >
             <Zap size={18} /> UDP
@@ -94,7 +94,7 @@ export default function PacketViewer() {
 
       {/* ÁREA DE INSPEÇÃO DO PACOTE (SEU CÓDIGO MELHORADO) */}
       <div>
-        <div className="text-xs text-slate-500 uppercase font-bold mb-3">
+        <div className="text-xs text-slate-400 uppercase font-bold mb-3">
           Estrutura do Cabeçalho {protocol.toUpperCase()} (Clique nos blocos)
         </div>
 
@@ -103,7 +103,7 @@ export default function PacketViewer() {
           style={{ gridTemplateColumns: 'repeat(32, minmax(0, 1fr))' }}
         >
           {/* Escala de Bits */}
-          <div className="col-span-full flex justify-between text-[10px] text-slate-500 mb-2 px-1 font-mono">
+          <div className="col-span-full flex justify-between text-2xs text-slate-400 mb-2 px-1 font-mono">
             <span>0</span><span>4</span><span>8</span><span>16</span><span>24</span><span>31</span>
           </div>
 
@@ -156,7 +156,7 @@ export default function PacketViewer() {
               </span>
             </div>
           ) : (
-            <div className="text-slate-500 text-sm w-full flex items-center justify-center gap-2">
+            <div className="text-slate-400 text-sm w-full flex items-center justify-center gap-2">
               <span className="animate-bounce">👆</span> Clique em qualquer campo do pacote acima para inspecionar.
             </div>
           )}
@@ -180,7 +180,7 @@ export default function PacketViewer() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {businessData.items.map((item, idx) => (
             <div key={idx} className="bg-slate-900 border border-slate-800 p-4 rounded-lg flex flex-col gap-3 hover:border-slate-600 transition-colors">
-              <div className={`p-2 rounded-md inline-flex w-fit bg-slate-950 border ${businessData.theme === 'emerald' ? 'border-emerald-500/30 text-emerald-400' : 'border-sky-500/30 text-sky-400'}`}>
+              <div className={`p-2 rounded-md inline-flex w-fit bg-[#181926] border ${businessData.theme === 'emerald' ? 'border-emerald-500/30 text-emerald-400' : 'border-sky-500/30 text-sky-400'}`}>
                 {item.icon}
               </div>
               <div>
@@ -224,12 +224,12 @@ function PacketField({
       style={{ gridColumn: `span ${span} / span ${span}` }}
       className={`p-2 sm:p-3 text-center flex flex-col justify-center rounded-sm transition-all border outline-none cursor-pointer
         ${highlight} 
-        ${isVariable ? 'border-dashed bg-slate-950/50' : 'bg-slate-800'}
+        ${isVariable ? 'border-dashed bg-[#181926]/50' : 'bg-slate-800'}
         ${isSelected ? 'ring-2 ring-white border-transparent scale-[1.02] z-10 shadow-lg bg-slate-700' : 'hover:bg-slate-700 hover:scale-[1.01]'}
       `}
     >
-      <span className="font-bold text-[10px] sm:text-xs truncate w-full">{displayLabel || label}</span>
-      <span className="text-[9px] sm:text-[10px] opacity-70 mt-1">{bits}</span>
+      <span className="font-bold text-2xs sm:text-xs truncate w-full">{displayLabel || label}</span>
+      <span className="text-2xs sm:text-2xs opacity-70 mt-1">{bits}</span>
     </button>
   );
 }

@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { useLang } from '../../i18n/LangContext';
-import { CICD_EN, tr } from '../../i18n/modulesEn';
-import { Copy, Check, ChevronRight } from 'lucide-react';
+import { Copy, Check, ChevronRight, GitBranch, Hammer, Search, Container, Shield, TrafficCone, CheckCircle, Rocket, RefreshCw, Zap, UserCircle, BookOpen } from 'lucide-react';
 
 type View = 'concepts' | 'github-actions' | 'jenkins' | 'stages';
 
@@ -10,13 +8,13 @@ function Code({ code, lang = '' }: { code: string; lang?: string }) {
   return (
     <div className="rounded-xl border border-slate-800 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="text-[10px] font-mono text-slate-500">{lang}</span>
+        <span className="text-2xs font-mono text-slate-400">{lang}</span>
         <button onClick={() => { navigator.clipboard.writeText(code); setC(true); setTimeout(() => setC(false), 1400); }}
-          className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-slate-300">
+          className="flex items-center gap-1 text-2xs text-slate-400 hover:text-slate-300">
           {c ? <><Check size={10} className="text-emerald-400" /><span className="text-emerald-400">Copiado</span></> : <><Copy size={10} />Copiar</>}
         </button>
       </div>
-      <pre className="p-4 text-[11px] font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 text-xs font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => <div key={i} className={line.startsWith('#') ? 'text-slate-600' : line.match(/^(name|on|jobs|steps|uses|run|with|env|if|needs|permissions|strategy|matrix):/) ? 'text-sky-300' : line.match(/^\s+(name|on|jobs|steps|uses|run|with|env|if|needs|permissions|strategy|matrix):/) ? 'text-violet-300' : 'text-slate-300'}>{line}</div>)}
       </pre>
     </div>
@@ -188,26 +186,25 @@ pipeline {
 }`;
 
 const PIPELINE_STAGES = [
-  { stage: 'Source', icon: '📥', color: 'slate', items: ['git clone / checkout', 'Webhook trigger', 'Branch/tag filtering', 'Change detection'] },
-  { stage: 'Build', icon: '🔨', color: 'sky', items: ['Compile (Maven/NPM/Go)', 'Unit tests', 'Code coverage', 'Artefacto (.jar/.whl/dist)'] },
-  { stage: 'SAST', icon: '🔬', color: 'amber', items: ['SonarQube análise', 'Quality Gate (falha se < threshold)', 'Dependency check (OWASP)', 'License compliance'] },
-  { stage: 'Image', icon: '🐳', color: 'violet', items: ['docker build multi-stage', 'Trivy scan (CRITICAL → fail)', 'Tag com commit SHA', 'Push para registry'] },
-  { stage: 'DAST', icon: '🕵️', color: 'rose', items: ['Deploy em ambiente efémero', 'OWASP ZAP scan', 'API fuzzing', 'Destroy ambiente'] },
-  { stage: 'Deploy STG', icon: '🚦', color: 'teal', items: ['Helm upgrade / kubectl apply', 'Smoke tests automáticos', 'Performance baseline', 'Notificação equipa'] },
-  { stage: 'Aprovação', icon: '✅', color: 'amber', items: ['Manual approval gate', '2 reviewers obrigatórios', 'Environment protection', 'JIRA ticket required'] },
-  { stage: 'Deploy PROD', icon: '🚀', color: 'emerald', items: ['Canary 5% → métricas → 100%', 'Rollback automático (error rate)', 'Health checks pós-deploy', 'Notificação stakeholders'] },
+  { stage: 'Source', icon: GitBranch, color: 'slate', items: ['git clone / checkout', 'Webhook trigger', 'Branch/tag filtering', 'Change detection'] },
+  { stage: 'Build', icon: Hammer, color: 'sky', items: ['Compile (Maven/NPM/Go)', 'Unit tests', 'Code coverage', 'Artefacto (.jar/.whl/dist)'] },
+  { stage: 'SAST', icon: Search, color: 'amber', items: ['SonarQube análise', 'Quality Gate (falha se < threshold)', 'Dependency check (OWASP)', 'License compliance'] },
+  { stage: 'Image', icon: Container, color: 'violet', items: ['docker build multi-stage', 'Trivy scan (CRITICAL → fail)', 'Tag com commit SHA', 'Push para registry'] },
+  { stage: 'DAST', icon: Shield, color: 'rose', items: ['Deploy em ambiente efémero', 'OWASP ZAP scan', 'API fuzzing', 'Destroy ambiente'] },
+  { stage: 'Deploy STG', icon: TrafficCone, color: 'teal', items: ['Helm upgrade / kubectl apply', 'Smoke tests automáticos', 'Performance baseline', 'Notificação equipa'] },
+  { stage: 'Aprovação', icon: CheckCircle, color: 'amber', items: ['Manual approval gate', '2 reviewers obrigatórios', 'Environment protection', 'JIRA ticket required'] },
+  { stage: 'Deploy PROD', icon: Rocket, color: 'emerald', items: ['Canary 5% → métricas → 100%', 'Rollback automático (error rate)', 'Health checks pós-deploy', 'Notificação stakeholders'] },
 ];
 
 export default function CiCdSimulator() {
-  const { lang } = useLang();
   const [view, setView] = useState<View>('stages');
   const [tool, setTool] = useState<'github-actions' | 'jenkins'>('github-actions');
 
   const views = [
-    { id: 'stages' as View, label: '🔄 Pipeline Stages' },
-    { id: 'github-actions' as View, label: '⚡ GitHub Actions' },
-    { id: 'jenkins' as View, label: '🤵 Jenkins' },
-    { id: 'concepts' as View, label: '📚 Conceitos' },
+    { id: 'stages' as View, label: <><RefreshCw size={14} className="mr-1 inline" /> Pipeline Stages</> },
+    { id: 'github-actions' as View, label: <><Zap size={14} className="mr-1 inline" /> GitHub Actions</> },
+    { id: 'jenkins' as View, label: <><UserCircle size={14} className="mr-1 inline" /> Jenkins</> },
+    { id: 'concepts' as View, label: <><BookOpen size={14} className="mr-1 inline" /> Conceitos</> },
   ];
 
   const colorMap: Record<string, string> = {
@@ -225,7 +222,7 @@ export default function CiCdSimulator() {
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
-            className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${view === v.id ? 'bg-rose-500/20 border border-rose-500/40 text-rose-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
+            className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${view === v.id ? 'bg-rose-500/20 border border-rose-500/40 text-rose-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300'}`}>
             {v.label}
           </button>
         ))}
@@ -235,10 +232,10 @@ export default function CiCdSimulator() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {PIPELINE_STAGES.map((s, i) => (
             <div key={i} className={`p-4 rounded-2xl border ${colorMap[s.color]}`}>
-              <div className="text-xl mb-2">{s.icon}</div>
-              <div className={`text-[11px] font-black uppercase mb-2 ${colorMap[s.color].split(' ')[2]}`}>{tr(CICD_EN.stages, s.stage, lang)}</div>
+              <div className="text-xl mb-2"><s.icon size={20} /></div>
+              <div className={`text-xs font-black uppercase mb-2 ${colorMap[s.color].split(' ')[2]}`}>{s.stage}</div>
               {s.items.map(item => (
-                <div key={item} className="flex items-start gap-1.5 text-[10px] text-slate-500 py-0.5">
+                <div key={item} className="flex items-start gap-1.5 text-2xs text-slate-400 py-0.5">
                   <ChevronRight size={9} className={`${colorMap[s.color].split(' ')[2]} mt-0.5 shrink-0`} />{item}
                 </div>
               ))}
@@ -259,8 +256,8 @@ export default function CiCdSimulator() {
             { t: 'Ferramentas por Stage', c: 'emerald', items: ['SAST: SonarQube, Checkmarx, Semgrep', 'SCA: Trivy, Snyk, OWASP Dependency Check', 'DAST: OWASP ZAP, Burp Suite Enterprise', 'Secrets: GitLeaks, TruffleHog'] },
           ].map(g => (
             <div key={g.t} className={`p-5 rounded-2xl border ${g.c === 'sky' ? 'border-sky-500/20 bg-sky-500/5' : g.c === 'violet' ? 'border-violet-500/20 bg-violet-500/5' : g.c === 'amber' ? 'border-amber-500/20 bg-amber-500/5' : 'border-emerald-500/20 bg-emerald-500/5'}`}>
-              <div className={`text-[11px] font-black uppercase tracking-widest mb-3 ${g.c === 'sky' ? 'text-sky-400' : g.c === 'violet' ? 'text-violet-400' : g.c === 'amber' ? 'text-amber-400' : 'text-emerald-400'}`}>{g.t}</div>
-              {g.items.map(i => <div key={i} className="flex items-start gap-2 text-[12px] text-slate-400 py-1"><ChevronRight size={11} className={`${g.c === 'sky' ? 'text-sky-500' : g.c === 'violet' ? 'text-violet-500' : g.c === 'amber' ? 'text-amber-500' : 'text-emerald-500'} shrink-0 mt-0.5`} />{i}</div>)}
+              <div className={`text-xs font-black uppercase tracking-widest mb-3 ${g.c === 'sky' ? 'text-sky-400' : g.c === 'violet' ? 'text-violet-400' : g.c === 'amber' ? 'text-amber-400' : 'text-emerald-400'}`}>{g.t}</div>
+              {g.items.map(i => <div key={i} className="flex items-start gap-2 text-sm text-slate-400 py-1"><ChevronRight size={11} className={`${g.c === 'sky' ? 'text-sky-500' : g.c === 'violet' ? 'text-violet-500' : g.c === 'amber' ? 'text-amber-500' : 'text-emerald-500'} shrink-0 mt-0.5`} />{i}</div>)}
             </div>
           ))}
         </div>

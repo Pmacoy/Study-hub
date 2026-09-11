@@ -1,22 +1,22 @@
 import { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, GitMerge, Wrench, Paintbrush, Telescope } from 'lucide-react';
 
 function Code({ code, output }: { code: string; output?: string }) {
   const [copied, setCopied] = useState(false);
   const [showOut, setShowOut] = useState(false);
   return (
-    <div className="rounded-xl border border-slate-800 overflow-hidden text-[11px]">
+    <div className="rounded-xl border border-slate-800 overflow-hidden text-xs">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="font-mono text-slate-500">python</span>
+        <span className="font-mono text-slate-400">python</span>
         <div className="flex gap-2">
-          {output && <button onClick={() => setShowOut(s => !s)} className="text-amber-400 text-[10px] hover:text-amber-300 font-semibold">{showOut ? '▼ output' : '▶ run'}</button>}
+          {output && <button onClick={() => setShowOut(s => !s)} className="text-amber-400 text-2xs hover:text-amber-300 font-semibold">{showOut ? '▼ output' : '▶ run'}</button>}
           <button onClick={() => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1400); }}
-            className="flex items-center gap-1 text-slate-500 hover:text-slate-300">
+            className="flex items-center gap-1 text-slate-400 hover:text-slate-300">
             {copied ? <Check size={10} className="text-emerald-400" /> : <Copy size={10} />}
           </button>
         </div>
       </div>
-      <pre className="p-4 font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => {
           const kw = /^\s*(def|class|if|elif|else|for|while|try|except|finally|with|return|yield|import|from|lambda|pass|break|continue|raise|and|or|not)\b/.test(line);
           const comment = line.trim().startsWith('#');
@@ -25,8 +25,8 @@ function Code({ code, output }: { code: string; output?: string }) {
       </pre>
       {output && showOut && (
         <div className="border-t border-slate-800 bg-slate-900/80 px-4 py-3">
-          <div className="text-[9px] text-amber-500 font-bold uppercase mb-1">Output:</div>
-          <pre className="font-mono text-amber-300 text-[11px]">{output}</pre>
+          <div className="text-2xs text-amber-500 font-bold uppercase mb-1">Output:</div>
+          <pre className="font-mono text-amber-300 text-xs">{output}</pre>
         </div>
       )}
     </div>
@@ -37,7 +37,7 @@ function Challenge({ q, opts, answer, explanation }: { q: string; opts: string[]
   const [selected, setSelected] = useState<number | null>(null);
   return (
     <div className="p-4 rounded-2xl border border-amber-500/20 bg-amber-500/5 space-y-3">
-      <div className="text-[12px] font-bold text-amber-300">🧩 {q}</div>
+      <div className="text-sm font-bold text-amber-300">🧩 {q}</div>
       <div className="grid grid-cols-2 gap-2">
         {opts.map((o, i) => {
           let cls = 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700';
@@ -47,11 +47,11 @@ function Challenge({ q, opts, answer, explanation }: { q: string; opts: string[]
           }
           return (
             <button key={i} onClick={() => setSelected(i)} disabled={selected !== null}
-              className={`p-2 rounded-xl border text-[11px] font-mono text-left transition-all ${cls}`}>{o}</button>
+              className={`p-2 rounded-xl border text-xs font-mono text-left transition-all ${cls}`}>{o}</button>
           );
         })}
       </div>
-      {selected !== null && <p className="text-[11px] text-slate-400">{explanation}</p>}
+      {selected !== null && <p className="text-xs text-slate-400">{explanation}</p>}
     </div>
   );
 }
@@ -60,10 +60,10 @@ export default function ControlFlowModule() {
   const [section, setSection] = useState<'control' | 'functions' | 'decorators' | 'scope'>('control');
 
   const views = [
-    { id: 'control' as const, label: '🔀 if/for/while' },
-    { id: 'functions' as const, label: '🔧 Funções & Lambda' },
-    { id: 'decorators' as const, label: '🎨 Decoradores' },
-    { id: 'scope' as const, label: '🔭 Scope LEGB' },
+    { id: 'control' as const, label: <><GitMerge size={14} className="mr-1 inline" /> if/for/while</> },
+    { id: 'functions' as const, label: <><Wrench size={14} className="mr-1 inline" /> Funções & Lambda</> },
+    { id: 'decorators' as const, label: <><Paintbrush size={14} className="mr-1 inline" /> Decoradores</> },
+    { id: 'scope' as const, label: <><Telescope size={14} className="mr-1 inline" /> Scope LEGB</> },
   ];
 
   return (
@@ -71,7 +71,7 @@ export default function ControlFlowModule() {
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setSection(v.id)}
-            className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${section === v.id ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
+            className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${section === v.id ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300'}`}>
             {v.label}
           </button>
         ))}
@@ -205,7 +205,7 @@ print(squares)`}
 
       {section === 'decorators' && (
         <div className="space-y-4">
-          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-[12px] text-slate-400 leading-relaxed">
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-sm text-slate-400 leading-relaxed">
             Decoradores são funções que <span className="text-amber-300 font-bold">envolvem outra função</span> para adicionar comportamento sem modificar o código original. São fundamentais em frameworks como Flask, FastAPI e em testes.
           </div>
           <Code code={`import time
@@ -268,8 +268,8 @@ def unstable_api_call():
               { l: 'B — Built-in', d: 'print, len, range…', c: 'emerald' },
             ].map(s => (
               <div key={s.l} className={`p-3 rounded-xl border text-center ${s.c === 'violet' ? 'border-violet-500/30 bg-violet-500/8' : s.c === 'sky' ? 'border-sky-500/30 bg-sky-500/8' : s.c === 'amber' ? 'border-amber-500/30 bg-amber-500/8' : 'border-emerald-500/30 bg-emerald-500/8'}`}>
-                <div className={`text-[11px] font-black ${s.c === 'violet' ? 'text-violet-300' : s.c === 'sky' ? 'text-sky-300' : s.c === 'amber' ? 'text-amber-300' : 'text-emerald-300'}`}>{s.l}</div>
-                <div className="text-[10px] text-slate-500 mt-1">{s.d}</div>
+                <div className={`text-xs font-black ${s.c === 'violet' ? 'text-violet-300' : s.c === 'sky' ? 'text-sky-300' : s.c === 'amber' ? 'text-amber-300' : 'text-emerald-300'}`}>{s.l}</div>
+                <div className="text-2xs text-slate-400 mt-1">{s.d}</div>
               </div>
             ))}
           </div>

@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { useLang } from '../../i18n/LangContext';
-import { PLATFORM_EN, tr } from '../../i18n/modulesEn';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, BarChart3, Flame, TrendingUp, List, Link, Search } from 'lucide-react';
 
 type View = 'overview' | 'prometheus' | 'grafana' | 'elk';
 
@@ -10,13 +8,13 @@ function Code({ code, lang = '' }: { code: string; lang?: string }) {
   return (
     <div className="rounded-xl border border-slate-800 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="text-[10px] font-mono text-slate-500">{lang}</span>
+        <span className="text-2xs font-mono text-slate-400">{lang}</span>
         <button onClick={() => { navigator.clipboard.writeText(code); setC(true); setTimeout(() => setC(false), 1400); }}
-          className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-slate-300">
+          className="flex items-center gap-1 text-2xs text-slate-400 hover:text-slate-300">
           {c ? <><Check size={10} className="text-emerald-400" /><span className="text-emerald-400">Copiado</span></> : <><Copy size={10} />Copiar</>}
         </button>
       </div>
-      <pre className="p-4 text-[11px] font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 text-xs font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => <div key={i} className={line.startsWith('#') ? 'text-slate-600' : 'text-slate-300'}>{line}</div>)}
       </pre>
     </div>
@@ -103,15 +101,14 @@ filter {
 }`;
 
 export default function MonitoringSimulator() {
-  const { lang } = useLang();
   const [view, setView] = useState<View>('overview');
   const [activeQuery, setActiveQuery] = useState(0);
 
   const views = [
-    { id: 'overview' as View, label: '📊 Overview' },
-    { id: 'prometheus' as View, label: '🔥 Prometheus' },
-    { id: 'grafana' as View, label: '📈 Grafana' },
-    { id: 'elk' as View, label: '🔍 ELK Stack' },
+    { id: 'overview' as View, label: <><BarChart3 size={14} className="mr-1 inline" /> Overview</> },
+    { id: 'prometheus' as View, label: <><Flame size={14} className="mr-1 inline" /> Prometheus</> },
+    { id: 'grafana' as View, label: <><TrendingUp size={14} className="mr-1 inline" /> Grafana</> },
+    { id: 'elk' as View, label: <><Search size={14} className="mr-1 inline" /> ELK Stack</> },
   ];
 
   return (
@@ -119,8 +116,8 @@ export default function MonitoringSimulator() {
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
-            className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${view === v.id ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
-            {tr(PLATFORM_EN.views, v.label, lang)}
+            className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${view === v.id ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300'}`}>
+            {v.label}
           </button>
         ))}
       </div>
@@ -129,15 +126,15 @@ export default function MonitoringSimulator() {
         <div className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
-              { t: 'Logs', e: '📋', d: 'O quê aconteceu? ELK Stack, Loki, CloudWatch', c: 'sky' },
-              { t: 'Métricas', e: '📊', d: 'Como está o sistema? Prometheus + Grafana', c: 'amber' },
-              { t: 'Traces', e: '🔗', d: 'Porquê demorou? Jaeger, Zipkin, Tempo', c: 'violet' },
-              { t: 'Alertas', e: '🔔', d: 'Quando falha? AlertManager, PagerDuty', c: 'rose' },
+              { t: 'Logs', e: List, d: 'O quê aconteceu? ELK Stack, Loki, CloudWatch', c: 'sky' },
+              { t: 'Métricas', e: BarChart3, d: 'Como está o sistema? Prometheus + Grafana', c: 'amber' },
+              { t: 'Traces', e: Link, d: 'Porquê demorou? Jaeger, Zipkin, Tempo', c: 'violet' },
+              { t: 'Alertas', e: Flame, d: 'Quando falha? AlertManager, PagerDuty', c: 'rose' },
             ].map(p => (
               <div key={p.t} className={`p-4 rounded-2xl border text-center ${p.c === 'sky' ? 'border-sky-500/30 bg-sky-500/8' : p.c === 'amber' ? 'border-amber-500/30 bg-amber-500/8' : p.c === 'violet' ? 'border-violet-500/30 bg-violet-500/8' : 'border-rose-500/30 bg-rose-500/8'}`}>
-                <div className="text-2xl mb-2">{p.e}</div>
-                <div className={`text-[11px] font-black mb-1 ${p.c === 'sky' ? 'text-sky-400' : p.c === 'amber' ? 'text-amber-400' : p.c === 'violet' ? 'text-violet-400' : 'text-rose-400'}`}>{p.t}</div>
-                <div className="text-[10px] text-slate-500">{p.d}</div>
+                <div className="mb-2"><p.e size={28} /></div>
+                <div className={`text-xs font-black mb-1 ${p.c === 'sky' ? 'text-sky-400' : p.c === 'amber' ? 'text-amber-400' : p.c === 'violet' ? 'text-violet-400' : 'text-rose-400'}`}>{p.t}</div>
+                <div className="text-2xs text-slate-400">{p.d}</div>
               </div>
             ))}
           </div>
@@ -148,8 +145,8 @@ export default function MonitoringSimulator() {
               { title: 'Alert Fatigue Prevention', color: 'rose', items: ['Alertar só sobre o que afecta utilizadores', 'Agrupar alertas relacionados', 'Severity: P1=pager now, P2=next hour, P3=ticket', 'Runbooks para cada alerta (o que fazer)', 'Rever e desactivar alertas silenciados > 30 dias'] },
             ].map(g => (
               <div key={g.title} className={`p-4 rounded-2xl border ${g.color === 'sky' ? 'border-sky-500/20 bg-sky-500/5' : g.color === 'amber' ? 'border-amber-500/20 bg-amber-500/5' : 'border-rose-500/20 bg-rose-500/5'}`}>
-                <div className={`text-[11px] font-black uppercase tracking-widest mb-3 ${g.color === 'sky' ? 'text-sky-400' : g.color === 'amber' ? 'text-amber-400' : 'text-rose-400'}`}>{g.title}</div>
-                {g.items.map(i => <div key={i} className="text-[11px] text-slate-400 py-0.5 flex items-start gap-1.5"><span className={`${g.color === 'sky' ? 'text-sky-500' : g.color === 'amber' ? 'text-amber-500' : 'text-rose-500'} shrink-0`}>·</span>{i}</div>)}
+                <div className={`text-xs font-black uppercase tracking-widest mb-3 ${g.color === 'sky' ? 'text-sky-400' : g.color === 'amber' ? 'text-amber-400' : 'text-rose-400'}`}>{g.title}</div>
+                {g.items.map(i => <div key={i} className="text-xs text-slate-400 py-0.5 flex items-start gap-1.5"><span className={`${g.color === 'sky' ? 'text-sky-500' : g.color === 'amber' ? 'text-amber-500' : 'text-rose-500'} shrink-0`}>·</span>{i}</div>)}
               </div>
             ))}
           </div>
@@ -160,22 +157,22 @@ export default function MonitoringSimulator() {
         <div className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div className="space-y-3">
-              <div className="text-[11px] font-black text-amber-400 uppercase tracking-widest">PromQL Queries</div>
+              <div className="text-xs font-black text-amber-400 uppercase tracking-widest">PromQL Queries</div>
               {PROMQL_EXAMPLES.map((q, i) => (
                 <button key={i} onClick={() => setActiveQuery(i)}
                   className={`w-full text-left p-3 rounded-xl border transition-all ${activeQuery === i ? 'border-amber-500/40 bg-amber-500/10' : 'border-slate-800 hover:border-slate-700 bg-slate-900/50'}`}>
-                  <div className={`text-[12px] font-semibold mb-1 ${activeQuery === i ? 'text-amber-300' : 'text-slate-300'}`}>{q.name}</div>
-                  <div className="text-[10px] text-slate-500">{q.desc}</div>
+                  <div className={`text-sm font-semibold mb-1 ${activeQuery === i ? 'text-amber-300' : 'text-slate-300'}`}>{q.name}</div>
+                  <div className="text-2xs text-slate-400">{q.desc}</div>
                 </button>
               ))}
             </div>
             <div className="space-y-3">
               <div className="p-4 rounded-2xl border border-amber-500/20 bg-amber-500/5">
-                <div className="text-[10px] font-black text-amber-400 uppercase mb-2">Query seleccionada</div>
-                <code className="block font-mono text-[12px] text-slate-300 break-all">{PROMQL_EXAMPLES[activeQuery].q}</code>
-                <p className="text-[11px] text-slate-500 mt-2">{PROMQL_EXAMPLES[activeQuery].desc}</p>
+                <div className="text-2xs font-black text-amber-400 uppercase mb-2">Query seleccionada</div>
+                <code className="block font-mono text-sm text-slate-300 break-all">{PROMQL_EXAMPLES[activeQuery].q}</code>
+                <p className="text-xs text-slate-400 mt-2">{PROMQL_EXAMPLES[activeQuery].desc}</p>
               </div>
-              <div className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-2">Regras de Alerta</div>
+              <div className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Regras de Alerta</div>
               <Code code={ALERT_RULES} lang="prometheus/rules/alerts.yml" />
             </div>
           </div>
@@ -191,8 +188,8 @@ export default function MonitoringSimulator() {
             { t: 'Grafana + Azure', c: 'emerald', items: ['Datasource: Azure Monitor (Log Analytics)', 'Painel HAProxy: conexões activas por backend', 'Painel VMSS: instâncias saudáveis e CPU', 'Alerta: Oracle connection failures > 10/min', 'SLO dashboard: availability 99.9% target'] },
           ].map(g => (
             <div key={g.t} className={`p-5 rounded-2xl border ${g.c === 'sky' ? 'border-sky-500/20 bg-sky-500/5' : g.c === 'violet' ? 'border-violet-500/20 bg-violet-500/5' : g.c === 'amber' ? 'border-amber-500/20 bg-amber-500/5' : 'border-emerald-500/20 bg-emerald-500/5'}`}>
-              <div className={`text-[11px] font-black uppercase tracking-widest mb-3 ${g.c === 'sky' ? 'text-sky-400' : g.c === 'violet' ? 'text-violet-400' : g.c === 'amber' ? 'text-amber-400' : 'text-emerald-400'}`}>{g.t}</div>
-              {g.items.map(i => <div key={i} className="flex items-start gap-2 text-[12px] text-slate-400 py-0.5"><span className="text-slate-600 shrink-0">·</span>{i}</div>)}
+              <div className={`text-xs font-black uppercase tracking-widest mb-3 ${g.c === 'sky' ? 'text-sky-400' : g.c === 'violet' ? 'text-violet-400' : g.c === 'amber' ? 'text-amber-400' : 'text-emerald-400'}`}>{g.t}</div>
+              {g.items.map(i => <div key={i} className="flex items-start gap-2 text-sm text-slate-400 py-0.5"><span className="text-slate-600 shrink-0">·</span>{i}</div>)}
             </div>
           ))}
         </div>
@@ -207,8 +204,8 @@ export default function MonitoringSimulator() {
               { t: 'Kibana', d: 'UI para visualização, dashboards, KQL queries e alertas sobre os dados no ES.', c: 'violet' },
             ].map(x => (
               <div key={x.t} className={`p-4 rounded-2xl border text-center ${x.c === 'amber' ? 'border-amber-500/30 bg-amber-500/8' : x.c === 'rose' ? 'border-rose-500/30 bg-rose-500/8' : 'border-violet-500/30 bg-violet-500/8'}`}>
-                <div className={`text-[13px] font-black mb-1 ${x.c === 'amber' ? 'text-amber-400' : x.c === 'rose' ? 'text-rose-400' : 'text-violet-400'}`}>{x.t}</div>
-                <div className="text-[10px] text-slate-500 leading-relaxed">{x.d}</div>
+                <div className={`text-base font-black mb-1 ${x.c === 'amber' ? 'text-amber-400' : x.c === 'rose' ? 'text-rose-400' : 'text-violet-400'}`}>{x.t}</div>
+                <div className="text-2xs text-slate-400 leading-relaxed">{x.d}</div>
               </div>
             ))}
           </div>

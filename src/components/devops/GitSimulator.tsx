@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { useLang } from '../../i18n/LangContext';
-import { MISC_EN, tr } from '../../i18n/modulesEn';
-import { Copy, Check, GitBranch, ArrowRight } from 'lucide-react';
+import { Copy, Check, GitBranch, ArrowRight, Package, Keyboard, PenTool } from 'lucide-react';
 
 type View = 'basics' | 'branching' | 'workflows' | 'advanced';
 
@@ -10,13 +8,13 @@ function Code({ code, lang = '' }: { code: string; lang?: string }) {
   return (
     <div className="rounded-xl border border-slate-800 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="text-[10px] font-mono text-slate-500">{lang}</span>
+        <span className="text-2xs font-mono text-slate-400">{lang}</span>
         <button onClick={() => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1400); }}
-          className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-slate-300">
+          className="flex items-center gap-1 text-2xs text-slate-400 hover:text-slate-300">
           {copied ? <><Check size={10} className="text-emerald-400" /><span className="text-emerald-400">Copiado</span></> : <><Copy size={10} />Copiar</>}
         </button>
       </div>
-      <pre className="p-4 text-[11px] font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 text-xs font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => (
           <div key={i} className={line.startsWith('#') ? 'text-slate-600' : line.startsWith('$') ? 'text-emerald-300' : 'text-slate-400'}>{line}</div>
         ))}
@@ -108,16 +106,15 @@ const COMMIT_TYPES = [
 ];
 
 export default function GitSimulator() {
-  const { lang } = useLang();
   const [view, setView] = useState<View>('basics');
   const [activeCmd, setActiveCmd] = useState('Setup Inicial');
   const [selectedStrategy, setSelectedStrategy] = useState(0);
 
   const views = [
-    { id: 'basics' as View, label: '📦 Áreas do Git' },
-    { id: 'branching' as View, label: '🌿 Branching Strategies' },
-    { id: 'workflows' as View, label: '⌨️ Comandos' },
-    { id: 'advanced' as View, label: '✍️ Conventional Commits' },
+    { id: 'basics' as View, label: <><Package size={14} className="mr-1 inline" /> Áreas do Git</> },
+    { id: 'branching' as View, label: <><GitBranch size={14} className="mr-1 inline" /> Branching Strategies</> },
+    { id: 'workflows' as View, label: <><Keyboard size={14} className="mr-1 inline" /> Comandos</> },
+    { id: 'advanced' as View, label: <><PenTool size={14} className="mr-1 inline" /> Conventional Commits</> },
   ];
 
   return (
@@ -125,8 +122,8 @@ export default function GitSimulator() {
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
-            className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${view === v.id ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
-            {tr(MISC_EN.views, v.label, lang)}
+            className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${view === v.id ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300'}`}>
+            {v.label}
           </button>
         ))}
       </div>
@@ -137,9 +134,9 @@ export default function GitSimulator() {
             {GIT_AREAS.map((a, i) => (
               <div key={i} className="flex items-center gap-2 shrink-0">
                 <div className={`p-4 rounded-2xl border text-center min-w-[150px] ${a.color === 'rose' ? 'border-rose-500/30 bg-rose-500/8' : a.color === 'amber' ? 'border-amber-500/30 bg-amber-500/8' : a.color === 'sky' ? 'border-sky-500/30 bg-sky-500/8' : 'border-emerald-500/30 bg-emerald-500/8'}`}>
-                  <div className={`text-[11px] font-black uppercase mb-1 ${a.color === 'rose' ? 'text-rose-400' : a.color === 'amber' ? 'text-amber-400' : a.color === 'sky' ? 'text-sky-400' : 'text-emerald-400'}`}>{a.name}</div>
-                  <div className="text-[10px] text-slate-500 leading-relaxed">{a.desc}</div>
-                  <code className={`mt-2 block text-[10px] font-mono font-bold ${a.color === 'rose' ? 'text-rose-300' : a.color === 'amber' ? 'text-amber-300' : a.color === 'sky' ? 'text-sky-300' : 'text-emerald-300'}`}>{a.cmd}</code>
+                  <div className={`text-xs font-black uppercase mb-1 ${a.color === 'rose' ? 'text-rose-400' : a.color === 'amber' ? 'text-amber-400' : a.color === 'sky' ? 'text-sky-400' : 'text-emerald-400'}`}>{a.name}</div>
+                  <div className="text-2xs text-slate-400 leading-relaxed">{a.desc}</div>
+                  <code className={`mt-2 block text-2xs font-mono font-bold ${a.color === 'rose' ? 'text-rose-300' : a.color === 'amber' ? 'text-amber-300' : a.color === 'sky' ? 'text-sky-300' : 'text-emerald-300'}`}>{a.cmd}</code>
                 </div>
                 {i < GIT_AREAS.length - 1 && <ArrowRight size={16} className="text-slate-600 shrink-0" />}
               </div>
@@ -154,15 +151,15 @@ export default function GitSimulator() {
           <div className="space-y-2">
             {BRANCH_STRATEGIES.map((s, i) => (
               <button key={i} onClick={() => setSelectedStrategy(i)}
-                className={`w-full p-4 rounded-2xl border text-left transition-all ${selectedStrategy === i ? `bg-${s.color}-500/15 border-${s.color}-500/40 text-${s.color}-300` : 'border-slate-800 text-slate-500 hover:border-slate-700 hover:text-slate-300'}`}>
+                className={`w-full p-4 rounded-2xl border text-left transition-all ${selectedStrategy === i ? `bg-${s.color}-500/15 border-${s.color}-500/40 text-${s.color}-300` : 'border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'}`}>
                 <div className="flex items-center gap-2">
                   <GitBranch size={13} className={selectedStrategy === i ? `text-${s.color}-400` : 'text-slate-600'} />
-                  <span className="text-[13px] font-semibold">{s.name}</span>
+                  <span className="text-base font-semibold">{s.name}</span>
                 </div>
               </button>
             ))}
           </div>
-          <div className="lg:col-span-2 p-5 rounded-2xl border border-slate-800 bg-slate-950/70 space-y-4">
+          <div className="lg:col-span-2 p-5 rounded-2xl border border-slate-800 bg-[#181926]/70 space-y-4">
             {(() => {
               const s = BRANCH_STRATEGIES[selectedStrategy];
               return (
@@ -170,7 +167,7 @@ export default function GitSimulator() {
                   <div className={`text-lg font-black ${s.color === 'violet' ? 'text-violet-300' : s.color === 'sky' ? 'text-sky-300' : 'text-emerald-300'}`}>{s.name}</div>
                   <div className="space-y-2">
                     {s.branches.map((b, i) => (
-                      <div key={i} className="flex items-center gap-2 font-mono text-[12px]">
+                      <div key={i} className="flex items-center gap-2 font-mono text-sm">
                         <GitBranch size={11} className="text-slate-600" />
                         <span className="text-slate-300">{b}</span>
                       </div>
@@ -178,12 +175,12 @@ export default function GitSimulator() {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                      <div className="text-[10px] font-bold text-emerald-400 mb-1">✓ Vantagem</div>
-                      <div className="text-[11px] text-slate-400">{s.pro}</div>
+                      <div className="text-2xs font-bold text-emerald-400 mb-1">✓ Vantagem</div>
+                      <div className="text-xs text-slate-400">{s.pro}</div>
                     </div>
                     <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
-                      <div className="text-[10px] font-bold text-rose-400 mb-1">✗ Limitação</div>
-                      <div className="text-[11px] text-slate-400">{s.con}</div>
+                      <div className="text-2xs font-bold text-rose-400 mb-1">✗ Limitação</div>
+                      <div className="text-xs text-slate-400">{s.con}</div>
                     </div>
                   </div>
                 </>
@@ -198,7 +195,7 @@ export default function GitSimulator() {
           <div className="space-y-1">
             {Object.keys(GIT_COMMANDS).map(k => (
               <button key={k} onClick={() => setActiveCmd(k)}
-                className={`w-full text-left px-3 py-2.5 rounded-xl text-[12px] font-medium transition-all ${activeCmd === k ? 'bg-amber-500/15 border border-amber-500/30 text-amber-300' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-900'}`}>
+                className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${activeCmd === k ? 'bg-amber-500/15 border border-amber-500/30 text-amber-300' : 'text-slate-400 hover:text-slate-300 hover:bg-slate-900'}`}>
                 {k}
               </button>
             ))}
@@ -212,19 +209,19 @@ export default function GitSimulator() {
       {view === 'advanced' && (
         <div className="space-y-4">
           <div className="p-4 rounded-2xl border border-amber-500/20 bg-amber-500/8">
-            <div className="text-[11px] font-black text-amber-400 uppercase tracking-widest mb-2">Conventional Commits</div>
-            <code className="font-mono text-[12px] text-slate-300">
+            <div className="text-xs font-black text-amber-400 uppercase tracking-widest mb-2">Conventional Commits</div>
+            <code className="font-mono text-sm text-slate-300">
               {'<type>(<scope>): <description>'}
             </code>
-            <p className="text-[11px] text-slate-500 mt-1">Formato padronizado para gerar CHANGELOG e versioning semântico automático.</p>
+            <p className="text-xs text-slate-400 mt-1">Formato padronizado para gerar CHANGELOG e versioning semântico automático.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {COMMIT_TYPES.map(c => (
               <div key={c.type} className="flex items-start gap-3 p-3 rounded-xl bg-slate-900 border border-slate-800">
-                <code className="font-mono text-[12px] font-black text-amber-300 shrink-0 w-16">{c.type}</code>
+                <code className="font-mono text-sm font-black text-amber-300 shrink-0 w-16">{c.type}</code>
                 <div>
-                  <div className="text-[11px] text-slate-400">{tr(MISC_EN.descs, c.desc, lang)}</div>
-                  <div className="text-[10px] font-mono text-slate-600 mt-0.5">{c.example}</div>
+                  <div className="text-xs text-slate-400">{c.desc}</div>
+                  <div className="text-2xs font-mono text-slate-600 mt-0.5">{c.example}</div>
                 </div>
               </div>
             ))}

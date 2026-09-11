@@ -35,7 +35,7 @@ export default function ResetProgressModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-3xl border border-slate-800 bg-slate-950 p-6 shadow-2xl"
+        className="w-full max-w-md rounded-3xl border border-slate-800 bg-[#181926] p-6 shadow-2xl"
         role="dialog"
         aria-modal="true"
         aria-labelledby="reset-title"
@@ -44,7 +44,7 @@ export default function ResetProgressModal({
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-rose-300">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-rose-300">
               Ação irreversível
             </p>
             <h3 id="reset-title" className="mt-1 text-xl font-semibold text-white">

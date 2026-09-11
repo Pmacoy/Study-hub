@@ -13,11 +13,6 @@ export const TAB_META: Record<StudyTab, TabMeta> = {
     subtitle: 'Comandos essenciais, permissões e scripting',
     group: 'Fundamentos',
   },
-  'shell-scripting': {
-    label: 'Shell Scripting',
-    subtitle: 'Bash de produção · strict mode, trap, getopts, ShellCheck',
-    group: 'Fundamentos',
-  },
   git: {
     label: 'Git & Versionamento',
     subtitle: 'Branches, merge, rebase e workflows',
@@ -43,11 +38,6 @@ export const TAB_META: Record<StudyTab, TabMeta> = {
     subtitle: 'Jenkins, GitHub Actions e GitLab CI',
     group: 'Automação',
   },
-  gitops: {
-    label: 'GitOps',
-    subtitle: 'ArgoCD · Flux · reconciliação contínua a partir do Git',
-    group: 'Automação',
-  },
   terraform: {
     label: 'Terraform / IaC',
     subtitle: 'Módulos, state, providers e multi-cloud',
@@ -61,11 +51,6 @@ export const TAB_META: Record<StudyTab, TabMeta> = {
   monitoring: {
     label: 'Monitoring & Observability',
     subtitle: 'Prometheus, Grafana, ELK e alertas',
-    group: 'Operações',
-  },
-  finops: {
-    label: 'FinOps · Custos K8s',
-    subtitle: 'Spot · Karpenter · KEDA · right-sizing · Savings Plans',
     group: 'Operações',
   },
   security: {
@@ -91,6 +76,21 @@ export const TAB_META: Record<StudyTab, TabMeta> = {
   mlops: {
     label: 'MLOps & AI',
     subtitle: 'MLflow · Kubeflow · DVC · drift · agentic AI · MCP',
+    group: 'Platform Engineering',
+  },
+  'service-mesh': {
+    label: 'Service Mesh',
+    subtitle: 'Istio · mTLS · Traffic Mgmt · Observability',
+    group: 'Platform Engineering',
+  },
+  gitops: {
+    label: 'GitOps',
+    subtitle: 'Argo CD · Flux · Declarative Deployments',
+    group: 'Platform Engineering',
+  },
+  sre: {
+    label: 'SRE & Fiabilidade',
+    subtitle: 'SLO/SLI · Error Budget · Incident Mgmt · Blameless',
     group: 'Platform Engineering',
   },
 };

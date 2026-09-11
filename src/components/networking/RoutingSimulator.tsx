@@ -99,7 +99,7 @@ export default function RoutingSimulator() {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-slate-950 text-slate-50 rounded-xl shadow-2xl border border-slate-800 space-y-8 animate-in fade-in duration-300">
+    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-[#181926] text-slate-50 rounded-xl shadow-2xl border border-slate-800 space-y-8 animate-in fade-in duration-300">
       
       {/* --- CABEÇALHO PADRONIZADO --- */}
       <div className="mb-6">
@@ -119,7 +119,7 @@ export default function RoutingSimulator() {
         </h2>
         
         <div className="flex flex-col gap-4">
-          <label className="text-xs text-slate-500 uppercase font-bold">Digite um Domínio (ex: netflix.com) ou IP (ex: 10.5.0.10):</label>
+          <label className="text-xs text-slate-400 uppercase font-bold">Digite um Domínio (ex: netflix.com) ou IP (ex: 10.5.0.10):</label>
           <div className="flex flex-col sm:flex-row gap-3">
             <input 
               type="text" 
@@ -127,7 +127,7 @@ export default function RoutingSimulator() {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Ex: google.com"
-              className="flex-1 bg-slate-950 text-emerald-400 border border-slate-700 p-3 rounded-md focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-mono text-lg transition-colors"
+              className="flex-1 bg-[#181926] text-emerald-400 border border-slate-700 p-3 rounded-md focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-mono text-lg transition-colors"
             />
             <button 
               onClick={handleSimulate}
@@ -154,7 +154,7 @@ export default function RoutingSimulator() {
 
       {/* --- SEÇÃO 2: TABELA DE ROTEAMENTO --- */}
       <div>
-        <h3 className="text-xs text-slate-500 uppercase font-bold mb-3 flex items-center justify-between">
+        <h3 className="text-xs text-slate-400 uppercase font-bold mb-3 flex items-center justify-between">
           <span className="flex items-center gap-2"><Map size={16} /> Tabela de Roteamento Ativa</span>
           <span className="text-sky-400 bg-sky-500/10 px-2 py-1 rounded border border-sky-500/20">Regra: Longest Prefix Match</span>
         </h3>
@@ -169,7 +169,7 @@ export default function RoutingSimulator() {
                 <th className="p-4 font-bold text-xs uppercase tracking-wider text-center">Métrica</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/50 bg-slate-950">
+            <tbody className="divide-y divide-slate-800/50 bg-[#181926]">
               {routingTable.map((route) => {
                 const isWinner = matchedRoute?.id === route.id;
                 return (
@@ -182,7 +182,7 @@ export default function RoutingSimulator() {
                     </td>
                     <td className={`p-4 font-mono ${isWinner ? 'text-slate-200' : 'text-slate-400'}`}>{route.gateway}</td>
                     <td className={`p-4 ${isWinner ? 'text-emerald-300 font-bold' : 'text-slate-400'}`}>{route.interface}</td>
-                    <td className={`p-4 text-center ${isWinner ? 'text-amber-400 font-bold' : 'text-slate-500'}`}>{route.metric}</td>
+                    <td className={`p-4 text-center ${isWinner ? 'text-amber-400 font-bold' : 'text-slate-400'}`}>{route.metric}</td>
                   </tr>
                 );
               })}
@@ -216,7 +216,7 @@ export default function RoutingSimulator() {
           </h4>
           
           <div className="flex flex-col gap-5">
-            <div className="flex items-center gap-3 text-xs sm:text-sm font-mono bg-slate-950 p-4 rounded-md border border-slate-800 w-fit overflow-x-auto max-w-full shadow-inner">
+            <div className="flex items-center gap-3 text-xs sm:text-sm font-mono bg-[#181926] p-4 rounded-md border border-slate-800 w-fit overflow-x-auto max-w-full shadow-inner">
               <span className="text-slate-300 whitespace-nowrap bg-slate-800 px-2 py-1 rounded">Pacote ({activeIp})</span>
               <span className="text-emerald-500">➔</span>
               <span className="text-amber-400 whitespace-nowrap">{matchedRoute.interface}</span>

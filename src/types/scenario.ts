@@ -1,7 +1,15 @@
 import type { Domain } from './platform';
 
 export type ScenarioDifficulty = 'junior' | 'mid' | 'senior';
-export type ScenarioFormat = 'guided'; // future: 'terminal' | 'architecture' | 'postmortem'
+export type ScenarioFormat = 'guided' | 'challenge';
+
+/** A progressive hint the user can reveal one-by-one while solving a challenge */
+export interface ChallengeHint {
+  id: string;
+  level: 1 | 2 | 3;                // 1 = nudge, 2 = pointer, 3 = near-answer
+  label: string;                    // short title like "Dica 1"
+  text: string;                     // the actual hint content
+}
 
 /** A single artifact the user can inspect while investigating (logs, config, output, screenshot) */
 export interface ScenarioArtifact {
@@ -53,11 +61,50 @@ export interface Scenario {
   };
 }
 
+/** A challenge-format scenario — same artifacts as guided, but user solves it open-ended */
+export interface ChallengeScenario {
+  id: string;
+  domain: Domain;
+  title: string;
+  hook: string;
+  difficulty: ScenarioDifficulty;
+  timeEstimateMin: number;
+  tags: string[];
+  /** All artifacts shown upfront — the user inspects whatever they want */
+  artifacts: ScenarioArtifact[];
+  /** The diagnosis question */
+  diagnosisQuestion: string;
+  /** Multiple-choice options for the root cause */
+  diagnosisOptions: { id: string; label: string; correct: boolean; feedback: string }[];
+  /** The fix question */
+  fixQuestion: string;
+  /** Multiple-choice options for the fix */
+  fixOptions: { id: string; label: string; correct: boolean; feedback: string }[];
+  /** Progressive hints (reveal one at a time) */
+  hints: ChallengeHint[];
+  resolution: {
+    rootCause: string;
+    fix: string;
+    preventions: string[];
+  };
+}
+
 /** Result of a completed scenario attempt */
 export interface ScenarioAttempt {
   scenarioId: string;
   completedAt: string;
-  correctFirstTry: number;                     // steps where user picked the right option first
+  correctFirstTry: number;
   totalSteps: number;
   durationSec: number;
 }
+
+/** Result of a completed challenge attempt */
+export interface ChallengeAttempt {
+  scenarioId: string;
+  completedAt: string;
+  diagnosisCorrect: boolean;
+  fixCorrect: boolean;
+  hintsUsed: number;
+  durationSec: number;
+}
+

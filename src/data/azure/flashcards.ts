@@ -11,3 +11,14 @@ export const azureFlashcards: Flashcard[] = Object.entries(knowledgeData).flatMa
       back: `${item.desc} 💡 ${item.tip}`,
     }))
 );
+
+/**
+ * Padronização: todos os flashcards seguem o formato:
+ * - front: pergunta/conceito a memorizar
+ * - back: explicação + dica de exame (💡)
+ * - category: agrupamento pelo módulo do conhecimentoBase
+ * - domain: 'azure' para filtragem no flashcard viewer
+ *
+ * A knowledgeBase estrutura os dados em abas (identity, governance, rbac, etc.)
+ * e cada item contém title, desc, e tip — mapeados directamente para flashcard.
+ */

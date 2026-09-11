@@ -106,7 +106,7 @@ export default function AzureMonitorSimulator() {
 
   return (
     <div className="w-full space-y-6 animate-in fade-in duration-500 text-slate-200">
-      <section className="overflow-hidden rounded-3xl border border-fuchsia-500/15 bg-slate-950/80 shadow-2xl shadow-black/10">
+      <section className="overflow-hidden rounded-3xl border border-fuchsia-500/15 bg-[#181926]/80 shadow-2xl shadow-black/10">
         <div className="border-b border-slate-800/80 px-6 py-5 md:px-8">
           <div className="flex items-start gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-fuchsia-500/20 bg-fuchsia-500/10 text-fuchsia-300">
@@ -114,13 +114,13 @@ export default function AzureMonitorSimulator() {
             </div>
 
             <div className="min-w-0">
-              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-fuchsia-300">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-fuchsia-300">
                 Observabilidade e proteção
               </p>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white leading-tight">
                 Monitor & Data Protection
               </h2>
-              <p className="mt-2 max-w-2xl text-[15px] text-slate-400 leading-relaxed">
+              <p className="mt-2 max-w-2xl text-lg text-slate-400 leading-relaxed">
                 Explora Azure Monitor, alertas, Log Analytics, Recovery Services Vault, Soft Delete e Site Recovery com foco nas diferenças que mais aparecem na prova AZ-104.
               </p>
             </div>
@@ -150,14 +150,14 @@ export default function AzureMonitorSimulator() {
       </section>
 
       <section className="grid grid-cols-1 xl:grid-cols-[360px_minmax(0,1fr)] gap-6">
-        <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+        <div className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6">
           <div className="flex items-center gap-2 mb-5">
             <Sparkles size={16} className="text-fuchsia-300" />
             <h3 className="text-sm font-semibold text-white">Configurar cenário</h3>
           </div>
 
           <div>
-            <label className="mb-3 block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+            <label className="mb-3 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
               1. Escolhe o domínio
             </label>
 
@@ -184,17 +184,17 @@ export default function AzureMonitorSimulator() {
 
           {mode === 'monitor' && (
             <div className="mt-6 border-t border-slate-800 pt-6 space-y-4">
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+              <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                 2. Simular métrica
               </label>
 
               <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
                 <div className="flex items-center justify-between gap-3 mb-3">
                   <div>
-                    <p className="text-[14px] font-semibold text-white">VM CPU Usage</p>
-                    <p className="text-[12px] text-slate-500">Threshold configurado: CPU &gt; 85%</p>
+                    <p className="text-md font-semibold text-white">VM CPU Usage</p>
+                    <p className="text-sm text-slate-400">Threshold configurado: CPU &gt; 85%</p>
                   </div>
-                  <span className={`text-[18px] font-semibold font-mono ${cpuUsage >= 85 ? 'text-rose-300' : 'text-emerald-300'}`}>
+                  <span className={`text-xl font-semibold font-mono ${cpuUsage >= 85 ? 'text-rose-300' : 'text-emerald-300'}`}>
                     {cpuUsage}%
                   </span>
                 </div>
@@ -218,19 +218,19 @@ export default function AzureMonitorSimulator() {
                   <div className={`flex h-10 w-10 items-center justify-center rounded-xl border ${
                     alertFired
                       ? 'border-rose-500/20 bg-rose-500/10 text-rose-200'
-                      : 'border-slate-800 bg-slate-950 text-slate-500'
+                      : 'border-slate-800 bg-[#181926] text-slate-400'
                   }`}>
                     <Bell size={16} className={alertFired ? 'animate-pulse' : ''} />
                   </div>
 
                   <div className="flex-1">
-                    <p className="text-[14px] font-semibold text-white">Action Group Rule</p>
-                    <p className="mt-1 text-[12px] text-slate-500">
+                    <p className="text-md font-semibold text-white">Action Group Rule</p>
+                    <p className="mt-1 text-sm text-slate-400">
                       Regra que observa a condição da métrica e dispara ações quando o threshold é atingido.
                     </p>
                   </div>
 
-                  <span className={`text-[11px] font-semibold ${alertFired ? 'text-rose-300' : 'text-slate-500'}`}>
+                  <span className={`text-xs font-semibold ${alertFired ? 'text-rose-300' : 'text-slate-400'}`}>
                     {alertFired ? 'Fired' : 'Standby'}
                   </span>
                 </div>
@@ -246,7 +246,7 @@ export default function AzureMonitorSimulator() {
 
           {mode === 'backup' && (
             <div className="mt-6 border-t border-slate-800 pt-6 space-y-4">
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+              <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                 2. Proteção de dados
               </label>
 
@@ -262,19 +262,19 @@ export default function AzureMonitorSimulator() {
                   <div className={`flex h-10 w-10 items-center justify-center rounded-xl border ${
                     siteRecovery
                       ? 'border-sky-500/20 bg-sky-500/10 text-sky-200'
-                      : 'border-slate-800 bg-slate-950 text-slate-500'
+                      : 'border-slate-800 bg-[#181926] text-slate-400'
                   }`}>
                     <RotateCcw size={16} />
                   </div>
 
                   <div className="flex-1">
-                    <p className="text-[14px] font-semibold text-white">Azure Site Recovery</p>
-                    <p className="mt-1 text-[12px] text-slate-500">
+                    <p className="text-md font-semibold text-white">Azure Site Recovery</p>
+                    <p className="mt-1 text-sm text-slate-400">
                       Replicação para outra região com foco em failover e continuidade operacional.
                     </p>
                   </div>
 
-                  <span className={`text-[11px] font-semibold ${siteRecovery ? 'text-sky-300' : 'text-slate-500'}`}>
+                  <span className={`text-xs font-semibold ${siteRecovery ? 'text-sky-300' : 'text-slate-400'}`}>
                     {siteRecovery ? 'ON' : 'OFF'}
                   </span>
                 </div>
@@ -298,13 +298,13 @@ export default function AzureMonitorSimulator() {
                   </div>
 
                   <div className="flex-1">
-                    <p className="text-[14px] font-semibold text-white">Soft Delete</p>
-                    <p className="mt-1 text-[12px] text-slate-500">
+                    <p className="text-md font-semibold text-white">Soft Delete</p>
+                    <p className="mt-1 text-sm text-slate-400">
                       Retenção temporária para recuperação de backups apagados acidentalmente.
                     </p>
                   </div>
 
-                  <span className={`text-[11px] font-semibold ${softDelete ? 'text-emerald-300' : 'text-rose-300'}`}>
+                  <span className={`text-xs font-semibold ${softDelete ? 'text-emerald-300' : 'text-rose-300'}`}>
                     {softDelete ? '14 dias' : 'OFF'}
                   </span>
                 </div>
@@ -313,7 +313,7 @@ export default function AzureMonitorSimulator() {
               <button
                 onClick={simulateDisaster}
                 disabled={disaster}
-                className="w-full rounded-2xl bg-rose-600 hover:bg-rose-500 disabled:bg-slate-800 text-white px-4 py-3 text-[12px] font-semibold transition-all"
+                className="w-full rounded-2xl bg-rose-600 hover:bg-rose-500 disabled:bg-slate-800 text-white px-4 py-3 text-sm font-semibold transition-all"
               >
                 {disaster ? 'Queda de região em curso...' : 'Simular desastre regional'}
               </button>
@@ -328,11 +328,11 @@ export default function AzureMonitorSimulator() {
         </div>
 
         <div className="space-y-6">
-          <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6 min-h-[420px] overflow-hidden">
+          <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6 min-h-[420px] overflow-hidden">
             {mode === 'monitor' && (
               <div className="w-full space-y-6 animate-in fade-in duration-300">
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                     Log Analytics Workspace
                   </p>
                   <h3 className="mt-1 text-sm font-semibold text-white">KQL + alerta operacional</h3>
@@ -341,10 +341,10 @@ export default function AzureMonitorSimulator() {
                 <div className="rounded-3xl overflow-hidden border border-slate-800 shadow-2xl">
                   <div className="bg-slate-900 px-4 py-3 border-b border-slate-800 flex items-center gap-2">
                     <Terminal size={14} className="text-fuchsia-300" />
-                    <span className="text-[12px] font-medium text-slate-300">Kusto Query Language</span>
+                    <span className="text-sm font-medium text-slate-300">Kusto Query Language</span>
                   </div>
 
-                  <div className="p-4 bg-black text-slate-300 font-mono text-[12px] space-y-2">
+                  <div className="p-4 bg-black text-slate-300 font-mono text-sm space-y-2">
                     <div className="text-fuchsia-400">Perf</div>
                     <div className="text-fuchsia-400 ml-4">
                       | where ObjectName == "Processor" and CounterName == "% Processor Time"
@@ -356,7 +356,7 @@ export default function AzureMonitorSimulator() {
                       | order by AvgCpu desc
                     </div>
 
-                    <div className="pt-4 border-t border-slate-800/50 mt-4 flex items-center justify-between text-slate-500">
+                    <div className="pt-4 border-t border-slate-800/50 mt-4 flex items-center justify-between text-slate-400">
                       <span>&gt; Executing query...</span>
                       <span>{alertFired ? '1 Critical Result' : 'System Normal'}</span>
                     </div>
@@ -378,11 +378,11 @@ export default function AzureMonitorSimulator() {
                     </div>
 
                     <div className="flex-1">
-                      <div className="text-[13px] font-semibold uppercase tracking-[0.08em] text-white mb-1">
+                      <div className="text-base font-semibold uppercase tracking-[0.08em] text-white mb-1">
                         {alertFired ? 'Action Group disparado' : 'Monitoramento passivo'}
                       </div>
 
-                      <p className="text-[13px] text-slate-400 leading-relaxed">
+                      <p className="text-base text-slate-400 leading-relaxed">
                         {alertFired
                           ? 'O limite de CPU foi rompido. O grupo de ação iniciou as rotinas configuradas para resposta operacional.'
                           : 'O Azure Monitor continua a recolher métricas e logs sem necessidade de acionar remediação.'}
@@ -390,10 +390,10 @@ export default function AzureMonitorSimulator() {
 
                       {alertFired && (
                         <div className="mt-4 flex flex-wrap gap-2">
-                          <span className="inline-flex items-center gap-1 rounded-full border border-rose-500/30 bg-rose-500/10 px-3 py-1 text-[11px] text-rose-200">
+                          <span className="inline-flex items-center gap-1 rounded-full border border-rose-500/30 bg-rose-500/10 px-3 py-1 text-xs text-rose-200">
                             <Mail size={12} /> Email admins
                           </span>
-                          <span className="inline-flex items-center gap-1 rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 px-3 py-1 text-[11px] text-fuchsia-200">
+                          <span className="inline-flex items-center gap-1 rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 px-3 py-1 text-xs text-fuchsia-200">
                             <Zap size={12} /> Trigger Azure Function
                           </span>
                         </div>
@@ -413,7 +413,7 @@ export default function AzureMonitorSimulator() {
             {mode === 'backup' && (
               <div className="w-full flex flex-col animate-in fade-in duration-300">
                 <div className="mb-6">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                     Arquitetura de recuperação
                   </p>
                   <h3 className="mt-1 text-sm font-semibold text-white">Backup, ASR e failover regional</h3>
@@ -421,13 +421,13 @@ export default function AzureMonitorSimulator() {
 
                 <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center">
                   <div className={`rounded-3xl border p-5 transition-all ${
-                    disaster ? 'border-rose-500/30 bg-rose-500/10 grayscale' : 'border-slate-800 bg-slate-950'
+                    disaster ? 'border-rose-500/30 bg-rose-500/10 grayscale' : 'border-slate-800 bg-[#181926]'
                   }`}>
                     <div className="flex flex-col items-center gap-4">
-                      <Globe size={24} className={disaster ? 'text-rose-300' : 'text-slate-500'} />
+                      <Globe size={24} className={disaster ? 'text-rose-300' : 'text-slate-400'} />
                       <div className="text-center">
-                        <p className="text-[12px] font-semibold text-white">Region A</p>
-                        <p className="text-[11px] text-slate-500">Produção</p>
+                        <p className="text-sm font-semibold text-white">Region A</p>
+                        <p className="text-xs text-slate-400">Produção</p>
                       </div>
 
                       <div className="relative">
@@ -439,7 +439,7 @@ export default function AzureMonitorSimulator() {
                         <div className="rounded-2xl border border-slate-800 bg-slate-900 p-3 flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <History size={14} className="text-slate-400" />
-                            <span className="text-[11px] text-slate-300">Daily Backup</span>
+                            <span className="text-xs text-slate-300">Daily Backup</span>
                           </div>
                           <ShieldCheck size={14} className="text-emerald-300" />
                         </div>
@@ -449,8 +449,8 @@ export default function AzureMonitorSimulator() {
                             ? 'border-emerald-500/20 bg-emerald-500/10'
                             : 'border-rose-500/20 bg-rose-500/10'
                         }`}>
-                          <span className="text-[11px] text-slate-200">Soft Delete</span>
-                          <span className={`text-[11px] font-semibold ${softDelete ? 'text-emerald-300' : 'text-rose-300'}`}>
+                          <span className="text-xs text-slate-200">Soft Delete</span>
+                          <span className={`text-xs font-semibold ${softDelete ? 'text-emerald-300' : 'text-rose-300'}`}>
                             {softDelete ? '14 dias' : 'Vulnerável'}
                           </span>
                         </div>
@@ -462,12 +462,12 @@ export default function AzureMonitorSimulator() {
                     <div className={`h-1.5 w-24 rounded-full transition-all ${
                       siteRecovery ? 'bg-sky-400 shadow-[0_0_18px_rgba(56,189,248,0.35)]' : 'bg-slate-800'
                     }`} />
-                    <span className={`mt-2 text-[11px] font-medium ${siteRecovery ? 'text-sky-300' : 'text-slate-600'}`}>
+                    <span className={`mt-2 text-xs font-medium ${siteRecovery ? 'text-sky-300' : 'text-slate-600'}`}>
                       {siteRecovery ? 'ASR Sync' : 'Sem réplica'}
                     </span>
 
                     {disaster && siteRecovery && (
-                      <span className="mt-3 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[11px] text-emerald-200 animate-bounce">
+                      <span className="mt-3 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-200 animate-bounce">
                         Iniciando failover...
                       </span>
                     )}
@@ -477,19 +477,19 @@ export default function AzureMonitorSimulator() {
                     siteRecovery
                       ? disaster
                         ? 'border-emerald-500/30 bg-emerald-500/10 shadow-[0_0_18px_rgba(16,185,129,0.10)]'
-                        : 'border-sky-500/20 bg-slate-950'
+                        : 'border-sky-500/20 bg-[#181926]'
                       : 'border-slate-800 bg-slate-900/40 opacity-50'
                   }`}>
                     <div className="flex flex-col items-center gap-4">
                       <Globe size={24} className={disaster && siteRecovery ? 'text-emerald-300' : 'text-slate-600'} />
                       <div className="text-center">
-                        <p className="text-[12px] font-semibold text-white">Region B</p>
-                        <p className="text-[11px] text-slate-500">Disaster Recovery</p>
+                        <p className="text-sm font-semibold text-white">Region B</p>
+                        <p className="text-xs text-slate-400">Disaster Recovery</p>
                       </div>
 
                       <Server size={40} className={disaster && siteRecovery ? 'text-emerald-300 animate-pulse' : 'text-slate-700'} />
 
-                      <span className={`text-[11px] font-medium ${
+                      <span className={`text-xs font-medium ${
                         siteRecovery
                           ? disaster
                             ? 'text-emerald-300'
@@ -512,7 +512,7 @@ export default function AzureMonitorSimulator() {
                       ? 'border-emerald-500/20 bg-emerald-500/10'
                       : 'border-rose-500/20 bg-rose-500/10'
                   }`}>
-                    <p className="text-[13px] leading-relaxed text-slate-200">
+                    <p className="text-base leading-relaxed text-slate-200">
                       {siteRecovery
                         ? 'A região primária caiu, mas o Azure Site Recovery está a sustentar a continuidade operacional com failover para a região secundária.'
                         : 'A região primária caiu e não existe Site Recovery ativo, então a recuperação dependerá de restore manual a partir do backup.'}
@@ -589,9 +589,9 @@ function TopMetric({
 
   return (
     <div className={`rounded-2xl border p-4 ${styles[tone]}`}>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] opacity-75">{label}</p>
-      <p className="mt-2 text-[18px] font-semibold leading-tight">{value}</p>
-      <p className="mt-1 text-[12px] opacity-70">{hint}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.12em] opacity-75">{label}</p>
+      <p className="mt-2 text-xl font-semibold leading-tight">{value}</p>
+      <p className="mt-1 text-sm opacity-70">{hint}</p>
     </div>
   );
 }
@@ -619,12 +619,12 @@ function ModeButton({
       }`}
     >
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-800 bg-slate-950 text-slate-300">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-800 bg-[#181926] text-slate-300">
           {icon}
         </div>
         <div>
-          <p className="text-[14px] font-semibold text-white">{title}</p>
-          <p className="mt-1 text-[12px] text-slate-500 leading-relaxed">{desc}</p>
+          <p className="text-md font-semibold text-white">{title}</p>
+          <p className="mt-1 text-sm text-slate-400 leading-relaxed">{desc}</p>
         </div>
       </div>
     </button>
@@ -649,8 +649,8 @@ function StatusCard({
 
   return (
     <div className={`rounded-2xl border p-4 ${styles[tone]}`}>
-      <p className="text-[14px] font-semibold text-white">{title}</p>
-      <p className="mt-1 text-[12px] text-slate-300 leading-relaxed">{text}</p>
+      <p className="text-md font-semibold text-white">{title}</p>
+      <p className="mt-1 text-sm text-slate-300 leading-relaxed">{text}</p>
     </div>
   );
 }
@@ -671,10 +671,10 @@ function CapabilityCard({
           <XCircle size={18} className="text-slate-600" />
         )}
         <div>
-          <p className={`text-[14px] font-medium ${active ? 'text-emerald-100' : 'text-slate-300'}`}>
+          <p className={`text-md font-medium ${active ? 'text-emerald-100' : 'text-slate-300'}`}>
             {title}
           </p>
-          <p className="mt-1 text-[12px] text-slate-500">
+          <p className="mt-1 text-sm text-slate-400">
             {active ? 'Ativo neste cenário' : 'Não ativo neste cenário'}
           </p>
         </div>
@@ -702,14 +702,14 @@ function RuleCard({
   };
 
   return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
+    <div className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5">
       <div className="flex items-start gap-3">
         <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border ${styles[tone]}`}>
           {icon}
         </div>
         <div>
-          <h4 className="text-[15px] font-semibold text-white">{title}</h4>
-          <p className="mt-2 text-[13px] text-slate-400 leading-relaxed">{text}</p>
+          <h4 className="text-lg font-semibold text-white">{title}</h4>
+          <p className="mt-2 text-base text-slate-400 leading-relaxed">{text}</p>
         </div>
       </div>
     </div>

@@ -53,7 +53,7 @@ export default function Module6SecurityDiagnostics() {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-slate-950 text-slate-50 rounded-xl shadow-2xl border border-slate-800 space-y-6">
+    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-[#181926] text-slate-50 rounded-xl shadow-2xl border border-slate-800 space-y-6">
       
       {/* CABEÇALHO */}
       <div>
@@ -71,7 +71,7 @@ export default function Module6SecurityDiagnostics() {
         <button
           onClick={() => setActiveTab('arp')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-md font-bold text-xs sm:text-sm transition-all duration-300 ${
-            activeTab === 'arp' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30 shadow-md' : 'text-slate-500 hover:text-slate-300'
+            activeTab === 'arp' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30 shadow-md' : 'text-slate-400 hover:text-slate-300'
           }`}
         >
           <Network size={16} /> ARP (Camada 2)
@@ -79,7 +79,7 @@ export default function Module6SecurityDiagnostics() {
         <button
           onClick={() => setActiveTab('tls')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-md font-bold text-xs sm:text-sm transition-all duration-300 ${
-            activeTab === 'tls' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-md' : 'text-slate-500 hover:text-slate-300'
+            activeTab === 'tls' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-md' : 'text-slate-400 hover:text-slate-300'
           }`}
         >
           <Lock size={16} /> TLS/SSL (HTTPS)
@@ -87,7 +87,7 @@ export default function Module6SecurityDiagnostics() {
         <button
           onClick={() => setActiveTab('traceroute')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-md font-bold text-xs sm:text-sm transition-all duration-300 ${
-            activeTab === 'traceroute' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30 shadow-md' : 'text-slate-500 hover:text-slate-300'
+            activeTab === 'traceroute' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30 shadow-md' : 'text-slate-400 hover:text-slate-300'
           }`}
         >
           <MapPin size={16} /> Traceroute (TTL)
@@ -120,7 +120,7 @@ export default function Module6SecurityDiagnostics() {
             </div>
 
             {/* Simulador Visual ARP */}
-            <div className="bg-slate-950 p-8 rounded-lg border border-slate-800 relative flex justify-around items-end min-h-[250px] overflow-hidden">
+            <div className="bg-[#181926] p-8 rounded-lg border border-slate-800 relative flex justify-around items-end min-h-[250px] overflow-hidden">
               {/* Roteador a fazer a pergunta */}
               <div className="flex flex-col items-center z-10">
                 <Router size={48} className="text-slate-300 mb-2" />
@@ -143,16 +143,16 @@ export default function Module6SecurityDiagnostics() {
               <div className="flex gap-8 z-10">
                 {/* PC 1 - Ignora */}
                 <div className="flex flex-col items-center opacity-70">
-                  <Laptop size={40} className="text-slate-500 mb-2" />
-                  <span className="text-[10px] font-mono">192.168.1.10</span>
-                  {arpStatus === 'broadcasting' && <span className="text-xs text-slate-500 mt-2 animate-in fade-in">(Ignora)</span>}
+                  <Laptop size={40} className="text-slate-400 mb-2" />
+                  <span className="text-2xs font-mono">192.168.1.10</span>
+                  {arpStatus === 'broadcasting' && <span className="text-xs text-slate-400 mt-2 animate-in fade-in">(Ignora)</span>}
                 </div>
                 
                 {/* PC 2 - O ALVO */}
                 <div className="flex flex-col items-center relative">
                   <Laptop size={40} className={arpStatus === 'resolved' ? 'text-emerald-400' : 'text-sky-400 mb-2'} />
-                  <span className="text-[10px] font-mono text-white bg-slate-800 px-2 py-1 mt-2 rounded">192.168.1.50</span>
-                  <span className={`text-[10px] font-mono mt-1 ${arpStatus === 'resolved' ? 'text-emerald-400 font-bold' : 'text-slate-600'}`}>
+                  <span className="text-2xs font-mono text-white bg-slate-800 px-2 py-1 mt-2 rounded">192.168.1.50</span>
+                  <span className={`text-2xs font-mono mt-1 ${arpStatus === 'resolved' ? 'text-emerald-400 font-bold' : 'text-slate-600'}`}>
                     MAC: AA:BB:CC:11:22
                   </span>
                   
@@ -186,12 +186,12 @@ export default function Module6SecurityDiagnostics() {
             <div className="flex-[1.5] space-y-4 relative">
               <div className="absolute left-6 top-6 bottom-6 w-0.5 bg-slate-800"></div>
               {tlsSteps.map((step, idx) => (
-                <div key={idx} className={`relative z-10 flex gap-4 items-start bg-slate-950 p-4 rounded-lg border transition-all duration-500 ${tlsStep >= idx ? 'border-slate-700 opacity-100' : 'border-transparent opacity-30'}`}>
+                <div key={idx} className={`relative z-10 flex gap-4 items-start bg-[#181926] p-4 rounded-lg border transition-all duration-500 ${tlsStep >= idx ? 'border-slate-700 opacity-100' : 'border-transparent opacity-30'}`}>
                   <div className={`p-2 rounded-full ${tlsStep >= idx ? 'bg-slate-900 shadow-lg ring-1 ring-slate-700' : 'bg-transparent'}`}>
                     {step.icon}
                   </div>
                   <div>
-                    <h4 className={`font-bold ${tlsStep >= idx ? 'text-slate-200' : 'text-slate-500'}`}>{step.title}</h4>
+                    <h4 className={`font-bold ${tlsStep >= idx ? 'text-slate-200' : 'text-slate-400'}`}>{step.title}</h4>
                     <p className="text-xs text-slate-400 mt-1 leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
@@ -217,15 +217,15 @@ export default function Module6SecurityDiagnostics() {
               </button>
             </div>
 
-            <div className="flex-[1.5] bg-slate-950 p-4 rounded-lg border border-slate-800 font-mono text-sm overflow-hidden">
-              <div className="text-slate-500 mb-4 border-b border-slate-800 pb-2">
+            <div className="flex-[1.5] bg-[#181926] p-4 rounded-lg border border-slate-800 font-mono text-sm overflow-hidden">
+              <div className="text-slate-400 mb-4 border-b border-slate-800 pb-2">
                 traceroute to aws.amazon.com (186.192.90.5), 30 hops max
               </div>
               <div className="space-y-2">
                 {hops.map((hop, i) => (
                   <div key={i} className="flex items-center gap-4 animate-in slide-in-from-left-4 fade-in duration-300">
                     <span className="w-8 text-right text-rose-400 font-bold">{hop.ttl}</span>
-                    <span className="w-16 text-slate-500">{hop.time}</span>
+                    <span className="w-16 text-slate-400">{hop.time}</span>
                     <span className="text-sky-400">{hop.ip}</span>
                     <span className="text-slate-400 hidden sm:inline">({hop.location})</span>
                   </div>

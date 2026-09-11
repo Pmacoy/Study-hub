@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export type ProjectDifficulty = 'foundations' | 'intermediate' | 'advanced' | 'expert';
 
 export type ProjectStatus = 'not-started' | 'in-progress' | 'done';
@@ -19,6 +21,6 @@ export interface ProjectSection {
   number: number;
   title: string;
   subtitle: string;
-  emoji: string;
+  icon: ReactNode;
   outcome: string;         // "Depois destes projectos vais entender..."
 }

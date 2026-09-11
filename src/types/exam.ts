@@ -6,7 +6,22 @@ export type QuestionTopic =
   | 'compute'
   | 'containers'
   | 'vnet'
-  | 'monitor';
+  | 'monitor'
+  | 'subnetting'
+  | 'tcpudp'
+  | 'dns'
+  | 'routing'
+  | 'http'
+  | 'networking_security'
+  | 'cloud_networking'
+  | 'troubleshooting'
+  // Azure DevOps (AZ-400)
+  | 'pipelines'
+  | 'repositories'
+  | 'boards'
+  | 'security'
+  | 'artifacts'
+  | 'environments';
 
 export type ExamTopicFilter = QuestionTopic | 'all';
 

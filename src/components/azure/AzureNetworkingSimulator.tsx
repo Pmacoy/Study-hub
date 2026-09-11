@@ -107,7 +107,7 @@ export default function AzureNetworkingSimulator() {
 
   return (
     <div className="w-full space-y-6 animate-in fade-in duration-500 text-slate-200">
-      <section className="overflow-hidden rounded-3xl border border-teal-500/15 bg-slate-950/80 shadow-2xl shadow-black/10">
+      <section className="overflow-hidden rounded-3xl border border-teal-500/15 bg-[#181926]/80 shadow-2xl shadow-black/10">
         <div className="border-b border-slate-800/80 px-6 py-5 md:px-8">
           <div className="flex items-start gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-teal-500/20 bg-teal-500/10 text-teal-300">
@@ -115,13 +115,13 @@ export default function AzureNetworkingSimulator() {
             </div>
 
             <div className="min-w-0">
-              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-teal-300">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-teal-300">
                 Redes e segurança
               </p>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white leading-tight">
                 Virtual Networks & Security
               </h2>
-              <p className="mt-2 max-w-2xl text-[15px] text-slate-400 leading-relaxed">
+              <p className="mt-2 max-w-2xl text-lg text-slate-400 leading-relaxed">
                 Estuda conectividade entre VNets, balanceamento de tráfego e acesso administrativo seguro nos cenários mais clássicos do AZ-104.
               </p>
             </div>
@@ -163,14 +163,14 @@ export default function AzureNetworkingSimulator() {
       </section>
 
       <section className="grid grid-cols-1 xl:grid-cols-[360px_minmax(0,1fr)] gap-6">
-        <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6">
+        <div className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6">
           <div className="flex items-center gap-2 mb-5">
             <Sparkles size={16} className="text-teal-300" />
             <h3 className="text-sm font-semibold text-white">Configurar cenário</h3>
           </div>
 
           <div>
-            <label className="mb-3 block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+            <label className="mb-3 block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
               1. Escolhe o domínio
             </label>
 
@@ -206,7 +206,7 @@ export default function AzureNetworkingSimulator() {
 
           {mode === 'routing' && (
             <div className="mt-6 border-t border-slate-800 pt-6 space-y-4">
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+              <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                 2. Conectividade entre redes
               </label>
 
@@ -223,20 +223,20 @@ export default function AzureNetworkingSimulator() {
                     className={`flex h-10 w-10 items-center justify-center rounded-xl border ${
                       peeringEnabled
                         ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-200'
-                        : 'border-slate-800 bg-slate-950 text-slate-500'
+                        : 'border-slate-800 bg-[#181926] text-slate-400'
                     }`}
                   >
                     <ArrowRightLeft size={16} />
                   </div>
 
                   <div className="flex-1">
-                    <p className="text-[14px] font-semibold text-white">VNet Peering</p>
-                    <p className="mt-1 text-[12px] text-slate-500 leading-relaxed">
+                    <p className="text-md font-semibold text-white">VNet Peering</p>
+                    <p className="mt-1 text-sm text-slate-400 leading-relaxed">
                       Liga as VNets pelo backbone privado da Microsoft, mas não elimina a necessidade de regras NSG corretas.
                     </p>
                   </div>
 
-                  <span className={`text-[11px] font-semibold ${peeringEnabled ? 'text-emerald-300' : 'text-slate-500'}`}>
+                  <span className={`text-xs font-semibold ${peeringEnabled ? 'text-emerald-300' : 'text-slate-400'}`}>
                     {peeringEnabled ? 'ON' : 'OFF'}
                   </span>
                 </div>
@@ -262,13 +262,13 @@ export default function AzureNetworkingSimulator() {
                   </div>
 
                   <div className="flex-1">
-                    <p className="text-[14px] font-semibold text-white">NSG Rule (Port 80)</p>
-                    <p className="mt-1 text-[12px] text-slate-500 leading-relaxed">
+                    <p className="text-md font-semibold text-white">NSG Rule (Port 80)</p>
+                    <p className="mt-1 text-sm text-slate-400 leading-relaxed">
                       O NSG continua a ser decisivo mesmo quando a conectividade entre VNets existe.
                     </p>
                   </div>
 
-                  <span className={`text-[11px] font-semibold ${nsgRule === 'Allow' ? 'text-sky-300' : 'text-rose-300'}`}>
+                  <span className={`text-xs font-semibold ${nsgRule === 'Allow' ? 'text-sky-300' : 'text-rose-300'}`}>
                     {nsgRule}
                   </span>
                 </div>
@@ -284,7 +284,7 @@ export default function AzureNetworkingSimulator() {
 
           {mode === 'balancing' && (
             <div className="mt-6 border-t border-slate-800 pt-6 space-y-4">
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+              <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                 2. Escolhe o balanceador
               </label>
 
@@ -298,12 +298,12 @@ export default function AzureNetworkingSimulator() {
                   }`}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-950 text-slate-300">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-800 bg-[#181926] text-slate-300">
                       <Route size={16} />
                     </div>
                     <div>
-                      <p className="text-[14px] font-semibold text-white">Azure Load Balancer (L4)</p>
-                      <p className="mt-1 text-[12px] text-slate-500">
+                      <p className="text-md font-semibold text-white">Azure Load Balancer (L4)</p>
+                      <p className="mt-1 text-sm text-slate-400">
                         TCP/UDP, rápido e direto, sem entender conteúdo HTTP.
                       </p>
                     </div>
@@ -319,12 +319,12 @@ export default function AzureNetworkingSimulator() {
                   }`}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-950 text-slate-300">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-800 bg-[#181926] text-slate-300">
                       <LayoutDashboard size={16} />
                     </div>
                     <div>
-                      <p className="text-[14px] font-semibold text-white">Application Gateway (L7)</p>
-                      <p className="mt-1 text-[12px] text-slate-500">
+                      <p className="text-md font-semibold text-white">Application Gateway (L7)</p>
+                      <p className="mt-1 text-sm text-slate-400">
                         HTTP/HTTPS, path-based routing e integração com WAF.
                       </p>
                     </div>
@@ -342,7 +342,7 @@ export default function AzureNetworkingSimulator() {
 
           {mode === 'bastion' && (
             <div className="mt-6 border-t border-slate-800 pt-6 space-y-4">
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+              <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                 2. Estratégia de acesso remoto
               </label>
 
@@ -359,8 +359,8 @@ export default function AzureNetworkingSimulator() {
                     <ShieldAlert size={16} />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[14px] font-semibold text-white">IP Público Exposto</p>
-                    <p className="mt-1 text-[12px] text-slate-500">
+                    <p className="text-md font-semibold text-white">IP Público Exposto</p>
+                    <p className="mt-1 text-sm text-slate-400">
                       Modelo mais arriscado para administração direta por RDP/SSH.
                     </p>
                   </div>
@@ -380,8 +380,8 @@ export default function AzureNetworkingSimulator() {
                     <ShieldCheck size={16} />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[14px] font-semibold text-white">Azure Bastion</p>
-                    <p className="mt-1 text-[12px] text-slate-500">
+                    <p className="text-md font-semibold text-white">Azure Bastion</p>
+                    <p className="mt-1 text-sm text-slate-400">
                       Acesso pelo navegador via TLS sem expor IP público na VM.
                     </p>
                   </div>
@@ -398,20 +398,20 @@ export default function AzureNetworkingSimulator() {
         </div>
 
         <div className="space-y-6">
-          <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 md:p-6 min-h-[420px] overflow-hidden">
+          <section className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5 md:p-6 min-h-[420px] overflow-hidden">
             {mode === 'routing' && (
               <div className="w-full flex flex-col items-center animate-in fade-in duration-300">
                 <div className="mb-6 text-center">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                     Topologia de rede
                   </p>
                   <h3 className="mt-1 text-sm font-semibold text-white">VNet Peering + NSG</h3>
                 </div>
 
                 <div className="flex justify-between items-center w-full gap-4 relative">
-                  <div className="flex-1 p-6 bg-slate-950 border border-teal-500/20 rounded-3xl flex flex-col items-center gap-4">
-                    <span className="text-[12px] font-semibold text-teal-300">VNet-A</span>
-                    <span className="text-[11px] text-slate-500">10.0.0.0/16</span>
+                  <div className="flex-1 p-6 bg-[#181926] border border-teal-500/20 rounded-3xl flex flex-col items-center gap-4">
+                    <span className="text-sm font-semibold text-teal-300">VNet-A</span>
+                    <span className="text-xs text-slate-400">10.0.0.0/16</span>
                     <Server className="text-slate-400" size={30} />
                   </div>
 
@@ -421,7 +421,7 @@ export default function AzureNetworkingSimulator() {
                     ) : (
                       <XCircle className="text-rose-400" size={22} />
                     )}
-                    <span className="text-[10px] font-medium text-slate-400">Peering</span>
+                    <span className="text-2xs font-medium text-slate-400">Peering</span>
                   </div>
 
                   <div
@@ -431,16 +431,16 @@ export default function AzureNetworkingSimulator() {
                   />
 
                   <div
-                    className={`flex-1 p-6 bg-slate-950 border rounded-3xl flex flex-col items-center gap-4 relative transition-all ${
+                    className={`flex-1 p-6 bg-[#181926] border rounded-3xl flex flex-col items-center gap-4 relative transition-all ${
                       peeringEnabled ? 'border-indigo-500/30' : 'border-slate-800 opacity-60'
                     }`}
                   >
-                    <span className="text-[12px] font-semibold text-indigo-300">VNet-B</span>
-                    <span className="text-[11px] text-slate-500">10.1.0.0/16</span>
+                    <span className="text-sm font-semibold text-indigo-300">VNet-B</span>
+                    <span className="text-xs text-slate-400">10.1.0.0/16</span>
                     <Server className="text-slate-400" size={30} />
 
                     <div
-                      className={`absolute -top-3 -right-3 flex h-10 w-10 items-center justify-center rounded-full border-2 bg-slate-950 ${
+                      className={`absolute -top-3 -right-3 flex h-10 w-10 items-center justify-center rounded-full border-2 bg-[#181926] ${
                         nsgRule === 'Allow'
                           ? 'border-sky-500/50 text-sky-300'
                           : 'border-rose-500/50 text-rose-300'
@@ -462,26 +462,26 @@ export default function AzureNetworkingSimulator() {
             {mode === 'balancing' && (
               <div className="w-full flex flex-col items-center animate-in fade-in duration-300">
                 <div className="mb-6 text-center">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                     Tráfego de entrada
                   </p>
                   <h3 className="mt-1 text-sm font-semibold text-white">Load Balancer vs Application Gateway</h3>
                 </div>
 
                 <div className="flex flex-col items-center gap-8 w-full">
-                  <Globe size={32} className="text-slate-500" />
+                  <Globe size={32} className="text-slate-400" />
 
                   {balancerType === 'L4' ? (
                     <div className="p-4 bg-sky-500/10 border border-sky-500/20 rounded-2xl flex items-center gap-3">
                       <Share2 size={20} className="text-sky-300" />
-                      <span className="text-[12px] font-semibold text-sky-200">Azure Load Balancer (L4)</span>
+                      <span className="text-sm font-semibold text-sky-200">Azure Load Balancer (L4)</span>
                     </div>
                   ) : (
                     <div className="p-4 bg-violet-500/10 border border-violet-500/20 rounded-2xl flex items-center gap-3">
                       <LayoutDashboard size={20} className="text-violet-300" />
                       <div className="text-center">
-                        <span className="block text-[12px] font-semibold text-violet-200">Application Gateway</span>
-                        <span className="text-[11px] text-violet-300/80">Path-based routing + WAF</span>
+                        <span className="block text-sm font-semibold text-violet-200">Application Gateway</span>
+                        <span className="text-xs text-violet-300/80">Path-based routing + WAF</span>
                       </div>
                     </div>
                   )}
@@ -489,30 +489,30 @@ export default function AzureNetworkingSimulator() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
                     <div className="flex flex-col items-center gap-2">
                       {balancerType === 'L7' && (
-                        <span className="text-[11px] font-mono text-violet-200 bg-violet-500/10 border border-violet-500/20 px-2.5 py-1 rounded-full">
+                        <span className="text-xs font-mono text-violet-200 bg-violet-500/10 border border-violet-500/20 px-2.5 py-1 rounded-full">
                           /images/*
                         </span>
                       )}
-                      <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl flex gap-2">
+                      <div className="p-4 bg-[#181926] border border-slate-800 rounded-2xl flex gap-2">
                         <Server size={20} className="text-slate-400" />
                         <Server size={20} className="text-slate-400" />
                       </div>
-                      <span className="text-[11px] text-slate-400">Pool A</span>
+                      <span className="text-xs text-slate-400">Pool A</span>
                     </div>
 
                     {balancerType === 'L7' ? (
                       <div className="flex flex-col items-center gap-2">
-                        <span className="text-[11px] font-mono text-emerald-200 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
+                        <span className="text-xs font-mono text-emerald-200 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
                           /video/*
                         </span>
-                        <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl flex gap-2">
+                        <div className="p-4 bg-[#181926] border border-slate-800 rounded-2xl flex gap-2">
                           <Server size={20} className="text-slate-400" />
                         </div>
-                        <span className="text-[11px] text-slate-400">Pool B</span>
+                        <span className="text-xs text-slate-400">Pool B</span>
                       </div>
                     ) : (
                       <div className="flex flex-col items-center justify-center rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
-                        <p className="text-[12px] text-slate-400 text-center">
+                        <p className="text-sm text-slate-400 text-center">
                           Em L4, o balanceador distribui tráfego sem entender o caminho da URL.
                         </p>
                       </div>
@@ -531,7 +531,7 @@ export default function AzureNetworkingSimulator() {
             {mode === 'bastion' && (
               <div className="w-full flex flex-col items-center animate-in fade-in duration-300">
                 <div className="mb-6 text-center">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
                     Acesso remoto
                   </p>
                   <h3 className="mt-1 text-sm font-semibold text-white">Public IP vs Azure Bastion</h3>
@@ -539,17 +539,17 @@ export default function AzureNetworkingSimulator() {
 
                 <div className="flex items-center justify-between w-full gap-4">
                   <div className="flex flex-col items-center gap-4">
-                    <Globe size={30} className="text-slate-500" />
+                    <Globe size={30} className="text-slate-400" />
                     <div className="text-center">
-                      <span className="text-[12px] font-semibold text-rose-300 block">Internet Pública</span>
-                      <span className="text-[11px] text-slate-500">Scanners e superfície exposta</span>
+                      <span className="text-sm font-semibold text-rose-300 block">Internet Pública</span>
+                      <span className="text-xs text-slate-400">Scanners e superfície exposta</span>
                     </div>
                   </div>
 
                   <div className="flex flex-col items-center justify-center relative flex-1">
                     {accessType === 'PublicIP' ? (
                       <div className="h-1 w-full bg-rose-500/50 relative rounded-full">
-                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-rose-500/10 border border-rose-500/20 px-3 py-1 rounded-full text-[11px] text-rose-200">
+                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-rose-500/10 border border-rose-500/20 px-3 py-1 rounded-full text-xs text-rose-200">
                           Tráfego exposto
                         </div>
                       </div>
@@ -557,17 +557,17 @@ export default function AzureNetworkingSimulator() {
                       <div className="flex flex-col items-center gap-2">
                         <div className="p-5 bg-emerald-500/10 border border-emerald-500/30 rounded-3xl flex flex-col items-center shadow-[0_0_20px_rgba(16,185,129,0.10)]">
                           <Shield size={24} className="text-emerald-300 mb-1" />
-                          <span className="text-[12px] font-semibold text-emerald-200">Azure Bastion</span>
-                          <span className="text-[11px] text-emerald-300/70">AzureBastionSubnet</span>
+                          <span className="text-sm font-semibold text-emerald-200">Azure Bastion</span>
+                          <span className="text-xs text-emerald-300/70">AzureBastionSubnet</span>
                         </div>
-                        <span className="text-[11px] text-slate-400">Acesso via navegador usando TLS/443</span>
+                        <span className="text-xs text-slate-400">Acesso via navegador usando TLS/443</span>
                       </div>
                     )}
                   </div>
 
                   <div className="flex flex-col items-center gap-4">
                     <div
-                      className={`p-6 bg-slate-950 border rounded-3xl flex flex-col items-center transition-colors ${
+                      className={`p-6 bg-[#181926] border rounded-3xl flex flex-col items-center transition-colors ${
                         accessType === 'PublicIP'
                           ? 'border-rose-500/30 shadow-[0_0_16px_rgba(244,63,94,0.12)]'
                           : 'border-slate-800'
@@ -576,8 +576,8 @@ export default function AzureNetworkingSimulator() {
                       <Terminal size={30} className={accessType === 'PublicIP' ? 'text-rose-300' : 'text-slate-400'} />
                     </div>
                     <div className="text-center">
-                      <span className="text-[12px] font-semibold text-white block">VM Produção</span>
-                      <span className="text-[11px] font-mono bg-slate-900 px-2 py-1 rounded text-slate-500 mt-1 inline-block">
+                      <span className="text-sm font-semibold text-white block">VM Produção</span>
+                      <span className="text-xs font-mono bg-slate-900 px-2 py-1 rounded text-slate-400 mt-1 inline-block">
                         {accessType === 'PublicIP' ? 'Public IP: 20.15.x.x' : 'Private IP: 10.0.1.4'}
                       </span>
                     </div>
@@ -670,9 +670,9 @@ function TopMetric({
 
   return (
     <div className={`rounded-2xl border p-4 ${styles[tone]}`}>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] opacity-75">{label}</p>
-      <p className="mt-2 text-[18px] font-semibold leading-tight">{value}</p>
-      <p className="mt-1 text-[12px] opacity-70">{hint}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.12em] opacity-75">{label}</p>
+      <p className="mt-2 text-xl font-semibold leading-tight">{value}</p>
+      <p className="mt-1 text-sm opacity-70">{hint}</p>
     </div>
   );
 }
@@ -700,12 +700,12 @@ function ModeButton({
       }`}
     >
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-800 bg-slate-950 text-slate-300">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-800 bg-[#181926] text-slate-300">
           {icon}
         </div>
         <div>
-          <p className="text-[14px] font-semibold text-white">{title}</p>
-          <p className="mt-1 text-[12px] text-slate-500 leading-relaxed">{desc}</p>
+          <p className="text-md font-semibold text-white">{title}</p>
+          <p className="mt-1 text-sm text-slate-400 leading-relaxed">{desc}</p>
         </div>
       </div>
     </button>
@@ -731,8 +731,8 @@ function StatusCard({
 
   return (
     <div className={`rounded-2xl border p-4 ${styles[tone]}`}>
-      <p className="text-[14px] font-semibold text-white">{title}</p>
-      <p className="mt-1 text-[12px] text-slate-300 leading-relaxed">{text}</p>
+      <p className="text-md font-semibold text-white">{title}</p>
+      <p className="mt-1 text-sm text-slate-300 leading-relaxed">{text}</p>
     </div>
   );
 }
@@ -753,10 +753,10 @@ function CapabilityCard({
           <XCircle size={18} className="text-slate-600" />
         )}
         <div>
-          <p className={`text-[14px] font-medium ${active ? 'text-emerald-100' : 'text-slate-300'}`}>
+          <p className={`text-md font-medium ${active ? 'text-emerald-100' : 'text-slate-300'}`}>
             {title}
           </p>
-          <p className="mt-1 text-[12px] text-slate-500">
+          <p className="mt-1 text-sm text-slate-400">
             {active ? 'Ativo neste cenário' : 'Não ativo neste cenário'}
           </p>
         </div>
@@ -785,14 +785,14 @@ function RuleCard({
   };
 
   return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-950/70 p-5">
+    <div className="rounded-3xl border border-slate-800 bg-[#181926]/70 p-5">
       <div className="flex items-start gap-3">
         <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border ${styles[tone]}`}>
           {icon}
         </div>
         <div>
-          <h4 className="text-[15px] font-semibold text-white">{title}</h4>
-          <p className="mt-2 text-[13px] text-slate-400 leading-relaxed">{text}</p>
+          <h4 className="text-lg font-semibold text-white">{title}</h4>
+          <p className="mt-2 text-base text-slate-400 leading-relaxed">{text}</p>
         </div>
       </div>
     </div>

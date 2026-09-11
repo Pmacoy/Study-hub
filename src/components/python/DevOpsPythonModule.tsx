@@ -1,29 +1,29 @@
 import { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Terminal, Cloud, Beaker, Globe } from 'lucide-react';
 
 function Code({ code, output }: { code: string; output?: string }) {
   const [copied, setCopied] = useState(false);
   const [show, setShow] = useState(false);
   return (
-    <div className="rounded-xl border border-slate-800 overflow-hidden text-[11px]">
+    <div className="rounded-xl border border-slate-800 overflow-hidden text-xs">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="font-mono text-slate-500">python</span>
+        <span className="font-mono text-slate-400">python</span>
         <div className="flex gap-2">
-          {output && <button onClick={() => setShow(s => !s)} className="text-amber-400 text-[10px] hover:text-amber-300 font-semibold">{show ? '▼ hide' : '▶ run'}</button>}
+          {output && <button onClick={() => setShow(s => !s)} className="text-amber-400 text-2xs hover:text-amber-300 font-semibold">{show ? '▼ hide' : '▶ run'}</button>}
           <button onClick={() => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1400); }}
-            className="flex items-center gap-1 text-slate-500 hover:text-slate-300">
+            className="flex items-center gap-1 text-slate-400 hover:text-slate-300">
             {copied ? <Check size={10} className="text-emerald-400" /> : <Copy size={10} />}
           </button>
         </div>
       </div>
-      <pre className="p-4 font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => (
           <div key={i} className={line.trim().startsWith('#') ? 'text-slate-600' : /^\s*(def |class |import |from |async |await |if |for |with |try |except |return |raise )\b/.test(line) ? 'text-violet-400' : 'text-slate-300'}>{line}</div>
         ))}
       </pre>
       {output && show && (
         <div className="border-t border-slate-800 bg-slate-900/80 px-4 py-3">
-          <pre className="font-mono text-amber-300 text-[11px]">{output}</pre>
+          <pre className="font-mono text-amber-300 text-xs">{output}</pre>
         </div>
       )}
     </div>
@@ -34,10 +34,10 @@ export default function DevOpsPythonModule() {
   const [section, setSection] = useState<'testing' | 'requests' | 'cli' | 'cloud'>('testing');
 
   const views = [
-    { id: 'testing' as const, label: '🧪 pytest & Testes' },
-    { id: 'requests' as const, label: '🌐 HTTP & requests' },
-    { id: 'cli' as const, label: '⌨️ CLI Tools' },
-    { id: 'cloud' as const, label: '☁️ Cloud SDKs' },
+    { id: 'testing' as const, label: <><Beaker size={14} className="mr-1 inline" /> pytest & Testes</> },
+    { id: 'requests' as const, label: <><Globe size={14} className="mr-1 inline" /> HTTP & requests</> },
+    { id: 'cli' as const, label: <><Terminal size={14} className="mr-1 inline" /> CLI Tools</> },
+    { id: 'cloud' as const, label: <><Cloud size={14} className="mr-1 inline" /> Cloud SDKs</> },
   ];
 
   return (
@@ -45,7 +45,7 @@ export default function DevOpsPythonModule() {
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setSection(v.id)}
-            className={`px-4 py-2 rounded-2xl text-[12px] font-semibold transition-all ${section === v.id ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
+            className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${section === v.id ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300'}`}>
             {v.label}
           </button>
         ))}
@@ -53,7 +53,7 @@ export default function DevOpsPythonModule() {
 
       {section === 'testing' && (
         <div className="space-y-4">
-          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-[12px] text-slate-400">
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-sm text-slate-400">
             <span className="text-amber-300 font-bold">pytest</span> é o standard da indústria. Menos boilerplate que unittest, melhor output, fixtures poderosas. Essencial para Infrastructure as Code testing.
           </div>
           <Code code={`# calculator.py
@@ -280,14 +280,14 @@ for cluster in w.clusters.list():
             output={`vmss-dbx-proxy-dev: Standard_B2s
 jupyter-cluster: RUNNING`} />
           <div className="p-4 rounded-2xl border border-amber-500/20 bg-amber-500/5 space-y-2">
-            <div className="text-[11px] font-black text-amber-400 uppercase tracking-widest">Python em Cenários Cross-Cloud</div>
+            <div className="text-xs font-black text-amber-400 uppercase tracking-widest">Python em Cenários Cross-Cloud</div>
             {[
               'Script de validação de conectividade Oracle (validate-connectivity.sh → validate_connectivity.py)',
               'Health checker para o HAProxy (:9000/health) com alertas por email/Slack',
               'Exportador Prometheus customizado para métricas do Oracle JDBC',
               'Import automation: import-dev-state.sh → terraform state import via subprocess',
             ].map(s => (
-              <div key={s} className="flex items-start gap-2 text-[11px] text-slate-400">
+              <div key={s} className="flex items-start gap-2 text-xs text-slate-400">
                 <span className="text-amber-400 shrink-0">→</span>{s}
               </div>
             ))}

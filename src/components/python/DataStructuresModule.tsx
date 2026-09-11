@@ -1,29 +1,29 @@
 import { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, List, Lock, Target, Map as MapIcon, Zap } from 'lucide-react';
 
 function Code({ code, output }: { code: string; output?: string }) {
   const [copied, setCopied] = useState(false);
   const [showOut, setShowOut] = useState(false);
   return (
-    <div className="rounded-xl border border-slate-800 overflow-hidden text-[11px]">
+    <div className="rounded-xl border border-slate-800 overflow-hidden text-xs">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800">
-        <span className="font-mono text-slate-500">python</span>
+        <span className="font-mono text-slate-400">python</span>
         <div className="flex gap-2">
-          {output && <button onClick={() => setShowOut(s => !s)} className="text-amber-400 text-[10px] hover:text-amber-300 font-semibold">{showOut ? '▼ hide' : '▶ run'}</button>}
+          {output && <button onClick={() => setShowOut(s => !s)} className="text-amber-400 text-2xs hover:text-amber-300 font-semibold">{showOut ? '▼ hide' : '▶ run'}</button>}
           <button onClick={() => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1400); }}
-            className="flex items-center gap-1 text-slate-500 hover:text-slate-300">
+            className="flex items-center gap-1 text-slate-400 hover:text-slate-300">
             {copied ? <Check size={10} className="text-emerald-400" /> : <Copy size={10} />}
           </button>
         </div>
       </div>
-      <pre className="p-4 font-mono leading-relaxed overflow-x-auto bg-slate-950">
+      <pre className="p-4 font-mono leading-relaxed overflow-x-auto bg-[#181926]">
         {code.split('\n').map((line, i) => (
           <div key={i} className={line.trim().startsWith('#') ? 'text-slate-600' : /^\s*(def|for|if|while|return|class|import)\b/.test(line) ? 'text-violet-400' : 'text-slate-300'}>{line}</div>
         ))}
       </pre>
       {output && showOut && (
         <div className="border-t border-slate-800 bg-slate-900/80 px-4 py-3">
-          <pre className="font-mono text-amber-300 text-[11px]">{output}</pre>
+          <pre className="font-mono text-amber-300 text-xs">{output}</pre>
         </div>
       )}
     </div>
@@ -31,10 +31,10 @@ function Code({ code, output }: { code: string; output?: string }) {
 }
 
 const STRUCTURES = [
-  { name: 'list', icon: '📋', mutable: true, ordered: true, duplicates: true, color: 'sky', use: 'Sequências ordenadas que mudam com frequência' },
-  { name: 'tuple', icon: '🔒', mutable: false, ordered: true, duplicates: true, color: 'violet', use: 'Dados imutáveis, retorno múltiplo, dict keys' },
-  { name: 'set', icon: '🎯', mutable: true, ordered: false, duplicates: false, color: 'emerald', use: 'Elementos únicos, operações de conjunto' },
-  { name: 'dict', icon: '🗺️', mutable: true, ordered: true, duplicates: false, color: 'amber', use: 'Mapeamento chave→valor (hash map)' },
+  { name: 'list', icon: List, mutable: true, ordered: true, duplicates: true, color: 'sky', use: 'Sequências ordenadas que mudam com frequência' },
+  { name: 'tuple', icon: Lock, mutable: false, ordered: true, duplicates: true, color: 'violet', use: 'Dados imutáveis, retorno múltiplo, dict keys' },
+  { name: 'set', icon: Target, mutable: true, ordered: false, duplicates: false, color: 'emerald', use: 'Elementos únicos, operações de conjunto' },
+  { name: 'dict', icon: MapIcon, mutable: true, ordered: true, duplicates: false, color: 'amber', use: 'Mapeamento chave→valor (hash map)' },
 ];
 
 export default function DataStructuresModule() {
@@ -43,19 +43,19 @@ export default function DataStructuresModule() {
   return (
     <div className="space-y-4">
       <div className="rounded-2xl border border-slate-800 overflow-hidden">
-        <div className="grid grid-cols-5 bg-slate-900 text-[10px] font-black uppercase text-slate-500 divide-x divide-slate-800">
+        <div className="grid grid-cols-5 bg-slate-900 text-2xs font-black uppercase text-slate-400 divide-x divide-slate-800">
           {['Tipo', 'Mutável', 'Ordenado', 'Duplicados', 'Quando usar'].map(h => (
             <div key={h} className="px-3 py-2">{h}</div>
           ))}
         </div>
         {STRUCTURES.map(s => (
           <button key={s.name} onClick={() => setDs(s.name as any)}
-            className={`w-full grid grid-cols-5 divide-x divide-slate-800/50 border-t border-slate-800/50 text-[11px] text-left transition-all hover:bg-slate-900 ${ds === s.name ? 'bg-slate-900' : ''}`}>
+            className={`w-full grid grid-cols-5 divide-x divide-slate-800/50 border-t border-slate-800/50 text-xs text-left transition-all hover:bg-slate-900 ${ds === s.name ? 'bg-slate-900' : ''}`}>
             <div className={`px-3 py-2 font-mono font-black ${s.color === 'sky' ? 'text-sky-300' : s.color === 'violet' ? 'text-violet-300' : s.color === 'emerald' ? 'text-emerald-300' : 'text-amber-300'}`}>
-              {s.icon} {s.name}
+              <s.icon size={14} /> {s.name}
             </div>
             <div className={`px-3 py-2 ${s.mutable ? 'text-emerald-400' : 'text-rose-400'}`}>{s.mutable ? '✓ sim' : '✗ não'}</div>
-            <div className={`px-3 py-2 ${s.ordered ? 'text-emerald-400' : 'text-slate-500'}`}>{s.ordered ? '✓ sim' : '✗ não'}</div>
+            <div className={`px-3 py-2 ${s.ordered ? 'text-emerald-400' : 'text-slate-400'}`}>{s.ordered ? '✓ sim' : '✗ não'}</div>
             <div className={`px-3 py-2 ${s.duplicates ? 'text-emerald-400' : 'text-rose-400'}`}>{s.duplicates ? '✓ sim' : '✗ não'}</div>
             <div className="px-3 py-2 text-slate-400">{s.use}</div>
           </button>
@@ -63,11 +63,11 @@ export default function DataStructuresModule() {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {[...STRUCTURES.map(s => ({ id: s.name, label: `${s.icon} ${s.name}` })),
-          { id: 'comprehensions', label: '⚡ Comprehensions' }
+        {[...STRUCTURES.map(s => ({ id: s.name, label: <><s.icon size={14} /> {s.name}</> })),
+          { id: 'comprehensions', label: <><Zap size={14} className="mr-1 inline" /> Comprehensions</> }
         ].map(v => (
           <button key={v.id} onClick={() => setDs(v.id as any)}
-            className={`px-3 py-1.5 rounded-2xl text-[12px] font-semibold transition-all ${ds === v.id ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-500 hover:text-slate-300'}`}>
+            className={`px-3 py-1.5 rounded-2xl text-sm font-semibold transition-all ${ds === v.id ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300' : 'border border-slate-800 text-slate-400 hover:text-slate-300'}`}>
             {v.label}
           </button>
         ))}
