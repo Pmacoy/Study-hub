@@ -30,7 +30,7 @@ build
 
 # Editor / IDE
 .vscode/*
-!.vscode/extensions.json
+.vscode
 .idea
 .DS_Store
 *.suo
@@ -58,5 +58,7 @@ coverage
 # inclui .db/.pkl de vários MB; nunca deve ir para o repo
 .repowise
 
-# Claude Code — definições pessoais (mantém .claude/CLAUDE.md, que é partilhado)
-.claude/settings.local.json
+# Claude Code — ferramentas/config pessoais de workflow, não fazem parte do
+# projecto em si (repositório aberto a contribuições da comunidade)
+.claude
+docs/superpowers
