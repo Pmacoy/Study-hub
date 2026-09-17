@@ -70,8 +70,6 @@ export default function LearningPathView({
       {/* Hero + global stats */}
       <section className="border card-glass card-glass-hover card-glass-violet p-6 relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-400/60 via-cyan-400/40 to-transparent" />
-        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-violet-500/10 rounded-full blur-3xl" style={{ animation: 'float 10s ease-in-out infinite' }} />
-        <div className="absolute -top-6 -right-6 w-24 h-24 bg-cyan-500/8 rounded-full blur-2xl" style={{ animation: 'float-reverse 14s ease-in-out infinite' }} />
         <div className="flex items-start gap-4">
           <div><Target size={40} className="text-violet-400" /></div>
           <div className="flex-1">

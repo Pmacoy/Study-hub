@@ -50,8 +50,6 @@ export default function ProjectsView({ onExit }: Props) {
       {/* Hero */}
       <section className="border card-glass card-glass-hover card-glass-orange p-6 relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-400/60 via-amber-400/40 to-transparent" />
-        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl" style={{ animation: 'float 10s ease-in-out infinite' }} />
-        <div className="absolute -top-6 -right-6 w-24 h-24 bg-amber-500/8 rounded-full blur-2xl" style={{ animation: 'float-reverse 12s ease-in-out infinite' }} />
         <div className="flex items-start gap-4">
           <div><Rocket size={40} className="text-orange-400" /></div>
           <div className="flex-1">

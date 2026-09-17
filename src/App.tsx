@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Brain, Cloud, GraduationCap, RotateCcw, Server, Sparkles, Terminal, ChevronLeft, Globe, Map as MapIcon, Rocket, Target } from 'lucide-react';
+import GamificationToasts from './components/shared/GamificationToasts';
+import { ProgressBreakdown } from './types/progress';
 import type { SidebarMenuGroup } from './types/navigation';
 
 // Platform types
@@ -102,6 +104,7 @@ import KnowledgeBase from './components/shared/KnowledgeBase';
 
 // Daily streak / gamification
 import { useDailyState } from './hooks/useDailyState';
+import UserLevelBadge from './components/shared/UserLevelBadge';
 
 import { useActivityLog } from './hooks/useActivityLog';
 import { computeProgress } from './types/progress';
@@ -1067,6 +1070,7 @@ export default function App() {
               </div>
             </button>
             <div className="ml-auto flex items-center gap-3">
+              <UserLevelBadge />
               {scenariosView === null && !showLearningPath && !showProjects && (
                 <>
                   <button
@@ -1214,6 +1218,7 @@ export default function App() {
 
           {/* Actions */}
           <div className="ml-auto flex items-center gap-2 shrink-0">
+            <UserLevelBadge />
             <button onClick={() => handleTabChange('exam')}
               className={`flex items-center gap-2 px-3 py-2 text-2xs font-semibold transition-all ${activeTab === 'exam' ? 'bg-amber-500 text-slate-950 shadow-lg' : 'border border-amber-500/30 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20'}`}>
               <GraduationCap size={13} />
@@ -1230,17 +1235,6 @@ export default function App() {
 
       {/* Body */}
       <div className="relative mx-auto w-full max-w-7xl px-4 py-6 md:px-6">
-        {/* Animated gradient mesh blobs — Stripe-inspired */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-          <div className="absolute top-[5%] left-[10%] w-[600px] h-[600px] bg-violet-500/8 rounded-full blur-[120px]" style={{ animation: 'mesh-drift-1 25s ease-in-out infinite' }} />
-          <div className="absolute top-[50%] right-[0%] w-[500px] h-[500px] bg-cyan-500/7 rounded-full blur-[100px]" style={{ animation: 'mesh-drift-2 30s ease-in-out infinite' }} />
-          <div className="absolute bottom-[5%] left-[25%] w-[400px] h-[400px] bg-emerald-500/6 rounded-full blur-[80px]" style={{ animation: 'mesh-drift-3 20s ease-in-out infinite' }} />
-          <div className="absolute top-[25%] right-[20%] w-[300px] h-[300px] bg-amber-500/5 rounded-full blur-[70px]" style={{ animation: 'mesh-drift-4 28s ease-in-out infinite' }} />
-        </div>
-        {/* Floating ambient orbs */}
-        <div className="absolute top-[15%] left-[8%] w-[200px] h-[200px] orb-violet rounded-full blur-3xl pointer-events-none" style={{ animation: 'float 8s ease-in-out infinite' }} />
-        <div className="absolute bottom-[20%] right-[5%] w-[160px] h-[160px] orb-cyan rounded-full blur-3xl pointer-events-none" style={{ animation: 'float-reverse 12s ease-in-out infinite' }} />
-        <div className="absolute top-[60%] left-[20%] w-[120px] h-[120px] orb-emerald rounded-full blur-2xl pointer-events-none" style={{ animation: 'float-slow 16s ease-in-out infinite' }} />
         <section className="grid grid-cols-1 gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
           {/* Sidebar — generic, domain-aware */}
           <Sidebar
@@ -1279,6 +1273,7 @@ export default function App() {
       </div>
 
       <ResetProgressModal open={showResetModal} onClose={() => setShowResetModal(false)} onConfirm={handleReset} />
+      <GamificationToasts />
     </main>
   );
 }

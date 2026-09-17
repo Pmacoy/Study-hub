@@ -11,9 +11,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans:  ['Inter', 'system-ui', 'sans-serif'],
+        sans:  ['IBM Plex Sans', 'system-ui', 'sans-serif'],
         mono:  ['JetBrains Mono', 'Fira Code', 'monospace'],
-        display: ['Outfit', 'Inter', 'sans-serif'],
+        display: ['Space Grotesk', 'IBM Plex Sans', 'sans-serif'],
       },
       // 2xs/xs/sm ficam como estão — são a camada de labels/chrome (badges,
       // eyebrows, meta-info), que a own QuizRunner.tsx já documenta como

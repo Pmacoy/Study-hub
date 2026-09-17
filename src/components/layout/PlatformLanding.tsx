@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ProgressBreakdown } from '../../types/progress';
 import ProgressIndexCard from '../shared/ProgressIndexCard';
 import ExportImportPanel from '../shared/ExportImportPanel';
+import BadgesShowcase from '../shared/BadgesShowcase';
 import { ArrowRight, Rocket, Settings, Zap } from 'lucide-react';
 
 interface Props {
@@ -64,6 +65,11 @@ export default function PlatformLanding({ progressBreakdown, onSelectDomain }: P
 
         {/* Progress */}
         <ProgressIndexCard breakdown={progressBreakdown} />
+
+        {/* Gamification Badges */}
+        <div className="mt-8">
+          <BadgesShowcase />
+        </div>
 
         {/* Primary CTA — única acção com peso total (tamanho + cor sólida),
             para responder "o que faço primeiro?" antes da grelha de domínios. */}

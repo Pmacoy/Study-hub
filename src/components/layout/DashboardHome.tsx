@@ -57,9 +57,6 @@ export default function DashboardHome({
       <section ref={heroRef} className="reveal reveal-delay-1 border card-glass card-glass-hover card-glass-violet p-6 md:p-8 relative overflow-hidden border-l-4 border-l-violet-500/50">
         {/* Top gradient line */}
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-400/60 via-cyan-400/40 to-transparent" />
-        {/* Ambient glow orbs */}
-        <div className="absolute -top-10 -right-10 w-48 h-48 bg-violet-500/10 rounded-full blur-3xl" style={{ animation: 'float 8s ease-in-out infinite' }} />
-        <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-cyan-500/8 rounded-full blur-2xl" style={{ animation: 'float-reverse 12s ease-in-out infinite' }} />
 
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1.2fr_0.8fr] relative">
           <div>
@@ -115,7 +112,6 @@ export default function DashboardHome({
       <section ref={modulesRef} className="reveal reveal-delay-2 border card-glass card-glass-hover card-glass-violet p-6 relative overflow-hidden border-l-4 border-l-violet-500/50">
         {/* Top gradient line */}
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-400/60 via-cyan-400/40 to-transparent" />
-        <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-cyan-500/8 rounded-full blur-2xl" style={{ animation: 'float 10s ease-in-out infinite reverse' }} />
 
         <div className="flex items-center justify-between mb-5">
           <div>

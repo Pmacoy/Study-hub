@@ -62,3 +62,6 @@ coverage
 # projecto em si (repositório aberto a contribuições da comunidade)
 .claude
 docs/superpowers
+
+# PDFs pesados e ficheiros bloqueados
+PDF/

@@ -7,6 +7,7 @@ import type { DailyState } from './daily';
 import type { ActivityEntry } from './progress';
 import type { ChallengeAttempt, ScenarioAttempt } from './scenario';
 import type { TerminalAttempt } from './terminal';
+import type { GamificationState } from './gamification';
 
 // ── DailyState ───────────────────────────────────────────────────────────────
 
@@ -143,4 +144,21 @@ export function isChallengeAttempts(v: unknown): v is ChallengeAttempt[] {
 
 export function isStringArray(v: unknown): v is string[] {
   return Array.isArray(v) && v.every((x) => typeof x === 'string' && x.length > 0);
+}
+
+// ── GamificationState ────────────────────────────────────────────────────────
+
+export function isGamificationState(v: unknown): v is GamificationState {
+  if (!v || typeof v !== 'object') return false;
+  const s = v as Record<string, unknown>;
+  return (
+    typeof s.xp === 'number' &&
+    Number.isFinite(s.xp) &&
+    s.xp >= 0 &&
+    typeof s.level === 'number' &&
+    Number.isFinite(s.level) &&
+    s.level >= 1 &&
+    Array.isArray(s.badges) &&
+    s.badges.every(b => typeof b === 'string')
+  );
 }

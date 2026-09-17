@@ -3,7 +3,8 @@ import { usePersistedState } from './usePersistedState';
 import { isDailyState } from '../types/validators';
 import { DAILY_STORAGE_KEY } from '../data/storageKeys';
 import type { DailyState, DailyStepId } from '../types/daily';
-import { EMPTY_DAILY_STATE, reconcileDailyState, completeStep, todayIso } from '../types/daily';
+import { EMPTY_DAILY_STATE, reconcileDailyState, completeStep, todayIso, allStepsComplete } from '../types/daily';
+import { useGamification, XP_DAILY_COMPLETION } from './useGamification';
 
 export function useDailyState() {
   const [state, setState, loaded] = usePersistedState(
@@ -29,11 +30,28 @@ export function useDailyState() {
     }
   }, [loaded, state, lastReconciled, setState]);
 
+  const { addXp, awardBadge } = useGamification();
+
   const markStepComplete = useCallback(
     (step: DailyStepId) => {
-      setState((prev) => completeStep(prev, step));
+      setState((prev) => {
+        const nextState = completeStep(prev, step);
+        // Only if it wasn't complete before but is complete now
+        const wasAllComplete = allStepsComplete(prev);
+        const isAllComplete = allStepsComplete(nextState);
+        
+        if (!wasAllComplete && isAllComplete) {
+          addXp(XP_DAILY_COMPLETION);
+        }
+        
+        if (nextState.streak >= 3) {
+          awardBadge('streak_3');
+        }
+
+        return nextState;
+      });
     },
-    [setState]
+    [setState, addXp, awardBadge]
   );
 
   const isStepDoneToday = useCallback(

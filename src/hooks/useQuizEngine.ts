@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { useGamification, XP_PER_QUIZ_CORRECT_ANSWER } from './useGamification';
 
 /**
  * Tipo genérico para uma questão de exame.

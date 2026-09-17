@@ -82,19 +82,13 @@ const NEXT_STEP_ARROW: Record<Accent, string> = {
   teal: 'text-teal-400', cyan: 'text-cyan-400',
 };
 
-// `.card-glass-*` e `.orb-*` não são utilities do Tailwind — são classes CSS
-// escritas à mão em src/styles.css, por isso interpolar o nome aqui é seguro
-// (a regra já existe no stylesheet, não depende do content-scanner).
+// `.card-glass-*` não é utility do Tailwind — é classe CSS escrita à mão em
+// src/styles.css, por isso interpolar o nome aqui é seguro (a regra já
+// existe no stylesheet, não depende do content-scanner).
 const GLASS_ACCENT: Record<Accent, string> = {
   violet: 'card-glass-violet', sky: 'card-glass-sky', emerald: 'card-glass-emerald',
   amber: 'card-glass-amber', orange: 'card-glass-orange', rose: 'card-glass-rose',
   teal: 'card-glass-teal', cyan: 'card-glass-cyan',
-};
-
-const ORB_ACCENT: Record<Accent, string> = {
-  violet: 'orb-violet', sky: 'orb-cyan', emerald: 'orb-emerald',
-  amber: 'orb-amber', orange: 'orb-amber', rose: 'orb-rose',
-  teal: 'orb-emerald', cyan: 'orb-cyan',
 };
 
 const QUICK_STAT_TONE: Record<Accent, 'violet' | 'sky' | 'emerald' | 'amber' | 'orange' | 'rose'> = {
@@ -144,7 +138,6 @@ export default function DomainDashboard({
       {/* Hero */}
       <section ref={heroRef} className={`reveal reveal-delay-1 border card-glass card-glass-hover ${GLASS_ACCENT[accent]} p-6 md:p-8 relative overflow-hidden border-l-4 ${BORDER_L[accent]}`}>
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-        <div className={`absolute -top-10 -right-10 w-48 h-48 ${ORB_ACCENT[accent]} rounded-full blur-3xl`} style={{ animation: 'float 8s ease-in-out infinite' }} />
 
         <div className={`grid grid-cols-1 items-start gap-6 relative ${totalCount > 0 ? 'lg:grid-cols-[1.2fr_0.8fr]' : ''}`}>
           <div>
