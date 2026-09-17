@@ -8,7 +8,8 @@ export interface PathNode {
   id: string;                // matches the tab id in the domain (e.g. 'iam', 'linux')
   label: string;
   subtitle: string;
-  icon: ReactNode;
+  emoji?: string;
+  icon?: ReactNode;
   estimatedMin: number;
   /** goalTag to match against completed scenarios/terminal sessions */
   scenarioIds?: string[];

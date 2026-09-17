@@ -1,6 +1,7 @@
 export type StudyTab =
   | 'devops-intro'
   | 'linux'
+  | 'shell-scripting'
   | 'git'
   | 'docker'
   | 'kubernetes'
@@ -16,6 +17,7 @@ export type StudyTab =
   | 'mlops'
   | 'service-mesh'
   | 'gitops'
+  | 'finops'
   | 'sre';
 
 export type CertExamTab = 'terraform-exam' | 'cka-exam';
@@ -25,6 +27,7 @@ export type DevOpsTab = 'dashboard' | 'exam' | CertExamTab | StudyTab;
 export const STUDY_TABS: StudyTab[] = [
   'devops-intro',
   'linux',
+  'shell-scripting',
   'git',
   'docker',
   'kubernetes',
@@ -40,6 +43,7 @@ export const STUDY_TABS: StudyTab[] = [
   'mlops',
   'service-mesh',
   'gitops',
+  'finops',
   'sre',
 ];
 

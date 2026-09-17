@@ -50,3 +50,4 @@ export const CHALLENGE_ATTEMPTS_STORAGE_KEY = 'challenge_attempts';
 export const TERMINAL_ATTEMPTS_STORAGE_KEY = 'terminal_attempts';
 export const WEAK_POINTS_STORAGE_KEY = 'weak_points';
 export const GAMIFICATION_STORAGE_KEY = 'gamification_state';
+export const DIAGNOSTIC_STORAGE_KEY = 'study_hub_diagnostic';

@@ -21,6 +21,7 @@ export interface ProjectSection {
   number: number;
   title: string;
   subtitle: string;
-  icon: ReactNode;
+  emoji?: string;
+  icon?: ReactNode;
   outcome: string;         // "Depois destes projectos vais entender..."
 }

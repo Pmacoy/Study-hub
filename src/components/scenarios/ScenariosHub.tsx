@@ -30,6 +30,7 @@ const DOMAIN_ACCENT: Record<Domain, string> = {
   devops: 'violet',
   azure: 'sky',
   aws: 'orange',
+  gcp: 'rose',
   networking: 'emerald',
   python: 'amber',
   'system-design': 'rose',

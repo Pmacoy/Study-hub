@@ -14,12 +14,13 @@ export const ALL_FLASHCARDS: Flashcard[] = [
   ...pythonFlashcards,
 ];
 
-export const FLASHCARDS_BY_DOMAIN: Record<Domain, Flashcard[]> = {
+export const DOMAIN_FLASHCARDS: Record<Domain, Flashcard[]> = {
   devops: devopsFlashcards,
   azure: [...azureFlashcards, ...azureStaticFlashcards],
   networking: networkingFlashcards,
   python: pythonFlashcards,
   aws: [],
+  gcp: [],
   'system-design': [],
   'distributed-systems': [],
   'algorithms': [],

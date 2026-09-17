@@ -1,9 +1,11 @@
+import type { ReactNode } from 'react';
 import type { AwsStudyTab } from '../../types/aws';
 
 export interface AwsTabMeta {
   label: string;
   subtitle: string;
   emoji: string;
+  icon?: ReactNode;
 }
 
 export const AWS_TAB_META: Record<AwsStudyTab, AwsTabMeta> = {

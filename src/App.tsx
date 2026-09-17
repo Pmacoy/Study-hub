@@ -141,6 +141,7 @@ import ProjectsView from './components/projects/ProjectsView';
 const DEVOPS_CONTENT: Record<DevOpsStudyTab, ReactNode> = {
   'devops-intro': <DevOpsIntroSimulator />,
   linux: <LinuxSimulator />,
+  'shell-scripting': <div className="p-10 text-center text-slate-400">Conteúdo em desenvolvimento</div>,
   git: <GitSimulator />,
   docker: <DockerSimulator />,
   kubernetes: <KubernetesSimulator />,
@@ -156,6 +157,7 @@ const DEVOPS_CONTENT: Record<DevOpsStudyTab, ReactNode> = {
   mlops: <MlopsSimulator />,
   'service-mesh': <ServiceMeshSimulator />,
   gitops: <GitOpsSimulator />,
+  finops: <div className="p-10 text-center text-slate-400">Conteúdo em desenvolvimento</div>,
   sre: <SreSimulator />,
 };
 
@@ -196,6 +198,7 @@ const DOMAIN_ACCENT: Record<Domain, string> = {
   devops: 'violet',
   azure: 'sky',
   aws: 'orange',
+  gcp: 'rose',
   networking: 'emerald',
   python: 'amber',
   'system-design': 'rose',

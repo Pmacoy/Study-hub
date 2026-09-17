@@ -1,4 +1,4 @@
-export type Domain = 'devops' | 'azure' | 'aws' | 'gcp' | 'networking' | 'python';
+export type Domain = 'devops' | 'azure' | 'aws' | 'gcp' | 'networking' | 'python' | 'system-design' | 'distributed-systems' | 'algorithms';
 
 export interface DomainMeta {
   id: Domain;

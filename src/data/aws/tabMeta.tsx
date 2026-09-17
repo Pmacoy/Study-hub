@@ -5,7 +5,8 @@ import { Shield, Globe, Cpu, Warehouse, Database, Building2 } from 'lucide-react
 export interface AwsTabMeta {
   label: string;
   subtitle: string;
-  icon: ReactNode;
+  icon?: any;
+  group: string;
 }
 
 export const AWS_TAB_META: Record<AwsStudyTab, AwsTabMeta> = {

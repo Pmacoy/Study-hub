@@ -13,6 +13,11 @@ export const TAB_META: Record<StudyTab, TabMeta> = {
     subtitle: 'Comandos essenciais, permissões e scripting',
     group: 'Fundamentos',
   },
+  'shell-scripting': {
+    label: 'Shell Scripting',
+    subtitle: 'Automação bash avançada e utilities CLI',
+    group: 'Fundamentos',
+  },
   git: {
     label: 'Git & Versionamento',
     subtitle: 'Branches, merge, rebase e workflows',
@@ -91,6 +96,11 @@ export const TAB_META: Record<StudyTab, TabMeta> = {
   sre: {
     label: 'SRE & Fiabilidade',
     subtitle: 'SLO/SLI · Error Budget · Incident Mgmt · Blameless',
+    group: 'Platform Engineering',
+  },
+  finops: {
+    label: 'FinOps & Cloud Cost',
+    subtitle: 'Cost Optimization · Budgeting · Showback',
     group: 'Platform Engineering',
   },
 };

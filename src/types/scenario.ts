@@ -32,7 +32,9 @@ export interface ScenarioStep {
 
 export interface ScenarioOption {
   id: string;
-  label: string;                              // the choice text
+  label?: string;                              // the choice text
+  text?: string;
+  prompt?: string;
   correct: boolean;
   feedback: string;                           // why it's right or wrong
   /** If defined and correct === true, reveals extra artifacts before the next step */
