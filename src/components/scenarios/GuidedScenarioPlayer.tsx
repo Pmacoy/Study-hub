@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { AlertTriangle, ArrowLeft, ArrowRight, Check, Copy, Lightbulb, Terminal, Trophy, X } from 'lucide-react';
 import type { Scenario, ScenarioAttempt, ScenarioOption } from '../../types/scenario';
+import { useGamification } from '../../hooks/useGamification';
 
 interface Props {
   scenario: Scenario;
@@ -40,6 +41,7 @@ export default function GuidedScenarioPlayer({ scenario, onExit, onComplete }: P
   const [unlocked, setUnlocked] = useState<Set<string>>(new Set());
   const [finished, setFinished] = useState(false);
   const [startTs] = useState(() => Date.now());
+  const { addXp } = useGamification();
 
   const currentStep = scenario.steps[stepIdx];
   const isLastStep = stepIdx === scenario.steps.length - 1;
@@ -84,6 +86,10 @@ export default function GuidedScenarioPlayer({ scenario, onExit, onComplete }: P
         totalSteps: scenario.steps.length,
         durationSec,
       };
+      
+      // Gamification: Give XP (e.g. 50 base + 20 per correct first try)
+      addXp(50 + correctFirstTry * 20);
+
       onComplete(attempt);
       setFinished(true);
     } else {

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, Circle, CheckCircle2, Terminal as TerminalIcon, Trophy, Lightbulb } from 'lucide-react';
 import type { TerminalAttempt, TerminalHistoryEntry, TerminalSession } from '../../types/terminal';
 import { runParser } from '../../utils/commandParser';
+import { useGamification } from '../../hooks/useGamification';
 
 interface Props {
   session: TerminalSession;
@@ -22,6 +23,7 @@ export default function TerminalPlayer({ session, onExit, onComplete }: Props) {
   const [finished, setFinished] = useState(false);
   const [totalCommands, setTotalCommands] = useState(0);
   const [startTs] = useState(() => Date.now());
+  const { addXp } = useGamification();
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -53,9 +55,13 @@ export default function TerminalPlayer({ session, onExit, onComplete }: Props) {
         totalObjectives: session.objectives.length,
         durationSec: Math.round((Date.now() - startTs) / 1000),
       };
+      
+      // Gamification: Give XP
+      addXp(100 + session.objectives.length * 20);
+
       onComplete(attempt);
     }
-  }, [allDone, finished, session, totalCommands, startTs, onComplete]);
+  }, [allDone, finished, session, totalCommands, startTs, onComplete, addXp]);
 
   const runCommand = useCallback((rawInput: string) => {
     const cmd = rawInput.trim();

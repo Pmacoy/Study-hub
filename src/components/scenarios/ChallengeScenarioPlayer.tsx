@@ -13,6 +13,7 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import type { ChallengeScenario, ChallengeAttempt } from '../../types/scenario';
+import { useGamification } from '../../hooks/useGamification';
 
 interface Props {
   scenario: ChallengeScenario;
@@ -51,6 +52,7 @@ export default function ChallengeScenarioPlayer({ scenario, onExit, onComplete }
   const [showHintInput, setShowHintInput] = useState(false);
   const [hasAttempted, setHasAttempted] = useState(false);
   const [startTs] = useState(() => Date.now());
+  const { addXp } = useGamification();
 
   const diagnosis = scenario.diagnosisOptions.find(o => o.id === diagnosisPicked) ?? null;
   const fix = scenario.fixOptions.find(o => o.id === fixPicked) ?? null;
@@ -71,6 +73,11 @@ export default function ChallengeScenarioPlayer({ scenario, onExit, onComplete }
       hintsUsed,
       durationSec: Math.round((Date.now() - startTs) / 1000),
     };
+    
+    // Gamification: Give XP
+    const xpEarned = 100 + (diagnosisCorrect ? 50 : 0) + (fixCorrect ? 50 : 0) - (hintsUsed * 10);
+    addXp(Math.max(20, xpEarned));
+
     onComplete(attempt);
   }
 

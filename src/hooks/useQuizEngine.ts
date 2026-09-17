@@ -67,8 +67,8 @@ export function useQuizEngine({
   maxTime,
   onWeakPointsChange,
 }: UseQuizEngineProps) {
-  // Conjunto escolhido no arranque (null = usar o conjunto default das props)
   const [activeQuestions, setActiveQuestions] = useState<Question[] | null>(null);
+  const { addXp, awardBadge, gamification } = useGamification();
 
   const [state, setState] = useState<QuizState>({
     mode: 'menu',
@@ -145,8 +145,17 @@ export function useQuizEngine({
       const newAnswers = [...prev.answers];
       newAnswers[prev.current] = optionIndex;
 
-      // Track weak points
+      // Gamification: Give XP if correct
       const q = shuffled[prev.current];
+      if (q && optionIndex === q.a) {
+        addXp(XP_PER_QUIZ_CORRECT_ANSWER);
+        const hour = new Date().getHours();
+        if (hour >= 0 && hour < 6) {
+          awardBadge('night_owl');
+        }
+      }
+
+      // Track weak points
       if (q) {
         const mod = q.mod;
         const entry = weakPointsRef.current.get(mod) ?? { wrong: 0, total: 0 };
@@ -177,6 +186,17 @@ export function useQuizEngine({
     setState((prev) => {
       if (prev.current >= shuffled.length - 1) {
         // Última questão → terminar
+        const currentScore = prev.answers.reduce<number>((sum, answer, idx) => {
+          return sum + (answer !== null && answer === shuffled[idx]?.a ? 1 : 0);
+        }, 0);
+
+        if (currentScore === shuffled.length && shuffled.length > 0) {
+          awardBadge('perfect_score');
+        }
+        if (!gamification.badges.includes('first_blood')) {
+          awardBadge('first_blood');
+        }
+
         return {
           ...prev,
           mode: 'finished',
