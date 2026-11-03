@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Copy, Check, ChevronRight, GitBranch, Hammer, Search, Container, Shield, TrafficCone, CheckCircle, Rocket, RefreshCw, Zap, UserCircle, BookOpen } from 'lucide-react';
+import { Copy, Check, ChevronRight, GitBranch, Hammer, Search, Container, Shield, TrafficCone, CheckCircle, Rocket, RefreshCw, Zap, UserCircle, BookOpen, Settings } from 'lucide-react';
 
-type View = 'concepts' | 'github-actions' | 'jenkins' | 'stages';
+type View = 'concepts' | 'github-actions' | 'jenkins' | 'stages' | 'patterns';
 
 function Code({ code, lang = '' }: { code: string; lang?: string }) {
   const [c, setC] = useState(false);
@@ -205,6 +205,7 @@ export default function CiCdSimulator() {
     { id: 'github-actions' as View, label: <><Zap size={14} className="mr-1 inline" /> GitHub Actions</> },
     { id: 'jenkins' as View, label: <><UserCircle size={14} className="mr-1 inline" /> Jenkins</> },
     { id: 'concepts' as View, label: <><BookOpen size={14} className="mr-1 inline" /> Conceitos</> },
+    { id: 'patterns' as View, label: <><Settings size={14} className="mr-1 inline" /> Padrões de Produção</> },
   ];
 
   const colorMap: Record<string, string> = {
@@ -260,6 +261,63 @@ export default function CiCdSimulator() {
               {g.items.map(i => <div key={i} className="flex items-start gap-2 text-sm text-slate-400 py-1"><ChevronRight size={11} className={`${g.c === 'sky' ? 'text-sky-500' : g.c === 'violet' ? 'text-violet-500' : g.c === 'amber' ? 'text-amber-500' : 'text-emerald-500'} shrink-0 mt-0.5`} />{i}</div>)}
             </div>
           ))}
+        </div>
+      )}
+
+      {view === 'patterns' && (
+        <div className="space-y-4 animate-in fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-5 rounded-2xl border border-rose-500/20 bg-rose-500/5 space-y-4">
+              <h3 className="text-sm font-bold text-rose-400">CI/CD as a Production System</h3>
+              <p className="text-xs text-slate-300">O CI/CD não é só uma ferramenta, é o <strong>sistema de produção</strong> que constrói a produção. Trata o pipeline como tratas a tua infraestrutura core.</p>
+              
+              <div className="space-y-3">
+                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                  <div className="text-xs font-bold text-rose-300 mb-1">Artefact Immutability</div>
+                  <div className="text-xs text-slate-400">Faz <strong>build apenas uma vez</strong>. O mesmo docker image tag deve ser promovido de Dev → Staging → Prod. Nunca recompiles código para diferentes ambientes, muda apenas a configuração (ConfigMaps/Secrets).</div>
+                </div>
+                
+                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                  <div className="text-xs font-bold text-rose-300 mb-1">Estratégias de Rollback</div>
+                  <div className="text-xs text-slate-400">Ter sempre um plano. Deploys devem ser <em>Safe to Fail</em>. Se o deploy de BD falhar, como ages? Usa Blue/Green ou Canary deployments para reduzir o blast radius.</div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                  <div className="text-xs font-bold text-rose-300 mb-1">Gestão de Dependências</div>
+                  <div className="text-xs text-slate-400">Faz o <em>pin</em> (lock) de versões de todas as bibliotecas. Configura scanners de segurança (SCA) automatizados como o Trivy no pipeline para não deixares entrar vulnerabilidades.</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="p-5 rounded-2xl border border-sky-500/20 bg-sky-500/5">
+                <h3 className="text-sm font-bold text-sky-400 mb-2">Senior Engineer Mindset</h3>
+                <ul className="text-sm text-slate-400 space-y-2 list-disc list-inside">
+                  <li>O pipeline tem de ser rápido (&lt; 10 mins). Se for lento, os devs fazem menos commits.</li>
+                  <li>Evita <em>flaky tests</em>. Se um teste falha aleatoriamente, apaga-o ou corrige-o logo.</li>
+                  <li>Automatiza verificações de segurança no pipeline, em vez de auditorias post-mortem.</li>
+                  <li>O CI/CD é a principal superfície de ataque. Foca no "Securing the Supply Chain".</li>
+                  <li>Nunca faças <em>hardcode</em> de credenciais em scripts.</li>
+                </ul>
+              </div>
+
+              <div className="p-5 rounded-2xl border border-emerald-500/20 bg-emerald-500/5">
+                <h3 className="text-sm font-bold text-emerald-400 mb-2">Environment Promotion Flow</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-1 bg-emerald-500/20 text-emerald-300 text-xs rounded">Build</span>
+                    <span className="text-emerald-500/50">→</span>
+                    <span className="px-2 py-1 bg-sky-500/20 text-sky-300 text-xs rounded">Dev</span>
+                    <span className="text-sky-500/50">→</span>
+                    <span className="px-2 py-1 bg-amber-500/20 text-amber-300 text-xs rounded">Staging</span>
+                    <span className="text-amber-500/50">→</span>
+                    <span className="px-2 py-1 bg-rose-500/20 text-rose-300 text-xs rounded">Prod</span>
+                  </div>
+                  <p className="text-2xs text-slate-400 pt-2">Uma imagem compilada flui de ambiente para ambiente. Apenas os apontadores (tags de Kubernetes/Helm) mudam de ambiente.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

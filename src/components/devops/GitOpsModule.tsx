@@ -146,6 +146,13 @@ $ argocd app diff checkout-production      # ver a divergência
 $ argocd app history checkout-production   # histórico de sincronizações
 $ argocd app rollback checkout-production 3`;
 
+const ARGO_STATE_COLORS: Record<string, string> = {
+  emerald: 'text-emerald-300',
+  amber: 'text-amber-300',
+  sky: 'text-sky-300',
+  rose: 'text-rose-300',
+};
+
 const ARGO_STATES = [
   ['Synced', 'O cluster corresponde ao estado no Git', 'emerald'],
   ['OutOfSync', 'Há divergência entre o Git e o cluster', 'amber'],
@@ -427,12 +434,15 @@ export default function GitOpsModule() {
           <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
             <h3 className="text-[14px] font-bold text-white mb-3">Estados que vais ver na UI</h3>
             <div className="space-y-1.5">
-              {ARGO_STATES.map(([state, meaning, color]) => (
-                <div key={state} className="flex gap-3 p-2.5 rounded-xl bg-slate-900">
-                  <span className={`shrink-0 text-[12px] font-bold text-${color}-300 w-28`}>{state}</span>
-                  <span className="text-[11px] text-slate-400">{meaning}</span>
-                </div>
-              ))}
+              {ARGO_STATES.map(([state, meaning, color]) => {
+                const textColor = ARGO_STATE_COLORS[color] ?? 'text-slate-300';
+                return (
+                  <div key={state} className="flex gap-3 p-2.5 rounded-xl bg-slate-900">
+                    <span className={`shrink-0 text-[12px] font-bold ${textColor} w-28`}>{state}</span>
+                    <span className="text-[11px] text-slate-400">{meaning}</span>
+                  </div>
+                );
+              })}
             </div>
           </section>
 

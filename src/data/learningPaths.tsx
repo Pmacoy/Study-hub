@@ -86,7 +86,7 @@ export const NETWORKING_PATH: LearningPath = {
   goal: 'Dominar networking fundamentals para cloud',
   icon: <Globe size={24} className="text-emerald-400" />,
   colorAccent: 'emerald',
-  totalHours: 25,
+  totalHours: 30,
   nodes: [
     { id: 'ip-calc',    label: 'Modelo OSI',            subtitle: '7 camadas',                icon: <BookOpen size={16} className="text-emerald-400" />, estimatedMin: 180 },
     { id: 'transport',    label: 'IP & Subnetting',        subtitle: 'CIDR, VLSM, masks',        icon: <Hash size={16} className="text-emerald-400" />, estimatedMin: 240 },
@@ -94,6 +94,7 @@ export const NETWORKING_PATH: LearningPath = {
     { id: 'application',          label: 'DNS',                    subtitle: 'Records, resolution',       icon: <Globe size={16} className="text-emerald-400" />, estimatedMin: 180, scenarioIds: ['networking-dns-private-resolver'] },
     { id: 'routing',      label: 'Routing',                subtitle: 'BGP, OSPF, static',         icon: <GitBranch size={16} className="text-emerald-400" />, estimatedMin: 240 },
     { id: 'security-net', label: 'VPN & Security',         subtitle: 'IPSec, TLS, firewalls',     icon: <Shield size={16} className="text-emerald-400" />, estimatedMin: 240 },
+    { id: 'bgp-cloud',    label: 'BGP & Cloud Hybrid',     subtitle: 'BGP, DirectConnect, VPN',   icon: <Globe size={16} className="text-emerald-400" />, estimatedMin: 240 },
   ],
 };
 

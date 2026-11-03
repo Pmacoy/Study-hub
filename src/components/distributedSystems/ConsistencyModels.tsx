@@ -48,6 +48,38 @@ const MODELS = [
   },
 ];
 
+const MODEL_COLOR_STYLES: Record<string, {
+  activeBtn: string;
+  iconActive: string;
+  card: string;
+  title: string;
+}> = {
+  emerald: {
+    activeBtn: 'border-emerald-500/50 bg-emerald-500/10',
+    iconActive: 'text-emerald-400',
+    card: 'border-emerald-500/20 bg-emerald-500/5',
+    title: 'text-emerald-300',
+  },
+  amber: {
+    activeBtn: 'border-amber-500/50 bg-amber-500/10',
+    iconActive: 'text-amber-400',
+    card: 'border-amber-500/20 bg-amber-500/5',
+    title: 'text-amber-300',
+  },
+  sky: {
+    activeBtn: 'border-sky-500/50 bg-sky-500/10',
+    iconActive: 'text-sky-400',
+    card: 'border-sky-500/20 bg-sky-500/5',
+    title: 'text-sky-300',
+  },
+  violet: {
+    activeBtn: 'border-violet-500/50 bg-violet-500/10',
+    iconActive: 'text-violet-400',
+    card: 'border-violet-500/20 bg-violet-500/5',
+    title: 'text-violet-300',
+  },
+};
+
 export default function ConsistencyModels() {
   const [active, setActive] = useState(0);
   const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
@@ -71,17 +103,18 @@ export default function ConsistencyModels() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-5">
           {MODELS.map((m, i) => {
             const MIcon = m.icon;
+            const style = MODEL_COLOR_STYLES[m.color] ?? MODEL_COLOR_STYLES.sky;
             return (
               <button
                 key={m.id}
                 onClick={() => setActive(i)}
                 className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-left transition-all ${
                   active === i
-                    ? `border-${m.color}-500/50 bg-${m.color}-500/10`
+                    ? style.activeBtn
                     : 'border-slate-800 bg-slate-900/30 text-slate-500 hover:border-slate-700'
                 }`}
               >
-                <MIcon size={14} className={`shrink-0 ${active === i ? `text-${m.color}-400` : 'text-slate-600'}`} />
+                <MIcon size={14} className={`shrink-0 ${active === i ? style.iconActive : 'text-slate-600'}`} />
                 <span className={`text-xs font-semibold ${active === i ? 'text-white' : 'text-slate-500'}`}>{m.name.split(' ')[0]}</span>
               </button>
             );
@@ -89,31 +122,36 @@ export default function ConsistencyModels() {
         </div>
 
         {/* Active model */}
-        <div className={`rounded-xl border border-${model.color}-500/20 bg-${model.color}-500/5 p-4`}>
-          <div className="flex items-center gap-2 mb-2">
-            <ModelIcon size={16} className={`text-${model.color}-400`} />
-            <h3 className={`text-sm font-bold text-${model.color}-300`}>{model.name}</h3>
-          </div>
-          <p className="text-xs text-slate-300 leading-relaxed mb-4">{model.description}</p>
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <div className="rounded-lg bg-slate-900/60 border border-slate-800 p-3">
-              <span className="text-2xs font-black uppercase tracking-widest text-slate-500 font-mono">Latência</span>
-              <p className="mt-1 text-xs text-slate-300">{model.latency}</p>
+        {(() => {
+          const activeStyle = MODEL_COLOR_STYLES[model.color] ?? MODEL_COLOR_STYLES.sky;
+          return (
+            <div className={`rounded-xl border p-4 ${activeStyle.card}`}>
+              <div className="flex items-center gap-2 mb-2">
+                <ModelIcon size={16} className={activeStyle.iconActive} />
+                <h3 className={`text-sm font-bold ${activeStyle.title}`}>{model.name}</h3>
+              </div>
+              <p className="text-xs text-slate-300 leading-relaxed mb-4">{model.description}</p>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div className="rounded-lg bg-slate-900/60 border border-slate-800 p-3">
+                  <span className="text-2xs font-black uppercase tracking-widest text-slate-500 font-mono">Latência</span>
+                  <p className="mt-1 text-xs text-slate-300">{model.latency}</p>
+                </div>
+                <div className="rounded-lg bg-slate-900/60 border border-slate-800 p-3">
+                  <span className="text-2xs font-black uppercase tracking-widest text-slate-500 font-mono">Disponibilidade</span>
+                  <p className="mt-1 text-xs text-slate-300">{model.availability}</p>
+                </div>
+              </div>
+              <div className="rounded-lg bg-slate-900/60 border border-slate-800 p-3 mb-3">
+                <span className="text-2xs font-black uppercase tracking-widest text-slate-500 font-mono">Exemplos</span>
+                <p className="mt-1 text-xs font-mono text-slate-300">{model.examples}</p>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-slate-400">
+                <AlertTriangle size={12} className="text-amber-400" />
+                <span className="text-amber-200/70"><strong>Trade-off:</strong> {model.tradeoff}</span>
+              </div>
             </div>
-            <div className="rounded-lg bg-slate-900/60 border border-slate-800 p-3">
-              <span className="text-2xs font-black uppercase tracking-widest text-slate-500 font-mono">Disponibilidade</span>
-              <p className="mt-1 text-xs text-slate-300">{model.availability}</p>
-            </div>
-          </div>
-          <div className="rounded-lg bg-slate-900/60 border border-slate-800 p-3 mb-3">
-            <span className="text-2xs font-black uppercase tracking-widest text-slate-500 font-mono">Exemplos</span>
-            <p className="mt-1 text-xs font-mono text-slate-300">{model.examples}</p>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <AlertTriangle size={12} className="text-amber-400" />
-            <span className="text-amber-200/70"><strong>Trade-off:</strong> {model.tradeoff}</span>
-          </div>
-        </div>
+          );
+        })()}
       </div>
 
       {/* Read-your-writes demo */}

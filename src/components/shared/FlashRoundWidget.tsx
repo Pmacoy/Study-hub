@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { X, Zap, ThumbsUp, ThumbsDown, RotateCcw, Trophy, Flame } from 'lucide-react';
-import { ALL_FLASHCARDS } from '../../data/flashcards';
+import { ALL_FLASHCARDS, DOMAIN_FLASHCARDS } from '../../data/flashcards';
 import type { Flashcard, FlashRoundResult } from '../../types/flashcard';
 
 const ROUND_SECONDS = 60;
 const MIN_CARDS_TO_FINISH = 3;
 
-function shuffledDeck(): Flashcard[] {
-  const arr = [...ALL_FLASHCARDS];
+function shuffledDeck(domain?: string): Flashcard[] {
+  const source = domain ? (DOMAIN_FLASHCARDS[domain as keyof typeof DOMAIN_FLASHCARDS] || ALL_FLASHCARDS) : ALL_FLASHCARDS;
+  const arr = [...source];
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -21,8 +22,8 @@ const DOMAIN_COLOR: Record<string, string> = {
   networking: 'emerald',
 };
 
-export default function FlashRoundWidget({ onClose, onComplete }: { onClose: () => void; onComplete: (result: FlashRoundResult) => void }) {
-  const deck = useMemo(() => shuffledDeck(), []);
+export default function FlashRoundWidget({ onClose, onComplete, domain }: { onClose: () => void; onComplete: (result: FlashRoundResult) => void; domain?: string }) {
+  const deck = useMemo(() => shuffledDeck(domain), [domain]);
   const [cardIdx, setCardIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS);

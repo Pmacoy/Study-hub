@@ -27,6 +27,29 @@ function Code({ code, lang = '' }: { code: string; lang?: string }) {
   );
 }
 
+const LAYER_STYLES: Record<string, { border: string; badge: string }> = {
+  violet: {
+    border: 'border-l-violet-500/50',
+    badge: 'bg-violet-500/15 border-violet-500/30 text-violet-300',
+  },
+  amber: {
+    border: 'border-l-amber-500/50',
+    badge: 'bg-amber-500/15 border-amber-500/30 text-amber-300',
+  },
+  sky: {
+    border: 'border-l-sky-500/50',
+    badge: 'bg-sky-500/15 border-sky-500/30 text-sky-300',
+  },
+  emerald: {
+    border: 'border-l-emerald-500/50',
+    badge: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300',
+  },
+  rose: {
+    border: 'border-l-rose-500/50',
+    badge: 'bg-rose-500/15 border-rose-500/30 text-rose-300',
+  },
+};
+
 const OSI_LAYERS = [
   { n: 7, name: 'Application', pt: 'Aplicação', does: 'Serviços de rede directamente às aplicações do utilizador', protos: 'HTTP, HTTPS, FTP, SMTP, DNS, DHCP, SSH', pdu: 'Data', color: 'violet' },
   { n: 6, name: 'Presentation', pt: 'Apresentação', does: 'Formatação de dados, encriptação, desencriptação e compressão', protos: 'SSL/TLS, JPEG, MPEG, ASCII', pdu: 'Data', color: 'violet' },
@@ -258,22 +281,25 @@ export default function NetworkingReferenceModule() {
               Um modelo de referência que divide a comunicação em sete responsabilidades, cada uma com o seu papel.
             </p>
             <div className="space-y-1.5">
-              {OSI_LAYERS.map(l => (
-                <div key={l.n} className={`p-3 rounded-xl bg-slate-900 border-l-2 border-${l.color}-500/50`}>
-                  <div className="flex items-baseline gap-2 flex-wrap">
-                    <span className={`shrink-0 w-6 h-6 rounded-full bg-${l.color}-500/15 border border-${l.color}-500/30 flex items-center justify-center text-[10px] font-black text-${l.color}-300`}>
-                      {l.n}
-                    </span>
-                    <span className="text-[13px] font-bold text-white">{l.name}</span>
-                    <span className="text-[11px] text-slate-500">· {l.pt}</span>
-                    <span className="ml-auto text-[10px] font-mono text-slate-600">{l.pdu}</span>
+              {OSI_LAYERS.map(l => {
+                const style = LAYER_STYLES[l.color] ?? LAYER_STYLES.violet;
+                return (
+                  <div key={l.n} className={`p-3 rounded-xl bg-slate-900 border-l-2 ${style.border}`}>
+                    <div className="flex items-baseline gap-2 flex-wrap">
+                      <span className={`shrink-0 w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-black ${style.badge}`}>
+                        {l.n}
+                      </span>
+                      <span className="text-[13px] font-bold text-white">{l.name}</span>
+                      <span className="text-[11px] text-slate-500">· {l.pt}</span>
+                      <span className="ml-auto text-[10px] font-mono text-slate-600">{l.pdu}</span>
+                    </div>
+                    <div className="mt-1.5 pl-8">
+                      <p className="text-[12px] text-slate-400">{l.does}</p>
+                      <p className="text-[11px] text-slate-600 font-mono mt-1">{l.protos}</p>
+                    </div>
                   </div>
-                  <div className="mt-1.5 pl-8">
-                    <p className="text-[12px] text-slate-400">{l.does}</p>
-                    <p className="text-[11px] text-slate-600 font-mono mt-1">{l.protos}</p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 

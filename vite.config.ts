@@ -8,6 +8,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'pwa-192x192.svg', 'pwa-512x512.svg'],
+      workbox: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+      },
       manifest: {
         name: 'Study Hub',
         short_name: 'Study Hub',

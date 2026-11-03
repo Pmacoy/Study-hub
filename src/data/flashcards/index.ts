@@ -5,6 +5,8 @@ import { networkingFlashcards } from './networkingFlashcards';
 import { azureFlashcards } from '../azure/flashcards';
 import { azureFlashcards as azureStaticFlashcards } from './azureFlashcards';
 import { pythonFlashcards } from './pythonFlashcards';
+import { awsFlashcards } from './awsFlashcards';
+import { socFlashcards } from './socFlashcards';
 
 export const ALL_FLASHCARDS: Flashcard[] = [
   ...devopsFlashcards,
@@ -12,6 +14,8 @@ export const ALL_FLASHCARDS: Flashcard[] = [
   ...azureStaticFlashcards,
   ...networkingFlashcards,
   ...pythonFlashcards,
+  ...awsFlashcards,
+  ...socFlashcards,
 ];
 
 export const DOMAIN_FLASHCARDS: Record<Domain, Flashcard[]> = {
@@ -19,9 +23,14 @@ export const DOMAIN_FLASHCARDS: Record<Domain, Flashcard[]> = {
   azure: [...azureFlashcards, ...azureStaticFlashcards],
   networking: networkingFlashcards,
   python: pythonFlashcards,
-  aws: [],
+  aws: awsFlashcards,
   gcp: [],
+  oci: [],
   'system-design': [],
   'distributed-systems': [],
   'algorithms': [],
+  'cybersecurity': socFlashcards,
+  'data-engineering': [],
+  'ai-ml': [],
+  'citrix': [],
 };

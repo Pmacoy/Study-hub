@@ -36,6 +36,11 @@ const DOMAIN_ACCENT: Record<Domain, string> = {
   'system-design': 'rose',
   'distributed-systems': 'teal',
   'algorithms': 'cyan',
+  'oci': 'orange',
+  'cybersecurity': 'rose',
+  'data-engineering': 'sky',
+  'ai-ml': 'violet',
+  'citrix': 'violet',
 };
 
 const ACCENT_TEXT: Record<string, string> = {
@@ -45,6 +50,8 @@ const ACCENT_TEXT: Record<string, string> = {
   rose:    'text-rose-400',
   emerald: 'text-emerald-400',
   amber:   'text-amber-400',
+  teal:    'text-teal-400',
+  cyan:    'text-cyan-400',
 };
 
 export default function ScenariosHub({

@@ -48,6 +48,7 @@ export const menuGroups: MenuGroup[] = [
     items: [
       { id: 'devops-intro', label: 'DevOps & DevSecOps', sublabel: 'Cultura e ciclo de vida', icon: LayoutDashboard },
       { id: 'linux', label: 'Linux & Shell', sublabel: 'Comandos e scripting', icon: Terminal },
+      { id: 'shell-scripting', label: 'Shell Scripting', sublabel: 'Automação bash avançada', icon: Terminal },
       { id: 'git', label: 'Git & Versionamento', sublabel: 'Branches e workflows', icon: GitBranch },
     ],
   },
@@ -91,6 +92,7 @@ export const menuGroups: MenuGroup[] = [
       { id: 'service-mesh', label: 'Service Mesh', sublabel: 'Istio · mTLS · Traffic', icon: Network },
       { id: 'gitops', label: 'GitOps', sublabel: 'Argo CD · Flux · Declarative', icon: RotateCw },
       { id: 'sre', label: 'SRE & Fiabilidade', sublabel: 'SLO · Error Budget · Incidents', icon: AlertTriangle },
+      { id: 'finops', label: 'FinOps & Cloud Cost', sublabel: 'Cost Optimization · Budgeting', icon: Activity },
     ],
   },
 ];

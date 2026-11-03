@@ -923,3 +923,355 @@ futex(0x7f1234567890, FUTEX_WAIT_PRIVATE, 4, NULL) = ?
     ],
   },
 };
+
+// ── Linux Cron Troubleshooting ───────────────────────────────────────────────
+export const linuxCronTroubleshooting: ChallengeScenario = {
+  id: 'linux-cron-troubleshooting',
+  domain: 'devops',
+  title: 'Backup automático não executa à hora certa',
+  hook: 'O script de backup da base de dados deveria executar todos os dias à meia-noite (00:00). No entanto, a equipa queixa-se que os backups nunca são gerados. O script funciona perfeitamente quando executado à mão. Qual é o problema do Cron?',
+  difficulty: 'junior',
+  timeEstimateMin: 4,
+  tags: ['linux', 'cron', 'troubleshooting'],
+
+  artifacts: [
+    {
+      id: 'crontab-file',
+      label: '$ crontab -l',
+      language: 'bash',
+      content: `# Edit this file to introduce tasks to be run by cron.
+# m h  dom mon dow   command
+* 0 * * * /opt/scripts/backup-db.sh > /var/log/backup.log 2>&1`,
+    },
+    {
+      id: 'cron-log',
+      label: '$ grep CRON /var/log/syslog | grep backup',
+      language: 'log',
+      content: `Oct 10 00:00:01 srv-db CRON[1204]: (root) CMD (/opt/scripts/backup-db.sh > /var/log/backup.log 2>&1)
+Oct 10 00:01:01 srv-db CRON[1225]: (root) CMD (/opt/scripts/backup-db.sh > /var/log/backup.log 2>&1)
+Oct 10 00:02:01 srv-db CRON[1243]: (root) CMD (/opt/scripts/backup-db.sh > /var/log/backup.log 2>&1)
+Oct 10 00:03:01 srv-db CRON[1260]: (root) CMD (/opt/scripts/backup-db.sh > /var/log/backup.log 2>&1)`,
+    },
+    {
+      id: 'backup-log',
+      label: '$ cat /var/log/backup.log',
+      language: 'log',
+      content: `Error: A backup is already in progress. Lock file exists. Aborting.`,
+    }
+  ],
+
+  diagnosisQuestion: 'Observando o crontab e os logs, porque é que os backups falham?',
+  diagnosisOptions: [
+    {
+      id: 'a',
+      label: 'A expressão cron (* 0 * * *) está a executar o script TODOS os minutos durante a hora zero (da meia-noite às 00:59), colidindo consigo mesmo e falhando devido ao ficheiro de lock.',
+      correct: true,
+      feedback: 'Exatamente! A sintaxe * 0 * * * significa "a cada minuto, da hora 0, todos os dias". Como o backup demora, a execução do minuto 00:01 deteta que a do minuto 00:00 ainda está a correr (lock file), e cancela, destruindo o log.',
+    },
+    {
+      id: 'b',
+      label: 'O daemon cron não está a correr ou tem a timezone errada.',
+      correct: false,
+      feedback: 'O syslog mostra o cron a executar o script repetidamente. Logo o serviço está ativo e à hora certa.',
+    },
+    {
+      id: 'c',
+      label: 'O ficheiro script não tem permissões de execução (chmod +x).',
+      correct: false,
+      feedback: 'Se não tivesse permissões de execução, o erro seria "Permission denied", não "A backup is already in progress".',
+    },
+    {
+      id: 'd',
+      label: 'O ficheiro crontab não tem uma nova linha no final.',
+      correct: false,
+      feedback: 'Embora a nova linha seja um requisito em algumas implementações cron, aqui vemos pelos logs que a task está a ser trigada.',
+    },
+  ],
+
+  fixQuestion: 'Como corriges a expressão cron para executar APENAS uma vez à meia-noite exata?',
+  fixOptions: [
+    {
+      id: 'a',
+      label: '0 0 * * *',
+      correct: true,
+      feedback: 'Correto. O primeiro campo (minutos) deve ser 0 para executar exatamente ao minuto zero. "0 0 * * *" = Minuto 0, Hora 0, Todos os dias.',
+    },
+    {
+      id: 'b',
+      label: '1 0 * * *',
+      correct: false,
+      feedback: 'Isto executaria às 00:01, o que é válido, mas não cumpre o requisito de "meia-noite exata" (00:00).',
+    },
+    {
+      id: 'c',
+      label: '*/60 * * * *',
+      correct: false,
+      feedback: 'Sintaxe inválida. Para indicar a cada x horas usa-se o segundo campo.',
+    },
+    {
+      id: 'd',
+      label: '* * 0 * *',
+      correct: false,
+      feedback: 'O terceiro campo é o dia do mês. Dia 0 não existe (os dias do mês começam em 1).',
+    },
+  ],
+
+  hints: [
+    {
+      id: 'h1',
+      level: 1,
+      label: 'Dica 1',
+      text: 'Observa bem a primeira coluna do crontab. Um asterisco (*) significa "todos/sempre".',
+    },
+    {
+      id: 'h2',
+      level: 2,
+      label: 'Dica 2',
+      text: 'O log do syslog mostra o cron a disparar o evento às 00:00:01, 00:01:01, 00:02:01... Será que isto é o comportamento desejado?',
+    },
+    {
+      id: 'h3',
+      level: 3,
+      label: 'Dica 3',
+      text: 'Um asterisco no primeiro campo (minutos) faz o job correr a cada minuto se a hora fizer match. Deves fixar o minuto no valor 0.',
+    },
+  ],
+
+  resolution: {
+    rootCause: 'A expressão cron (* 0 * * *) estava mal configurada. O asterisco na posição dos minutos fazia com que o cron disparasse a tarefa repetidamente (60 vezes) entre as 00:00 e as 00:59. Como os scripts tentavam correr simultaneamente, batiam num conflito de "lock file" e o processo global nunca concluía corretamente.',
+    fix: 'Alterar a expressão de `* 0 * * *` para `0 0 * * *`, garantindo o disparo único.',
+    preventions: [
+      'Usar validadores de cron (ex: crontab.guru) antes de instalar regras',
+      'Testar scripts de cron de hora a hora (`0 * * * *`) antes de passar para diário',
+      'Escrever scripts idempotentes que lidam bem com bloqueios e concorrência',
+    ],
+  },
+};
+
+// ── Linux FHS Misplacement ───────────────────────────────────────────────────
+export const linuxFhsMisplacement: ChallengeScenario = {
+  id: 'linux-fhs-misplacement',
+  domain: 'devops',
+  title: 'Comando não encontrado apesar da instalação',
+  hook: 'O novo developer instalou a ferramenta "kubectl" copiando o binário descarregado diretamente para a pasta `/tmp/tools`. Agora queixa-se que o comando "kubectl" falha sempre com "command not found". Onde devia ele colocar o executável para funcionar naturalmente para todos os utilizadores?',
+  difficulty: 'junior',
+  timeEstimateMin: 3,
+  tags: ['linux', 'fhs', 'filesystem', 'path'],
+
+  artifacts: [
+    {
+      id: 'terminal',
+      label: '$ kubectl get pods',
+      language: 'bash',
+      content: `bash: kubectl: command not found`,
+    },
+    {
+      id: 'ls-tmp',
+      label: '$ ls -la /tmp/tools/kubectl',
+      language: 'bash',
+      content: `-rwxr-xr-x 1 root root 51240320 Oct 10 14:00 /tmp/tools/kubectl`,
+    },
+    {
+      id: 'path',
+      label: '$ echo $PATH',
+      language: 'bash',
+      content: `/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin`,
+    }
+  ],
+
+  diagnosisQuestion: 'Qual é o erro de FHS e bash PATH que está a ocorrer?',
+  diagnosisOptions: [
+    {
+      id: 'a',
+      label: 'A pasta /tmp/tools não faz parte da variável $PATH, e o diretório /tmp é inadequado para armazenar binários do sistema.',
+      correct: true,
+      feedback: 'Exato! Em Linux, a bash procura executáveis nos diretórios listados na variável $PATH. O /tmp é volátil (apagado no reboot) e não está no PATH.',
+    },
+    {
+      id: 'b',
+      label: 'O ficheiro não tem as permissões de execução corretas.',
+      correct: false,
+      feedback: 'O ls -la mostra "-rwxr-xr-x". O bit "x" está presente para owner, group e other.',
+    },
+    {
+      id: 'c',
+      label: 'O binário é incompatível com o kernel Linux atual.',
+      correct: false,
+      feedback: 'O erro "command not found" significa que a shell nem encontrou o binário. Erros de kernel/arquitetura costumam dar "Exec format error".',
+    },
+    {
+      id: 'd',
+      label: 'Falta criar um alias no .bashrc',
+      correct: false,
+      feedback: 'Abordagem possível, mas não é a standard. Binários instalados manualmente por admin devem ir para um diretório no PATH.',
+    },
+  ],
+
+  fixQuestion: 'Segundo a File System Hierarchy Standard (FHS), qual o local ideal para colocar um executável de terceiros instalado manualmente?',
+  fixOptions: [
+    {
+      id: 'a',
+      label: '/usr/local/bin',
+      correct: true,
+      feedback: 'Correto! /usr/local/bin é o destino standard (FHS) para binários locais ou de terceiros instalados manualmente pelo administrador de sistema. Além disso, já faz parte do $PATH predefinido.',
+    },
+    {
+      id: 'b',
+      label: '/bin',
+      correct: false,
+      feedback: 'O /bin está reservado para os binários essenciais do sistema (fornecidos pelo package manager, como ls, bash, cp).',
+    },
+    {
+      id: 'c',
+      label: '/etc',
+      correct: false,
+      feedback: 'O /etc serve para ficheiros de configuração (texto), não para ficheiros binários/executáveis.',
+    },
+    {
+      id: 'd',
+      label: '/var',
+      correct: false,
+      feedback: 'O /var armazena dados variáveis (logs, cache, bases de dados), não executáveis estáticos.',
+    },
+  ],
+
+  hints: [
+    {
+      id: 'h1',
+      level: 1,
+      label: 'Dica 1',
+      text: 'O $PATH mostra os caminhos oficiais onde o Linux procura comandos por defeito. Estará o /tmp lá no meio?',
+    },
+    {
+      id: 'h2',
+      level: 2,
+      label: 'Dica 2',
+      text: 'A FHS define /bin para sistema, /usr/bin para aplicações geridas por dpkg/rpm, e existe uma pasta específica com "local" no nome para instalações manuais.',
+    },
+    {
+      id: 'h3',
+      level: 3,
+      label: 'Dica 3',
+      text: 'Usa mv /tmp/tools/kubectl /usr/local/bin/kubectl.',
+    },
+  ],
+
+  resolution: {
+    rootCause: 'O binário kubectl foi colocado na pasta `/tmp`, que além de ser apagada no reboot, não pertence à variável `$PATH` do sistema operativo. Assim, quando se tenta executar o comando diretamente, a shell não sabe onde o procurar.',
+    fix: 'Mover o executável para `/usr/local/bin`, o local oficial ditado pela Linux File System Hierarchy para software compilado ou instalado manualmente fora do package manager do OS.',
+    preventions: [
+      'Conhecer e respeitar o standard de hierarquia do Linux (FHS).',
+      'Garantir a verificação constante do $PATH para dependências globais.',
+    ],
+  },
+};
+
+export const secopsDataPipelineChallenge: ChallengeScenario = {
+  id: 'secops-data-pipeline',
+  domain: 'cybersecurity',
+  title: 'Logs Fragmentados e Perda de Contexto',
+  hook: 'O teu SOC (Security Operations Center) reporta que alertas cruciais de força bruta não estão a disparar. Os logs chegam ao SIEM, mas parecem uma "sopa de letras".',
+  difficulty: 'mid',
+  timeEstimateMin: 15,
+  tags: ['secops', 'data-ingestion', 'normalization', 'fluentbit'],
+  artifacts: [
+    {
+      id: 'app-logs',
+      label: 'auth-api.log',
+      language: 'json',
+      content: '{"t": "2026-09-19T00:30:12Z", "user_id": 492, "event": "login_failed", "src_ip": "192.168.1.55"}\n{"t": "2026-09-19T00:30:13Z", "user_id": 492, "event": "login_failed", "src_ip": "192.168.1.55"}\n{"time": "2026-09-19 00:30:14", "usr": "admin", "action": "auth_err", "ip_addr": "192.168.1.55"}',
+    },
+    {
+      id: 'siem-query',
+      label: 'splunk-query.txt',
+      language: 'text',
+      content: '> index=security event_type=login_failed | stats count by source_ip | where count > 5\n\n[No Results Found]',
+    },
+    {
+      id: 'fluentbit-conf',
+      label: 'fluent-bit.conf',
+      language: 'ini',
+      content: '[INPUT]\n    Name        tail\n    Path        /var/log/auth-api/*.log\n\n[OUTPUT]\n    Name        splunk\n    Match       *\n    Host        siem.internal\n    Port        8088\n    Splunk_Token xxxxxxxx-xxxx-xxxx',
+    }
+  ],
+  diagnosisQuestion: 'Porque é que o SIEM não consegue despoletar o alerta apesar de existirem eventos de falha de login repetidos?',
+  diagnosisOptions: [
+    { id: '1', label: 'Os logs estão a ser enviados para o porto errado do Splunk (8088 em vez de 514).', correct: false, feedback: 'O Splunk HEC (HTTP Event Collector) funciona no porto 8088, o que está correto para logs JSON.' },
+    { id: '2', label: 'Não existe normalização dos dados (campos e formatos variam), impedindo a query padrão de fazer match.', correct: true, feedback: 'Correto! Os logs têm estruturas mistas (`t` vs `time`, `src_ip` vs `ip_addr`). Sem um schema unificado, as pesquisas e correlações do SIEM falham.' },
+    { id: '3', label: 'O FluentBit não tem permissão para ler `/var/log/auth-api/`.', correct: false, feedback: 'Se assim fosse, os logs nem sequer chegariam ao SIEM (e vimos que eles chegam, apenas em formato estranho).' },
+  ],
+  fixQuestion: 'Qual é a melhor abordagem arquitetural para resolver este problema de SecOps de forma escalável?',
+  fixOptions: [
+    { id: '1', label: 'Criar múltiplas queries no SIEM para cada variação de log que existe.', correct: false, feedback: 'Isto é um pesadelo de gestão. Sempre que uma app nova surge, terias de alterar todos os dashboards e alertas.' },
+    { id: '2', label: 'Configurar o FluentBit com filtros (Filter Modify/Record) para padronizar os campos (Normalização) antes do envio.', correct: true, feedback: 'Exato! A Normalização e o Enriquecimento devem acontecer na camada de Ingestão/Processamento, garantindo que o SIEM consome um schema limpo e unificado (ex: ECS ou CIM).' },
+    { id: '3', label: 'Mudar a configuração de output do FluentBit para `Format csv`.', correct: false, feedback: 'Converter para CSV não resolve a variação dos nomes dos campos base que a aplicação emite.' },
+  ],
+  hints: [
+    { id: 'h1', level: 1, label: 'Olha para os campos', text: 'Compara os nomes das chaves JSON do primeiro log com o terceiro log no `auth-api.log`.' },
+    { id: 'h2', level: 2, label: 'Olha para a Query', text: 'O SIEM está à procura dos campos exatos `event_type` e `source_ip`. Será que eles existem tal e qual na origem?' },
+  ],
+  resolution: {
+    rootCause: 'Falta de normalização na pipeline de ingestão de logs. Múltiplos serviços escrevem logs em esquemas diferentes (`src_ip` vs `ip_addr`), o que destrói a capacidade de correlação e deteção de ameaças no SIEM.',
+    fix: 'Introduzir uma camada de transformação (Filtros no FluentBit/Logstash) que mapeia todos os campos díspares para um schema comum de segurança (como o Splunk CIM ou Elastic ECS) antes do envio para o indexador final.',
+    preventions: [
+      'Adotar um schema de logs canónico na empresa (ex: Elastic Common Schema).',
+      'Fornecer bibliotecas padrão de logger aos developers que garantam a estrutura correta desde a fonte.',
+      'Implementar validação de schema nos pipelines de CI/CD para rejeitar commits que quebrem os contratos de logging.'
+    ]
+  }
+};
+
+export const secopsSslTlsChallenge: ChallengeScenario = {
+  id: 'secops-ssl-tls',
+  domain: 'cybersecurity',
+  title: 'Erro de Handshake Incompleto',
+  hook: 'A equipa de frontend alerta que a API de pagamentos está em baixo. Contudo, ao testares localmente a API responde 200 OK.',
+  difficulty: 'mid',
+  timeEstimateMin: 15,
+  tags: ['secops', 'tls', 'ssl', 'ingress', 'certificates'],
+  artifacts: [
+    {
+      id: 'curl-output',
+      label: 'curl-test.sh',
+      language: 'bash',
+      content: '$ curl -v https://api.empresa.com/health\n*   Trying 192.168.10.50:443...\n* Connected to api.empresa.com (192.168.10.50) port 443 (#0)\n* ALPN, offering h2\n* ALPN, offering http/1.1\n* TLSv1.3 (OUT), TLS handshake, Client hello (1):\n* TLSv1.3 (IN), TLS handshake, Server hello (2):\n* TLSv1.3 (IN), TLS handshake, Certificate (11):\n* TLSv1.3 (OUT), TLS alert, unknown CA (560):\n* SSL certificate problem: unable to get local issuer certificate\n* Closing connection 0\ncurl: (60) SSL certificate problem: unable to get local issuer certificate',
+    },
+    {
+      id: 'k8s-secret',
+      label: 'tls-secret.yaml',
+      language: 'yaml',
+      content: 'apiVersion: v1\nkind: Secret\nmetadata:\n  name: api-tls\ntype: kubernetes.io/tls\ndata:\n  # Base64 encoded certs — apenas o certificado folha, SEM intermediário\n  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUV6akNDQ...\n  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFc...',
+    },
+    {
+      id: 'cert-check',
+      label: 'openssl-check.sh',
+      language: 'bash',
+      content: '$ openssl x509 -in cert.pem -text -noout | grep "Issuer:"\n        Issuer: C = US, O = Let\'s Encrypt, CN = R3\n\n$ openssl x509 -in cert.pem -text -noout | grep "Subject:"\n        Subject: CN = api.empresa.com\n\n# Verificar quantos certs estão na chain:\n$ openssl crl2pkcs7 -nocrl -certfile cert.pem | openssl pkcs7 -print_certs -noout\n# Resultado: apenas 1 certificado (deviam ser 2 ou 3 na full chain)'
+    }
+  ],
+  diagnosisQuestion: 'Qual é o problema com a configuração do certificado SSL/TLS no Ingress?',
+  diagnosisOptions: [
+    { id: '1', label: 'O certificado foi emitido para o domínio errado (mismatch de Subject Alternative Name).', correct: false, feedback: 'O Subject mostra `api.empresa.com`, que coincide exatamente com o URL invocado pelo curl.' },
+    { id: '2', label: 'O certificado expirou (falta de validade temporal).', correct: false, feedback: 'O erro não é `certificate has expired`, mas sim `unable to get local issuer certificate`.' },
+    { id: '3', label: 'O secret de TLS contém apenas o certificado "folha" sem a cadeia intermédia (Intermediate CA).', correct: true, feedback: 'Correto! O erro `unknown CA` ocorre porque o browser/curl não confia diretamente na Let\'s Encrypt R3. O servidor precisa de enviar o certificado intermédio junto com o final (Full Chain) durante o handshake.' },
+  ],
+  fixQuestion: 'Como resolves este problema de SSL/TLS Handshake no manifesto Kubernetes?',
+  fixOptions: [
+    { id: '1', label: 'Modificar o Ingress para ignorar a verificação de SSL (ssl-verify: false).', correct: false, feedback: 'Isto introduz uma vulnerabilidade crítica, tornando a ligação suscetível a ataques Man-in-the-Middle.' },
+    { id: '2', label: 'Substituir tls.crt pelo fullchain.pem — certificado da API + intermediário da CA concatenados.', correct: true, feedback: 'Exatamente. No K8s Ingress, tls.crt deve conter a full chain para o cliente rastrear a confiança até à Root CA.' },
+    { id: '3', label: 'Desativar o TLS 1.3 e forçar o TLS 1.2 no Ingress Controller.', correct: false, feedback: 'O problema não tem relação com a versão do protocolo, mas sim com a cadeia de confiança.' },
+  ],
+  hints: [
+    { id: 'h1', level: 1, label: 'Olha para o erro no curl', text: 'O erro diz "unable to get local issuer certificate". O curl não sabe quem emitiu o certificado.' },
+    { id: 'h2', level: 2, label: 'Verifica o número de certs', text: 'O openssl mostra apenas 1 certificado na chain. Uma chain completa devia ter pelo menos 2: o da API e o intermédio da CA.' },
+  ],
+  resolution: {
+    rootCause: 'Configuração incompleta da cadeia de certificados SSL/TLS (Certificate Chain). O servidor Ingress enviava apenas o "Leaf Certificate", deixando o cliente incapaz de verificar a confiança até à Root CA.',
+    fix: 'Atualizar o Secret do Kubernetes (tls.crt) para conter o fullchain.pem gerado pela CA, garantindo que o handshake inclui todos os elos da cadeia.',
+    preventions: [
+      'Usar cert-manager no Kubernetes para gerir certificados automaticamente.',
+      'Correr scans periódicos com SSL Labs ou testssl.sh nos ambientes públicos.'
+    ]
+  }
+};
+

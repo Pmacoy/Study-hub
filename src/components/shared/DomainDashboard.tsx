@@ -22,18 +22,18 @@ function useReveal() {
 // não executa JS: uma classe montada dinamicamente não é encontrada e não
 // gera CSS nenhum. Ver src/styles/designTokens.ts para o bug histórico que
 // este padrão evita repetir.
-type Accent = 'violet' | 'sky' | 'emerald' | 'amber' | 'orange' | 'rose' | 'teal' | 'cyan';
+type Accent = 'violet' | 'sky' | 'emerald' | 'amber' | 'orange' | 'rose' | 'teal' | 'cyan' | 'fuchsia' | 'red';
 
 const EYEBROW_TEXT: Record<Accent, string> = {
   violet: 'text-violet-400', sky: 'text-sky-400', emerald: 'text-emerald-400',
   amber: 'text-amber-400', orange: 'text-orange-400', rose: 'text-rose-400',
-  teal: 'text-teal-400', cyan: 'text-cyan-400',
+  teal: 'text-teal-400', cyan: 'text-cyan-400', fuchsia: 'text-fuchsia-400', red: 'text-red-400',
 };
 
 const BORDER_L: Record<Accent, string> = {
   violet: 'border-l-violet-500/50', sky: 'border-l-sky-500/50', emerald: 'border-l-emerald-500/50',
   amber: 'border-l-amber-500/50', orange: 'border-l-orange-500/50', rose: 'border-l-rose-500/50',
-  teal: 'border-l-teal-500/50', cyan: 'border-l-cyan-500/50',
+  teal: 'border-l-teal-500/50', cyan: 'border-l-cyan-500/50', fuchsia: 'border-l-fuchsia-500/50', red: 'border-l-red-500/50',
 };
 
 const TILE_COLORS: Record<Accent, string> = {
@@ -45,6 +45,8 @@ const TILE_COLORS: Record<Accent, string> = {
   rose:    'border-rose-500/25 text-rose-400 bg-rose-500/5 hover:bg-rose-500/10 hover:border-rose-500/40',
   teal:    'border-teal-500/25 text-teal-400 bg-teal-500/5 hover:bg-teal-500/10 hover:border-teal-500/40',
   cyan:    'border-cyan-500/25 text-cyan-400 bg-cyan-500/5 hover:bg-cyan-500/10 hover:border-cyan-500/40',
+  fuchsia: 'border-fuchsia-500/25 text-fuchsia-400 bg-fuchsia-500/5 hover:bg-fuchsia-500/10 hover:border-fuchsia-500/40',
+  red:     'border-red-500/25 text-red-400 bg-red-500/5 hover:bg-red-500/10 hover:border-red-500/40',
 };
 
 const CTA_COLORS: Record<Accent, string> = {
@@ -56,6 +58,8 @@ const CTA_COLORS: Record<Accent, string> = {
   rose:    'border-rose-500/30 bg-rose-500/10 text-rose-200 hover:bg-rose-500/20 btn-glow-rose',
   teal:    'border-teal-500/30 bg-teal-500/10 text-teal-200 hover:bg-teal-500/20',
   cyan:    'border-cyan-500/30 bg-cyan-500/10 text-cyan-200 hover:bg-cyan-500/20',
+  fuchsia: 'border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-200 hover:bg-fuchsia-500/20',
+  red:     'border-red-500/30 bg-red-500/10 text-red-200 hover:bg-red-500/20',
 };
 
 // Ícone quadrado do bloco "Próximo passo" — borda, fundo e cor do ícone.
@@ -68,18 +72,20 @@ const NEXT_STEP_ICON: Record<Accent, string> = {
   rose: 'border-rose-500/30 bg-rose-500/10 text-rose-400',
   teal: 'border-teal-500/30 bg-teal-500/10 text-teal-400',
   cyan: 'border-cyan-500/30 bg-cyan-500/10 text-cyan-400',
+  fuchsia: 'border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-400',
+  red: 'border-red-500/30 bg-red-500/10 text-red-400',
 };
 
 const NEXT_STEP_CARD_BORDER: Record<Accent, string> = {
   violet: 'border-violet-500/20', sky: 'border-sky-500/20', emerald: 'border-emerald-500/20',
   amber: 'border-amber-500/20', orange: 'border-orange-500/20', rose: 'border-rose-500/20',
-  teal: 'border-teal-500/20', cyan: 'border-cyan-500/20',
+  teal: 'border-teal-500/20', cyan: 'border-cyan-500/20', fuchsia: 'border-fuchsia-500/20', red: 'border-red-500/20',
 };
 
 const NEXT_STEP_ARROW: Record<Accent, string> = {
   violet: 'text-violet-400', sky: 'text-sky-400', emerald: 'text-emerald-400',
   amber: 'text-amber-400', orange: 'text-orange-400', rose: 'text-rose-400',
-  teal: 'text-teal-400', cyan: 'text-cyan-400',
+  teal: 'text-teal-400', cyan: 'text-cyan-400', fuchsia: 'text-fuchsia-400', red: 'text-red-400',
 };
 
 // `.card-glass-*` não é utility do Tailwind — é classe CSS escrita à mão em
@@ -88,12 +94,12 @@ const NEXT_STEP_ARROW: Record<Accent, string> = {
 const GLASS_ACCENT: Record<Accent, string> = {
   violet: 'card-glass-violet', sky: 'card-glass-sky', emerald: 'card-glass-emerald',
   amber: 'card-glass-amber', orange: 'card-glass-orange', rose: 'card-glass-rose',
-  teal: 'card-glass-teal', cyan: 'card-glass-cyan',
+  teal: 'card-glass-teal', cyan: 'card-glass-cyan', fuchsia: 'card-glass-fuchsia', red: 'card-glass-rose',
 };
 
 const QUICK_STAT_TONE: Record<Accent, 'violet' | 'sky' | 'emerald' | 'amber' | 'orange' | 'rose'> = {
   violet: 'violet', sky: 'sky', emerald: 'emerald', amber: 'amber', orange: 'orange', rose: 'rose',
-  teal: 'emerald', cyan: 'sky', // QuickStat/BlockProgress só têm tons Catppuccin — sem teal/cyan próprios
+  teal: 'emerald', cyan: 'sky', fuchsia: 'violet', red: 'rose', // QuickStat/BlockProgress só têm tons Catppuccin — sem teal/cyan/fuchsia próprios
 };
 
 export type DomainDashboardAccent = Accent;
@@ -116,6 +122,7 @@ interface Props {
   examLabel?: string;
   onBack?: () => void;
   backLabel?: string;
+  children?: React.ReactNode;
 }
 
 export default function DomainDashboard({
@@ -125,6 +132,7 @@ export default function DomainDashboard({
   nextTabId, nextTabLabel,
   examTabId, examLabel = 'Simulado',
   onBack, backLabel = '← Escolher outra certificação',
+  children,
 }: Props) {
   const heroRef = useReveal();
   const modulesRef = useReveal();
@@ -256,6 +264,9 @@ export default function DomainDashboard({
           </button>
         </section>
       )}
+
+      {/* Children elements (e.g. DomainResourcesList) */}
+      {children}
     </div>
   );
 }

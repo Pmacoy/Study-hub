@@ -1,8 +1,8 @@
 import React from 'react';
 import { useState } from 'react';
-import { BookOpen, RefreshCw, Rocket, Users, Cog, Target, Beaker, Building2, ChevronDown, ChevronRight, ArrowRight, X, ShieldCheck } from 'lucide-react';
+import { BookOpen, RefreshCw, Rocket, Users, Cog, Target, Beaker, Building2, ChevronDown, ChevronRight, ArrowRight, X, ShieldCheck, Terminal, Server, Shield, Database } from 'lucide-react';
 
-type View = 'concepts' | 'lifecycle' | 'deploy' | 'teams';
+type View = 'concepts' | 'lifecycle' | 'deploy' | 'teams' | 'glossary';
 
 const DEPLOY_STRATEGIES = [
   { name: 'Blue-Green', color: 'sky', risk: 'Baixo', downtime: 'Zero', rollback: 'Instantâneo', desc: 'Dois ambientes idênticos (blue = atual, green = novo). O tráfego é comutado de uma vez via load balancer. Rollback é trocar de volta.', use: 'Apps stateless com capacidade para duplicar infra.' },
@@ -66,32 +66,36 @@ const LIFECYCLE_DETAILS: Record<string, { why: string; howto: string[]; devops: 
 };
 
 const CONCEPTS = [
-  { title: 'DevOps vs DevSecOps', icon: RefreshCw, content: [
-    'DevOps une Dev + Ops com foco em velocidade e automação.',
-    'DevSecOps adiciona Security como responsabilidade partilhada — "shift-left security".',
-    'Em DevSecOps, segurança é verificada em cada stage do pipeline (SAST, DAST, image scanning).',
-    'O objetivo não é bloquear deploys, mas detetar vulnerabilidades o mais cedo possível.',
+  { title: 'O que é DevOps?', icon: Rocket, content: [
+    'DevOps (Development + Operations) é uma cultura, conjunto de práticas e ferramentas que une as equipas de desenvolvimento de software (Dev) e operações de TI (Ops).',
+    'O principal objetivo é encurtar o ciclo de vida do desenvolvimento (Lead Time) e entregar software de alta qualidade de forma contínua e automatizada.',
+    'Elimina o modelo tradicional em "silos" onde Dev escrevia código e Ops sofria para colocar em produção sem conhecer a aplicação.',
   ]},
-  { title: 'CI vs CD vs CD', icon: Cog, content: [
-    'CI (Continuous Integration): merge frequente para main + build + testes automáticos.',
-    'Continuous Delivery: o código está sempre em estado deployável (deploy manual).',
-    'Continuous Deployment: cada commit que passa no pipeline vai automaticamente para produção.',
-    'A diferença entre Delivery e Deployment é uma aprovação manual.',
+  { title: 'DevOps vs DevSecOps', icon: ShieldCheck, content: [
+    'DevOps foca-se na velocidade, colaboração e automação de entregas.',
+    'DevSecOps insere a segurança desde o primeiro dia ("Shift-Left Security"). A segurança deixa de ser um obstáculo no final e passa a ser integrada no pipeline (SAST, SCA, scans de imagens).',
+    'Todos na equipa partilham a responsabilidade pela segurança, garantindo que vulnerabilidades são detetadas no commit e não em produção.',
   ]},
-  { title: 'Shift-Left Security', icon: ShieldCheck, content: [
-    'Mover os controlos de segurança para o início do SDLC, não só no final.',
-    'SAST (Static Analysis): analisa código fonte — SonarQube, Checkmarx.',
-    'SCA (Software Composition Analysis): vulnerabilidades em dependências — Trivy, Snyk.',
-    'DAST (Dynamic Analysis): testa a app em execução — OWASP ZAP.',
-    'Image scanning: Trivy no Dockerfile antes de publicar no registry.',
+  { title: 'CI vs CD (Continuous Integration & Continuous Delivery)', icon: Cog, content: [
+    'CI (Continuous Integration): Prática de fazer merge frequente de código para o branch principal (main). Cada commit dispara builds e testes automáticos para detetar erros rapidamente.',
+    'Continuous Delivery: Garante que o código testado está sempre num estado pronto para ir para produção. O deploy em si pode ter uma aprovação manual.',
+    'Continuous Deployment: Cada commit que passa por todos os testes vai automaticamente para produção sem intervenção humana.',
   ]},
-  { title: 'Team Topologies', icon: Users, content: [
-    'Stream-Aligned Team: equipa que entrega valor para um produto/serviço.',
-    'Platform Team: fornece capacidades internas (IDP, CI/CD, observabilidade).',
-    'Enabling Team: ajuda outras equipas a adotar novas tecnologias ou práticas.',
-    'Complicated Subsystem Team: especialistas em componentes técnicos complexos.',
-    'O modelo reduz dependências e aumenta autonomia das equipas.',
+  { title: 'Infraestrutura como Código (IaC)', icon: Server, content: [
+    'Em vez de configurar servidores manualmente clicando no portal cloud (Azure/AWS), a infraestrutura é escrita em código (ex: Terraform, Bicep, Ansible).',
+    'Vantagens: Versionamento no Git, reprodutibilidade exata de ambientes (DEV, STG, PROD iguais) e auditoria de alterações.',
   ]},
+];
+
+const GLOSSARY = [
+  { term: 'Docker', desc: 'Plataforma de contentorização. Empacota a aplicação e todas as suas dependências num contentor isolado que corre igual em qualquer máquina.' },
+  { term: 'Kubernetes (K8s)', desc: 'Orquestrador de contentores em escala enterprise. Gere o fecho, escalabilidade automática, load balancing e recuperação de pods.' },
+  { term: 'Terraform', desc: 'Ferramenta de IaC (Infrastructure as Code) agnóstica de cloud para provisionar recursos de forma declarativa.' },
+  { term: 'Ansible', desc: 'Ferramenta de gestão de configuração e automação de servidores via SSH sem agentes instalados.' },
+  { term: 'Prometheus & Grafana', desc: 'Prometheus recolhe métricas em formato time-series; Grafana cria dashboards visuais incríveis com esses dados.' },
+  { term: 'ArgoCD / GitOps', desc: 'Ferramenta que mantém o cluster Kubernetes sincronizado exatamente com o que está declarado num repositório Git.' },
+  { term: 'OpenSearch / ELK', desc: 'Sistemas de indexação e busca de logs em tempo real para auditoria de segurança (SIEM) e troubleshooting.' },
+  { term: 'ModSecurity / WAF', desc: 'Web Application Firewall que protege aplicações contra ataques comuns como SQL Injection e XSS.' },
 ];
 
 export default function DevOpsIntroSimulator() {
@@ -112,14 +116,26 @@ export default function DevOpsIntroSimulator() {
   };
 
   const views: { id: View; label: string | JSX.Element }[] = [
-    { id: 'concepts', label: <><BookOpen size={14} className="mr-1 inline" /> Conceitos</> },
-    { id: 'lifecycle', label: <><RefreshCw size={14} className="mr-1 inline" /> Ciclo de Vida</> },
-    { id: 'deploy', label: <><Rocket size={14} className="mr-1 inline" /> Deploy Strategies</> },
-    { id: 'teams', label: <><Users size={14} className="mr-1 inline" /> Estrutura de Equipa</> },
+    { id: 'concepts', label: <><BookOpen size={14} className="mr-1 inline" /> O que é DevOps?</> },
+    { id: 'lifecycle', label: <><RefreshCw size={14} className="mr-1 inline" /> Ciclo de Vida (SDLC)</> },
+    { id: 'deploy', label: <><Rocket size={14} className="mr-1 inline" /> Estratégias de Deploy</> },
+    { id: 'teams', label: <><Users size={14} className="mr-1 inline" /> Equipas & Topologias</> },
+    { id: 'glossary', label: <><Server size={14} className="mr-1 inline" /> Glossário de Ferramentas</> },
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Cabeçalho explicativo */}
+      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-3">
+        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+          <Rocket className="text-violet-400" />
+          Fundamentos de DevOps & Plataforma
+        </h2>
+        <p className="text-sm text-slate-300 leading-relaxed">
+          O DevOps não é apenas uma ferramenta — é uma mudança cultural e operacional. Aqui compreende o porquê de cada tecnologia, como os serviços interagem no ciclo de vida do software e quais as melhores práticas da indústria para entrega contínua, fiabilidade (SRE) e segurança.
+        </p>
+      </div>
+
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}
@@ -135,15 +151,15 @@ export default function DevOpsIntroSimulator() {
             <div key={i} className="rounded-2xl border border-slate-800 overflow-hidden">
               <button onClick={() => setOpen(open === i ? null : i)}
                 className="w-full flex items-center gap-3 px-5 py-4 bg-[#181926]/70 hover:bg-slate-900 transition-colors text-left">
-                <span className="text-xl">{React.createElement(c.icon, { size: 20 })}</span>
+                <span className="text-xl text-violet-400">{React.createElement(c.icon, { size: 20 })}</span>
                 <span className="flex-1 text-md font-semibold text-slate-200">{c.title}</span>
                 {open === i ? <ChevronDown size={15} className="text-violet-400" /> : <ChevronRight size={15} className="text-slate-400" />}
               </button>
               {open === i && (
                 <div className="px-5 py-4 bg-slate-900/50 border-t border-slate-800 space-y-2">
                   {c.content.map((line, j) => (
-                    <div key={j} className="flex items-start gap-2 text-base text-slate-300">
-                      <ArrowRight size={12} className="text-violet-400 mt-0.5 shrink-0" />
+                    <div key={j} className="flex items-start gap-2 text-sm text-slate-300 leading-relaxed">
+                      <ArrowRight size={14} className="text-violet-400 mt-1 shrink-0" />
                       {line}
                     </div>
                   ))}
@@ -156,7 +172,7 @@ export default function DevOpsIntroSimulator() {
 
       {view === 'lifecycle' && (
         <div className="space-y-4">
-          <p className="text-sm text-slate-400">Clica em cada stage para ver detalhes.</p>
+          <p className="text-sm text-slate-400">Clica em cada etapa do ciclo de vida para entender o propósito, ferramentas e boas práticas:</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {LIFECYCLE_STAGES.map((s, i) => (
               <button
@@ -184,19 +200,19 @@ export default function DevOpsIntroSimulator() {
             <div className="rounded-2xl border border-violet-500/25 bg-violet-500/5 p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <div className={`text-base font-black uppercase tracking-widest ${colorMap[LIFECYCLE_STAGES.find(s => s.stage === selectedStage)?.color ?? 'slate'].split(' ')[0]}`}>
-                  {selectedStage}
+                  {selectedStage} — O que é e para que serve?
                 </div>
                 <button onClick={() => setSelectedStage(null)} className="text-slate-600 hover:text-slate-400 transition-colors">
                   <X size={14} />
                 </button>
               </div>
 
-              <p className="text-base text-slate-300 leading-relaxed">
+              <p className="text-sm text-slate-300 leading-relaxed">
                 {LIFECYCLE_DETAILS[selectedStage].why}
               </p>
 
               <div>
-                <div className="text-2xs font-bold text-slate-400 uppercase tracking-widest mb-2">Como fazer</div>
+                <div className="text-2xs font-bold text-slate-400 uppercase tracking-widest mb-2">Como implementar na prática</div>
                 <div className="space-y-1.5">
                   {LIFECYCLE_DETAILS[selectedStage].howto.map((step, i) => (
                     <div key={i} className="flex items-start gap-2 text-sm text-slate-300">
@@ -208,7 +224,7 @@ export default function DevOpsIntroSimulator() {
               </div>
 
               <div className="p-3 rounded-xl bg-amber-500/8 border border-amber-500/20">
-                <span className="text-2xs font-bold text-amber-400 uppercase">DevOps tip: </span>
+                <span className="text-2xs font-bold text-amber-400 uppercase">Regra de Ouro DevOps: </span>
                 <span className="text-xs text-slate-400">{LIFECYCLE_DETAILS[selectedStage].devops}</span>
               </div>
             </div>
@@ -223,7 +239,7 @@ export default function DevOpsIntroSimulator() {
               <button key={i} onClick={() => setSelectedDeploy(i)}
                 className={`w-full p-4 rounded-2xl border text-left transition-all ${selectedDeploy === i ? `${colorMap[d.color]} border-2` : 'border-slate-800 bg-[#181926]/50 hover:border-slate-700'}`}>
                 <div className={`text-base font-bold ${selectedDeploy === i ? colorMap[d.color].split(' ')[0] : 'text-slate-300'}`}>{d.name}</div>
-                <div className="text-2xs text-slate-400 mt-1">Rollback: {d.rollback}</div>
+                <div className="text-2xs text-slate-400 mt-1">Rollback: {d.rollback} | Risco: {d.risk}</div>
               </button>
             ))}
           </div>
@@ -241,9 +257,9 @@ export default function DevOpsIntroSimulator() {
                       </div>
                     ))}
                   </div>
-                  <p className="text-base text-slate-300 leading-relaxed">{d.desc}</p>
+                  <p className="text-sm text-slate-300 leading-relaxed">{d.desc}</p>
                   <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">
-                    <span className="text-xs font-bold text-violet-400">Quando usar: </span>
+                    <span className="text-xs font-bold text-violet-400">Quando utilizar: </span>
                     <span className="text-xs text-slate-400">{d.use}</span>
                   </div>
                 </>
@@ -256,24 +272,35 @@ export default function DevOpsIntroSimulator() {
       {view === 'teams' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
-            { type: 'Stream-Aligned', emoji: <Target size={16} className="text-sky-400" />, color: 'sky', desc: 'Alinhada ao fluxo de valor. Entrega features diretamente ao utilizador. Tem autonomia para build, test e deploy do seu produto.', resp: ['Desenvolvimento de features', 'Manutenção do pipeline CI/CD', 'Ownership do produto em produção'] },
-            { type: 'Platform', emoji: <Building2 size={16} className="text-violet-400" />, color: 'violet', desc: 'Fornece capacidades internas como serviço (IaC, CI/CD templates, observabilidade). Reduz carga cognitiva das stream-aligned teams.', resp: ['Internal Developer Platform (IDP)', 'Golden path templates', 'Gestão de Kubernetes e Terraform'] },
-            { type: 'Enabling', emoji: <Beaker size={16} className="text-amber-400" />, color: 'amber', desc: 'Especialistas temporários que ajudam outras equipas a adotar novas tecnologias. Não ficam permanentemente — transferem conhecimento.', resp: ['Workshops e mentoria', 'Proof of concepts', 'Adoção de novas práticas (DevSecOps, SRE)'] },
-            { type: 'Complicated Subsystem', emoji: <Cog size={16} className="text-rose-400" />, color: 'rose', desc: 'Gere componentes técnicos que requerem expertise muito especializado (ML models, processamento de vídeo, compliance engines).', resp: ['Componentes de alta complexidade', 'APIs internas para outras equipas', 'Documentação e SLAs do componente'] },
+            { type: 'Stream-Aligned Team', emoji: Target, color: 'sky', desc: 'Alinhada ao fluxo de valor de negócio. Entrega features diretamente aos clientes com total autonomia para desenhar, construir e fazer deploy.', resp: ['Desenvolvimento de produto', 'Manutenção do pipeline CI/CD próprio', 'Ownership de produção'] },
+            { type: 'Platform Team', emoji: Building2, color: 'violet', desc: 'Fornece uma plataforma interna de autosserviço (IDP). Reduz a carga cognitiva das equipas de produto fornecendo golden paths prontos a usar.', resp: ['Internal Developer Platform (IDP)', 'Templates de CI/CD e Terraform', 'Gestão de clusters Kubernetes'] },
+            { type: 'Enabling Team', emoji: Beaker, color: 'amber', desc: 'Especialistas que ajudam as equipas a adotar novas tecnologias ou práticas (ex: DevSecOps, SRE). Ficam temporariamente até a equipa ganhar autonomia.', resp: ['Workshops e formação', 'Proof of concepts', 'Consultoria interna'] },
+            { type: 'Complicated Subsystem Team', emoji: Cog, color: 'rose', desc: 'Gere componentes técnicos complexos que exigem conhecimentos especializados profundos (ex: motores de IA, segurança criptográfica).', resp: ['Desenvolvimento de subsistemas complexos', 'APIs internas', 'SLAs de performance'] },
           ].map(t => (
-            <div key={t.type} className={`p-5 rounded-2xl border ${colorMap[t.color]}`}>
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-2xl">{t.emoji}</span>
-                <span className={`text-md font-bold ${colorMap[t.color].split(' ')[0]}`}>{t.type}</span>
+            <div key={t.type} className={`p-5 rounded-2xl border ${colorMap[t.color]} space-y-3`}>
+              <div className="flex items-center gap-3">
+                <span className="text-xl text-violet-400"><t.emoji size={22} /></span>
+                <span className={`text-base font-bold ${colorMap[t.color].split(' ')[0]}`}>{t.type}</span>
               </div>
-              <p className="text-sm text-slate-400 leading-relaxed mb-3">{t.desc}</p>
-              <ul className="space-y-1">
+              <p className="text-sm text-slate-300 leading-relaxed">{t.desc}</p>
+              <ul className="space-y-1 pt-1">
                 {t.resp.map(r => (
                   <li key={r} className="flex items-start gap-2 text-xs text-slate-400">
                     <ArrowRight size={10} className={`${colorMap[t.color].split(' ')[0]} mt-0.5 shrink-0`} />{r}
                   </li>
                 ))}
               </ul>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {view === 'glossary' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {GLOSSARY.map(g => (
+            <div key={g.term} className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-1.5">
+              <div className="text-sm font-bold text-violet-300 font-mono">{g.term}</div>
+              <p className="text-xs text-slate-300 leading-relaxed">{g.desc}</p>
             </div>
           ))}
         </div>

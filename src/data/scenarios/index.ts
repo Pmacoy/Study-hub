@@ -8,6 +8,9 @@ import { k8sRbacForbiddenScenario } from './k8sRbacForbidden';
 import { k8sLivenessProbeScenario } from './k8sLivenessProbe';
 import { k8sNodeDiskPressureScenario } from './k8sNodeDiskPressure';
 import { azureVpnBgpScenario } from './azureVpnBgp';
+import { cloudHybridBgpPartitionScenario } from './cloudHybridBgpPartition';
+import { azureMultiRegionDrScenario } from './azureMultiRegionDr';
+import { socIncidentPhishingScenario } from './socIncidentPhishing';
 import { az305MigracaoMultiregiaoScenario } from './az305MigracaoMultiregiao';
 import { az305DataStorageFocusScenario } from './az305DataStorageFocus';
 import { az305IdentityMonitoringFocusScenario } from './az305IdentityMonitoringFocus';
@@ -20,7 +23,11 @@ import { s3BucketPublicScenario } from './s3BucketPublic';
 import { iamCrossAccountScenario } from './iamCrossAccount';
 import { rdsFailoverScenario } from './rdsFailover';
 import { terraformStateLockScenario } from './terraformStateLock';
-import { k8sNetworkPolicyBlocked, awsS3PublicBucket, linuxOomKill, terraformStateLock as tfStateLock, networkingDnsChallenge, pythonSubprocessChallenge } from './challenges';
+import { k8sNetworkPolicyBlocked, awsS3PublicBucket, linuxOomKill, terraformStateLock as tfStateLock, networkingDnsChallenge, pythonSubprocessChallenge, linuxCronTroubleshooting, linuxFhsMisplacement, secopsDataPipelineChallenge, secopsSslTlsChallenge } from './challenges';
+import { systemDesignCacheStampede } from './systemDesignCacheStampede';
+import { systemDesignReplicationLag } from './systemDesignReplicationLag';
+import { gcpIamPrivilegeEscalation } from './gcpIamPrivilegeEscalation';
+import { gcpCloudRunNetworking } from './gcpCloudRunNetworking';
 
 export const ALL_SCENARIOS: Scenario[] = [
   // Kubernetes (do "100 K8s Errors" — treino directo para CKA)
@@ -33,6 +40,9 @@ export const ALL_SCENARIOS: Scenario[] = [
   k8sNodeDiskPressureScenario,
   // Outros domínios / AZ-305
   azureVpnBgpScenario,
+  cloudHybridBgpPartitionScenario,
+  azureMultiRegionDrScenario,
+  socIncidentPhishingScenario,
   az305MigracaoMultiregiaoScenario,
   az305DataStorageFocusScenario,
   az305IdentityMonitoringFocusScenario,
@@ -56,6 +66,14 @@ export const ALL_CHALLENGES: ChallengeScenario[] = [
   tfStateLock,
   networkingDnsChallenge,
   pythonSubprocessChallenge,
+  linuxCronTroubleshooting,
+  linuxFhsMisplacement,
+  secopsDataPipelineChallenge,
+  secopsSslTlsChallenge,
+  systemDesignCacheStampede,
+  systemDesignReplicationLag,
+  gcpIamPrivilegeEscalation,
+  gcpCloudRunNetworking,
 ];
 
 export function scenariosByDomain(domain: Domain): Scenario[] {

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { CheckCircle2, Circle, Play, Github, ExternalLink, Trophy, Filter, X, Rocket } from 'lucide-react';
+import { CheckCircle2, Circle, Play, Github, ExternalLink, Trophy, Filter, X, Rocket, Target, ListChecks, Layers, Zap } from 'lucide-react';
 import type { ProjectItem, ProjectStatus } from '../../types/project';
 import { ALL_PROJECTS, projectsBySection } from '../../data/projects';
 import { PROJECT_SECTIONS } from '../../data/projectSections';
@@ -163,7 +163,7 @@ export default function ProjectsView({ onExit }: Props) {
       {selectedProject && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
           onClick={() => setSelectedProject(null)}>
-          <div className="w-full max-w-lg max-h-[85vh] overflow-y-auto border border-slate-700 bg-[#181926] p-6"
+          <div className="w-full max-w-3xl max-h-[85vh] overflow-y-auto border border-slate-700 bg-[#181926] p-6"
             onClick={e => e.stopPropagation()}>
             <div className="flex items-start justify-between gap-3 mb-4">
               <div>
@@ -180,81 +180,219 @@ export default function ProjectsView({ onExit }: Props) {
               </button>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <div className="text-2xs font-black text-orange-400 uppercase tracking-widest mb-1 font-mono">O que constróis</div>
-                <p className="text-sm text-slate-300 leading-relaxed">{selectedProject.whatYouBuild}</p>
-              </div>
+            {selectedProject.scenario ? (
+              /* DETAILED VIEW (WITH SPECS) */
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="md:col-span-2 space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-orange-400 font-mono text-xs uppercase font-black tracking-widest">
+                      <Target size={14} /> O Cenário
+                    </div>
+                    <p className="text-sm text-slate-300 leading-relaxed bg-[#181926] p-4 border border-slate-800 rounded-sm">
+                      {selectedProject.scenario}
+                    </p>
+                  </div>
+                  
+                  {selectedProject.architectureSteps && selectedProject.architectureSteps.length > 0 && (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-sky-400 font-mono text-xs uppercase font-black tracking-widest">
+                        <Layers size={14} /> Passo a Passo
+                      </div>
+                      <div className="space-y-2">
+                        {selectedProject.architectureSteps.map((step, idx) => (
+                          <div key={idx} className="flex items-start gap-3 bg-slate-900/50 p-3 border border-slate-800">
+                            <span className="shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-sky-500/20 text-sky-300 text-2xs font-bold font-mono border border-sky-500/30">
+                              {idx + 1}
+                            </span>
+                            <span className="text-sm text-slate-300">{step}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
-              <div>
-                <div className="text-2xs font-black text-sky-400 uppercase tracking-widest mb-2 font-mono">Conceitos cobertos</div>
-                <div className="flex flex-wrap gap-1.5">
-                  {selectedProject.concepts.map(c => (
-                    <span key={c} className="text-xs px-2 py-1 border border-sky-500/20 text-sky-200 font-mono">{c}</span>
-                  ))}
+                  {selectedProject.acceptanceCriteria && selectedProject.acceptanceCriteria.length > 0 && (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs uppercase font-black tracking-widest">
+                        <ListChecks size={14} /> Critérios de Aceite (DoD)
+                      </div>
+                      <ul className="space-y-2">
+                        {selectedProject.acceptanceCriteria.map((crit, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-sm text-slate-300">
+                            <CheckCircle2 size={16} className="text-emerald-500/50 mt-0.5 shrink-0" />
+                            <span>{crit}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {selectedProject.bonusChallenge && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-amber-400 font-mono text-xs uppercase font-black tracking-widest">
+                        <Zap size={14} /> Desafio Bónus
+                      </div>
+                      <p className="text-sm text-amber-100/70 bg-amber-500/5 p-3 border border-amber-500/20 italic">
+                        {selectedProject.bonusChallenge}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              </div>
 
-              <div>
-                <div className="text-2xs font-black text-slate-400 uppercase tracking-widest mb-2 font-mono">Stack</div>
-                <div className="flex flex-wrap gap-1.5">
-                  {selectedProject.stack.map(t => (
-                    <span key={t} className="text-xs px-2 py-1 bg-slate-800 text-slate-300 font-mono">{t}</span>
-                  ))}
-                </div>
-              </div>
+                <div className="space-y-6">
+                  <div>
+                    <div className="text-2xs font-black text-slate-400 uppercase tracking-widest mb-1 font-mono">O que constróis</div>
+                    <p className="text-sm text-slate-300 leading-relaxed">{selectedProject.whatYouBuild}</p>
+                  </div>
 
-              <div className="p-3 bg-violet-500/5 border border-violet-500/20">
-                <div className="text-2xs font-black text-violet-400 uppercase tracking-widest mb-1 font-mono">Porque importa</div>
-                <p className="text-sm text-violet-100 leading-relaxed italic">{selectedProject.whyItMatters}</p>
-              </div>
+                  <div>
+                    <div className="text-2xs font-black text-sky-400 uppercase tracking-widest mb-2 font-mono">Conceitos</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedProject.concepts.map(c => (
+                        <span key={c} className="text-xs px-2 py-1 border border-sky-500/20 text-sky-200 font-mono">{c}</span>
+                      ))}
+                    </div>
+                  </div>
 
-              {/* Status control */}
-              <div>
-                <div className="text-2xs font-black text-slate-400 uppercase tracking-widest mb-2 font-mono">Estado</div>
-                <div className="grid grid-cols-3 gap-2">
-                  {(['not-started', 'in-progress', 'done'] as ProjectStatus[]).map(st => {
-                    const cur = getEntry(selectedProject.id)?.status ?? 'not-started';
-                    const labels = { 'not-started': 'Por fazer', 'in-progress': 'Em curso', 'done': 'Concluído' };
-                    return (
-                      <button key={st} onClick={() => setStatus(selectedProject.id, st)}
-                        className={`py-2 border text-xs font-semibold transition-all ${
-                          cur === st
-                            ? st === 'done' ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300'
-                              : st === 'in-progress' ? 'border-amber-500/40 bg-amber-500/15 text-amber-300'
-                              : 'border-slate-600 bg-slate-800 text-slate-300'
-                            : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'
-                        }`}>
-                        {labels[st]}
+                  <div>
+                    <div className="text-2xs font-black text-slate-400 uppercase tracking-widest mb-2 font-mono">Stack</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedProject.stack.map(t => (
+                        <span key={t} className="text-xs px-2 py-1 bg-slate-800 text-slate-300 font-mono">{t}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-violet-500/5 border border-violet-500/20">
+                    <div className="text-2xs font-black text-violet-400 uppercase tracking-widest mb-1 font-mono">Porque importa</div>
+                    <p className="text-sm text-violet-100 leading-relaxed italic">{selectedProject.whyItMatters}</p>
+                  </div>
+
+                  {/* Status control */}
+                  <div>
+                    <div className="text-2xs font-black text-slate-400 uppercase tracking-widest mb-2 font-mono">Estado</div>
+                    <div className="grid grid-cols-1 gap-2">
+                      {(['not-started', 'in-progress', 'done'] as ProjectStatus[]).map(st => {
+                        const cur = getEntry(selectedProject.id)?.status ?? 'not-started';
+                        const labels = { 'not-started': 'Por fazer', 'in-progress': 'Em curso', 'done': 'Concluído' };
+                        return (
+                          <button key={st} onClick={() => setStatus(selectedProject.id, st)}
+                            className={`py-2 border text-xs font-semibold transition-all ${
+                              cur === st
+                                ? st === 'done' ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300'
+                                  : st === 'in-progress' ? 'border-amber-500/40 bg-amber-500/15 text-amber-300'
+                                  : 'border-slate-600 bg-slate-800 text-slate-300'
+                                : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'
+                            }`}>
+                            {labels[st]}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Repo URL */}
+                  <div>
+                    <div className="text-2xs font-black text-slate-400 uppercase tracking-widest mb-2 font-mono">Repositório</div>
+                    <div className="flex flex-col gap-2">
+                      <input
+                        value={repoInput}
+                        onChange={e => setRepoInput(e.target.value)}
+                        placeholder="https://github.com/..."
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-800 text-sm text-slate-200 placeholder-slate-600 focus:border-orange-500/40 focus:outline-none font-mono"
+                      />
+                      <button onClick={() => { setRepoUrl(selectedProject.id, repoInput); }}
+                        className="w-full px-3 py-2 border border-orange-500/40 bg-orange-500/10 text-orange-300 text-sm font-semibold hover:bg-orange-500/20 font-mono">
+                        Guardar Link
                       </button>
-                    );
-                  })}
+                    </div>
+                    {getEntry(selectedProject.id)?.repoUrl && (
+                      <a href={getEntry(selectedProject.id)!.repoUrl} target="_blank" rel="noopener noreferrer"
+                        className="mt-2 inline-flex items-center gap-1 text-xs text-orange-300 hover:text-orange-200 font-mono">
+                        <Github size={12} /> Abrir repo <ExternalLink size={10} />
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
+            ) : (
+              /* BASIC VIEW (OLD LAYOUT) */
+              <div className="space-y-4">
+                <div>
+                  <div className="text-2xs font-black text-orange-400 uppercase tracking-widest mb-1 font-mono">O que constróis</div>
+                  <p className="text-sm text-slate-300 leading-relaxed">{selectedProject.whatYouBuild}</p>
+                </div>
 
-              {/* Repo URL */}
-              <div>
-                <div className="text-2xs font-black text-slate-400 uppercase tracking-widest mb-2 font-mono">Link do repositório</div>
-                <div className="flex gap-2">
-                  <input
-                    value={repoInput}
-                    onChange={e => setRepoInput(e.target.value)}
-                    placeholder="https://github.com/user/projecto"
-                    className="flex-1 px-3 py-2 bg-slate-900 border border-slate-800 text-sm text-slate-200 placeholder-slate-600 focus:border-orange-500/40 focus:outline-none font-mono"
-                  />
-                  <button onClick={() => { setRepoUrl(selectedProject.id, repoInput); }}
-                    className="px-3 py-2 border border-orange-500/40 bg-orange-500/10 text-orange-300 text-sm font-semibold hover:bg-orange-500/20 font-mono">
-                    Guardar
-                  </button>
+                <div>
+                  <div className="text-2xs font-black text-sky-400 uppercase tracking-widest mb-2 font-mono">Conceitos cobertos</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedProject.concepts.map(c => (
+                      <span key={c} className="text-xs px-2 py-1 border border-sky-500/20 text-sky-200 font-mono">{c}</span>
+                    ))}
+                  </div>
                 </div>
-                {getEntry(selectedProject.id)?.repoUrl && (
-                  <a href={getEntry(selectedProject.id)!.repoUrl} target="_blank" rel="noopener noreferrer"
-                    className="mt-2 inline-flex items-center gap-1 text-xs text-orange-300 hover:text-orange-200 font-mono">
-                    <Github size={12} /> Abrir repositório <ExternalLink size={10} />
-                  </a>
-                )}
+
+                <div>
+                  <div className="text-2xs font-black text-slate-400 uppercase tracking-widest mb-2 font-mono">Stack</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedProject.stack.map(t => (
+                      <span key={t} className="text-xs px-2 py-1 bg-slate-800 text-slate-300 font-mono">{t}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="p-3 bg-violet-500/5 border border-violet-500/20">
+                  <div className="text-2xs font-black text-violet-400 uppercase tracking-widest mb-1 font-mono">Porque importa</div>
+                  <p className="text-sm text-violet-100 leading-relaxed italic">{selectedProject.whyItMatters}</p>
+                </div>
+
+                {/* Status control */}
+                <div>
+                  <div className="text-2xs font-black text-slate-400 uppercase tracking-widest mb-2 font-mono">Estado</div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(['not-started', 'in-progress', 'done'] as ProjectStatus[]).map(st => {
+                      const cur = getEntry(selectedProject.id)?.status ?? 'not-started';
+                      const labels = { 'not-started': 'Por fazer', 'in-progress': 'Em curso', 'done': 'Concluído' };
+                      return (
+                        <button key={st} onClick={() => setStatus(selectedProject.id, st)}
+                          className={`py-2 border text-xs font-semibold transition-all ${
+                            cur === st
+                              ? st === 'done' ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300'
+                                : st === 'in-progress' ? 'border-amber-500/40 bg-amber-500/15 text-amber-300'
+                                : 'border-slate-600 bg-slate-800 text-slate-300'
+                              : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'
+                          }`}>
+                          {labels[st]}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Repo URL */}
+                <div>
+                  <div className="text-2xs font-black text-slate-400 uppercase tracking-widest mb-2 font-mono">Link do repositório</div>
+                  <div className="flex gap-2">
+                    <input
+                      value={repoInput}
+                      onChange={e => setRepoInput(e.target.value)}
+                      placeholder="https://github.com/user/projecto"
+                      className="flex-1 px-3 py-2 bg-slate-900 border border-slate-800 text-sm text-slate-200 placeholder-slate-600 focus:border-orange-500/40 focus:outline-none font-mono"
+                    />
+                    <button onClick={() => { setRepoUrl(selectedProject.id, repoInput); }}
+                      className="px-3 py-2 border border-orange-500/40 bg-orange-500/10 text-orange-300 text-sm font-semibold hover:bg-orange-500/20 font-mono">
+                      Guardar
+                    </button>
+                  </div>
+                  {getEntry(selectedProject.id)?.repoUrl && (
+                    <a href={getEntry(selectedProject.id)!.repoUrl} target="_blank" rel="noopener noreferrer"
+                      className="mt-2 inline-flex items-center gap-1 text-xs text-orange-300 hover:text-orange-200 font-mono">
+                      <Github size={12} /> Abrir repositório <ExternalLink size={10} />
+                    </a>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}

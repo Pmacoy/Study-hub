@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { Brain, Cloud, GraduationCap, RotateCcw, Server, Sparkles, Terminal, ChevronLeft, Globe, Map as MapIcon, Rocket, Target } from 'lucide-react';
+import { Brain, Cloud, GraduationCap, RotateCcw, Server, Sparkles, Terminal, ChevronLeft, Globe, Map as MapIcon, 
+Rocket, Target, Lock, Cpu, Database } from 'lucide-react';
 import GamificationToasts from './components/shared/GamificationToasts';
 import { ProgressBreakdown } from './types/progress';
 import type { SidebarMenuGroup } from './types/navigation';
@@ -13,7 +14,7 @@ import { DOMAINS } from './types/platform';
 import type { DevOpsTab, StudyTab as DevOpsStudyTab } from './types/devops';
 import { STUDY_TABS as DEVOPS_STUDY_TABS, isDevOpsTab } from './types/devops';
 import { TAB_META as DEVOPS_TAB_META } from './data/tabMeta';
-import { STORAGE_KEYS, AZURE_STORAGE_KEYS, NETWORKING_STORAGE_KEYS, AWS_STORAGE_KEYS, PLATFORM_STORAGE_KEYS, SYSTEM_DESIGN_STORAGE_KEYS, DISTRIBUTED_SYSTEMS_STORAGE_KEYS, ALGORITHMS_STORAGE_KEYS } from './data/storageKeys';
+import { STORAGE_KEYS, AZURE_STORAGE_KEYS, NETWORKING_STORAGE_KEYS, AWS_STORAGE_KEYS, GCP_STORAGE_KEYS, OCI_STORAGE_KEYS, PLATFORM_STORAGE_KEYS, SYSTEM_DESIGN_STORAGE_KEYS, DISTRIBUTED_SYSTEMS_STORAGE_KEYS, ALGORITHMS_STORAGE_KEYS, DATA_STORAGE_KEYS, CYBER_STORAGE_KEYS, AI_STORAGE_KEYS } from './data/storageKeys';
 import { menuGroups as devopsMenuGroups } from './data/navigation';
 import { systemDesignMenuGroups } from './data/systemDesign/navigation';
 import { SYSTEM_DESIGN_TAB_META } from './data/systemDesign/tabMeta';
@@ -25,11 +26,29 @@ import { algorithmsMenuGroups } from './data/algorithms/navigation';
 import { ALGORITHMS_TAB_META } from './data/algorithms/tabMeta';
 import { ALGORITHMS_STUDY_TABS, isAlgorithmsTab } from './types/algorithms';
 
+// Data Engineering
+import type { DataEngineeringTab, DataEngineeringStudyTab } from './types/dataEngineering';
+import { DATA_ENGINEERING_STUDY_TABS, isDataEngineeringTab } from './types/dataEngineering';
+import { DATA_ENGINEERING_TAB_META } from './data/dataEngineering/tabMeta';
+import { dataEngineeringMenuGroups } from './data/dataEngineering/navigation';
+
+// Cybersecurity
+import type { CybersecurityTab, CybersecurityStudyTab } from './types/cybersecurity';
+import { CYBERSECURITY_STUDY_TABS, isCybersecurityTab } from './types/cybersecurity';
+import { CYBERSECURITY_TAB_META } from './data/cybersecurity/tabMeta';
+import { cybersecurityMenuGroups } from './data/cybersecurity/navigation';
+
+// AI/ML
+import type { AiMlTab, AiMlStudyTab } from './types/aiml';
+import { AIML_STUDY_TABS, isAiMlTab } from './types/aiml';
+import { AIML_TAB_META } from './data/aiml/tabMeta';
+import { aimlMenuGroups } from './data/aiml/navigation';
+
 // Azure types & data
 import type { AzureTab, StudyTab as AzureStudyTab } from './types/azure';
 import { STUDY_TABS as AZURE_STUDY_TABS, isAzureTab } from './types/azure';
 import { TAB_META as AZURE_TAB_META } from './data/azure/tabMeta';
-import { menuGroups as azureMenuGroups } from './data/azure/navigation';
+import { getAzureMenuForCert } from './data/azure/navigation';
 import { knowledgeData as AZURE_KNOWLEDGE_DATA } from './data/azure/knowledgeBase';
 
 // Networking types
@@ -41,7 +60,12 @@ import type { PythonTab, PythonStudyTab } from './types/python';
 import { PYTHON_STUDY_TABS, isPythonTab } from './types/python';
 import { PYTHON_STORAGE_KEYS } from './data/storageKeys';
 
-// Certifications (per-cloud domain)
+import { CITRIX_STUDY_TABS, isCitrixTab, type CitrixTab, type CitrixStudyTab } from './types/citrix';
+import { CITRIX_TAB_META } from './data/citrix/tabMeta';
+import { citrixMenuGroups } from './data/citrix/navigation';
+import { CITRIX_STORAGE_KEYS } from './data/storageKeys';
+import CitrixSimulator from './components/citrix/CitrixSimulator';
+import CitrixExamSimulator from './components/citrix/CitrixExamSimulator';
 import { getCertsFor } from './types/certification';
 import CertHub from './components/shared/CertHub';
 import ComingSoonCert from './components/shared/ComingSoonCert';
@@ -51,6 +75,8 @@ import DevOpsIntroSimulator from './components/devops/DevOpsIntroSimulator';
 import LinuxSimulator from './components/devops/LinuxSimulator';
 import GitSimulator from './components/devops/GitSimulator';
 import DockerSimulator from './components/devops/DockerSimulator';
+import FinOpsSimulator from './components/devops/FinOpsSimulator';
+import ShellScriptingSimulator from './components/devops/ShellScriptingSimulator';
 import KubernetesSimulator from './components/devops/KubernetesSimulator';
 import HelmSimulator from './components/devops/HelmSimulator';
 import CiCdSimulator from './components/devops/CiCdSimulator';
@@ -71,6 +97,8 @@ import CkaExamSimulator from './components/devops/CkaExamSimulator';
 import SystemDesignSimulator from './components/systemDesign/SystemDesignSimulator';
 import DistributedSystemsSimulator from './components/distributedSystems/DistributedSystemsSimulator';
 import AlgorithmsSimulator from './components/algorithms/AlgorithmsSimulator';
+import CybersecuritySimulator from './components/cybersecurity/CybersecuritySimulator';
+import AiMlSimulator from './components/aiml/AiMlSimulator';
 
 // Azure components
 import AzureIdentitySimulator from './components/azure/AzureIdentitySimulator';
@@ -83,6 +111,13 @@ import AzureMonitorSimulator from './components/azure/AzureMonitorSimulator';
 import AzureContainersSimulator from './components/azure/AzureContainersSimulator';
 import AzureExamSimulator from './components/azure/AzureExamSimulator';
 import AzureDevOpsExamSimulator from './components/azure/AzureDevOpsExamSimulator';
+import AzureFundamentalsSimulator from './components/azure/AzureFundamentalsSimulator';
+import AzureArchitectureModule from './components/azure/AzureArchitectureModule';
+import AzureDataDesignModule from './components/azure/AzureDataDesignModule';
+import AzureBcdrDesignModule from './components/azure/AzureBcdrDesignModule';
+import AzurePipelinesModule from './components/azure/AzurePipelinesModule';
+import AzureSourceControlModule from './components/azure/AzureSourceControlModule';
+import AzureDevSecOpsModule from './components/azure/AzureDevSecOpsModule';
 // Networking components
 import NetworkingSimulator from './components/networking/NetworkingSimulator';
 import NetworkingExamSimulator from './components/networking/NetworkingExamSimulator';
@@ -96,6 +131,7 @@ import Sidebar from './components/layout/Sidebar';
 import TerminalTitleBar from './components/layout/TerminalTitleBar';
 import DashboardHome from './components/layout/DashboardHome';
 import DomainDashboard from './components/shared/DomainDashboard';
+import GcpSimulator from './components/gcp/GcpSimulator';
 import PlatformLanding from './components/layout/PlatformLanding';
 import QuickStat from './components/shared/QuickStat';
 import ResetProgressModal from './components/layout/ResetProgressModal';
@@ -125,10 +161,48 @@ import TerminalPlayer from './components/terminal/TerminalPlayer';
 // AWS SAA-C03
 import type { AwsTab, AwsStudyTab } from './types/aws';
 import { ALL_AWS_TABS, AWS_STUDY_TABS, isAwsTab } from './types/aws';
+import type { GcpTab, GcpStudyTab } from './types/gcp';
+import { ALL_GCP_TABS, GCP_STUDY_TABS, isGcpTab } from './types/gcp';
 import { AWS_TAB_META } from './data/aws/tabMeta';
 import { awsMenuGroups } from './data/aws/navigation';
+import { GCP_TAB_META } from './data/gcp/tabMeta';
+import { gcpMenuGroups } from './data/gcp/navigation';
 import AwsExamSimulator from './components/aws/AwsExamSimulator';
 import { knowledgeData as AWS_KNOWLEDGE_DATA } from './data/aws/knowledgeBase';
+
+// Azure Data Imports
+import { ALL_QUESTIONS as AZURE_QUESTIONS } from './data/azure/examQuestions';
+
+// GCP Data Imports
+import { GCP_ACE_QUESTIONS } from './data/gcp/examQuestions';
+
+// OCI
+import type { OciTab, OciStudyTab } from './types/oci';
+import { ALL_OCI_TABS, OCI_STUDY_TABS, isOciTab } from './types/oci';
+import { OCI_TAB_META } from './data/oci/tabMeta';
+import { getOciMenuForCert } from './data/oci/navigation';
+import OciIamModule from './components/oci/OciIamModule';
+import OciComputeModule from './components/oci/OciComputeModule';
+import OciNetworkingModule from './components/oci/OciNetworkingModule';
+import OciStorageModule from './components/oci/OciStorageModule';
+import OciDatabaseModule from './components/oci/OciDatabaseModule';
+import OciArchitectureModule from './components/oci/OciArchitectureModule';
+
+// Shared Exam Simulator
+import SharedExamSimulator, { type ExamQuestion } from './components/shared/SharedExamSimulator';
+import { OCI_FOUNDATIONS_QUESTIONS, OCI_ARCHITECT_QUESTIONS } from './data/oci/examQuestions';
+import { CYBER_EXAM_QUESTIONS, CYBER_TOPICS } from './data/cybersecurity/examQuestions';
+import { AIML_EXAM_QUESTIONS, AIML_TOPICS } from './data/aiml/examQuestions';
+import { Building2 } from 'lucide-react';
+
+const OCI_CONTENT: Record<OciStudyTab, ReactNode> = {
+  iam: <OciIamModule />,
+  compute: <OciComputeModule />,
+  networking: <OciNetworkingModule />,
+  storage: <OciStorageModule />,
+  database: <OciDatabaseModule />,
+  architecture: <OciArchitectureModule />,
+};
 
 // Learning Path
 import LearningPathView from './components/learning/LearningPathView';
@@ -141,7 +215,7 @@ import ProjectsView from './components/projects/ProjectsView';
 const DEVOPS_CONTENT: Record<DevOpsStudyTab, ReactNode> = {
   'devops-intro': <DevOpsIntroSimulator />,
   linux: <LinuxSimulator />,
-  'shell-scripting': <div className="p-10 text-center text-slate-400">Conteúdo em desenvolvimento</div>,
+  'shell-scripting': <ShellScriptingSimulator />,
   git: <GitSimulator />,
   docker: <DockerSimulator />,
   kubernetes: <KubernetesSimulator />,
@@ -157,7 +231,7 @@ const DEVOPS_CONTENT: Record<DevOpsStudyTab, ReactNode> = {
   mlops: <MlopsSimulator />,
   'service-mesh': <ServiceMeshSimulator />,
   gitops: <GitOpsSimulator />,
-  finops: <div className="p-10 text-center text-slate-400">Conteúdo em desenvolvimento</div>,
+  finops: <FinOpsSimulator />,
   sre: <SreSimulator />,
 };
 
@@ -183,6 +257,9 @@ const DISTRIBUTED_SYSTEMS_CONTENT: Record<import('./types/distributedSystems').D
 
 // ── Azure content map ────────────────────────────────────────────────────
 const AZURE_CONTENT: Record<AzureStudyTab, ReactNode> = {
+  concepts: <AzureFundamentalsSimulator tab="concepts" />,
+  architecture: <AzureFundamentalsSimulator tab="architecture" />,
+  management: <AzureFundamentalsSimulator tab="management" />,
   identity: <AzureIdentitySimulator />,
   governance: <AzureGovernanceSimulator />,
   rbac: <AzureRbacSimulator />,
@@ -191,6 +268,12 @@ const AZURE_CONTENT: Record<AzureStudyTab, ReactNode> = {
   compute: <AzureComputeSimulator />,
   monitor: <AzureMonitorSimulator />,
   containers: <AzureContainersSimulator />,
+  'design-infra': <AzureArchitectureModule />,
+  'design-data': <AzureDataDesignModule />,
+  'design-bcdr': <AzureBcdrDesignModule />,
+  cicd: <AzurePipelinesModule />,
+  'source-control': <AzureSourceControlModule />,
+  devsecops: <AzureDevSecOpsModule />,
 };
 
 // ── Color accents per domain ─────────────────────────────────────────────
@@ -204,10 +287,16 @@ const DOMAIN_ACCENT: Record<Domain, string> = {
   'system-design': 'rose',
   'distributed-systems': 'teal',
   'algorithms': 'cyan',
+  oci: 'rose',
+  'data-engineering': 'sky',
+  'cybersecurity': 'red',
+  'ai-ml': 'fuchsia',
+  'citrix': 'violet',
 };
 
 const ACCENT_CLASSES: Record<string, { active: string; bar: string; label: string }> = {
   violet:  { active: 'border-violet-500/20 bg-violet-500/15 text-violet-300',   bar: 'from-violet-500 to-fuchsia-500',  label: 'text-violet-400' },
+  fuchsia: { active: 'border-fuchsia-500/20 bg-fuchsia-500/15 text-fuchsia-300', bar: 'from-fuchsia-500 to-pink-500',   label: 'text-fuchsia-400' },
   sky:     { active: 'border-sky-500/20 bg-sky-500/15 text-sky-300',             bar: 'from-sky-500 to-blue-500',         label: 'text-sky-400' },
   emerald: { active: 'border-emerald-500/20 bg-emerald-500/15 text-emerald-300', bar: 'from-emerald-500 to-teal-500',     label: 'text-emerald-400' },
   amber:   { active: 'border-amber-500/20 bg-amber-500/15 text-amber-300',       bar: 'from-amber-500 to-orange-500',     label: 'text-amber-400' },
@@ -215,16 +304,18 @@ const ACCENT_CLASSES: Record<string, { active: string; bar: string; label: strin
   rose:    { active: 'border-rose-500/20 bg-rose-500/15 text-rose-300',           bar: 'from-rose-500 to-pink-500',        label: 'text-rose-400' },
   teal:    { active: 'border-teal-500/20 bg-teal-500/15 text-teal-300',           bar: 'from-teal-500 to-cyan-500',        label: 'text-teal-400' },
   cyan:    { active: 'border-cyan-500/20 bg-cyan-500/15 text-cyan-300',           bar: 'from-cyan-500 to-blue-500',        label: 'text-cyan-400' },
+  red:     { active: 'border-red-500/20 bg-red-500/15 text-red-300',              bar: 'from-red-500 to-orange-500',       label: 'text-red-400' },
 };
 
 // ── Networking tab meta ──────────────────────────────────────────────────
 const NETWORKING_TAB_META: Record<NetworkingStudyTab, { label: string; subtitle: string }> = {
-  'ip-calc':       { label: 'Calculadora IP & Sub-redes', subtitle: 'CIDR, broadcast, hosts e árvore de subnets' },
+  'ip-calc':       { label: 'Endereçamento IP & CIDR', subtitle: 'CIDR, broadcast, hosts e árvore de subnets' },
   'transport':     { label: 'Anatomia do Pacote & TCP', subtitle: 'Campos TCP/UDP + 3-Way Handshake' },
   'ip-addressing': { label: 'Endereçamento IP', subtitle: 'Classes, IPs privados, NAT e IPv6' },
   'application':   { label: 'Camada Aplicação', subtitle: 'DNS lookup + verbos e status HTTP/REST' },
   'routing':       { label: 'Roteamento L3', subtitle: 'Longest Prefix Match e tabela de rotas' },
   'security-net':  { label: 'Segurança & Diagnóstico', subtitle: 'ARP, TLS Handshake e Traceroute' },
+  'bgp-cloud':     { label: 'BGP & Cloud Hybrid', subtitle: 'BGP Routing, DirectConnect e Túneis IPsec' },
 };
 
 // ── Networking navigation ────────────────────────────────────────────────
@@ -239,19 +330,25 @@ const NETWORKING_MENU_GROUPS = [
     ],
   },
   {
-    title: 'Fundamentos',
+    title: 'Nível 1 · Fundamentos',
     items: [
-      { id: 'ip-calc' as NetworkingTab,       label: 'Calculadora IP',    sublabel: 'CIDR · Subnets · Hosts', icon: Server },
-      { id: 'transport' as NetworkingTab,     label: 'Pacotes & TCP',     sublabel: 'Anatomia · Handshake',   icon: Network },
-      { id: 'ip-addressing' as NetworkingTab, label: 'Endereçamento IP',  sublabel: 'Classes · NAT · IPv6',   icon: Globe2 },
+      { id: 'ip-calc' as NetworkingTab,       label: 'Endereçamento IP & CIDR',    sublabel: 'CIDR · Subnets · Hosts', icon: Server },
+      { id: 'ip-addressing' as NetworkingTab, label: 'Classes & NAT / IPv6',  sublabel: 'Privados · Públicos · IPv6',   icon: Globe2 },
     ],
   },
   {
-    title: 'Avançado',
+    title: 'Nível 2 · Intermédio',
     items: [
+      { id: 'transport' as NetworkingTab,     label: 'Pacotes & TCP',     sublabel: 'Anatomia · Handshake',   icon: Network },
       { id: 'application' as NetworkingTab,  label: 'Camada Aplicação', sublabel: 'DNS · HTTP · REST',        icon: Wifi },
+    ],
+  },
+  {
+    title: 'Nível 3 · Avançado',
+    items: [
       { id: 'routing' as NetworkingTab,      label: 'Roteamento L3',    sublabel: 'Longest Prefix Match',     icon: Activity },
       { id: 'security-net' as NetworkingTab, label: 'Segurança & Diag', sublabel: 'ARP · TLS · Traceroute',  icon: Shield },
+      { id: 'bgp-cloud' as NetworkingTab,    label: 'BGP & Cloud Hybrid', sublabel: 'BGP · VPN · DirectConnect', icon: Globe2 },
     ],
   },
 ];
@@ -267,6 +364,8 @@ const PYTHON_TAB_META: Record<PythonStudyTab, { label: string; subtitle: string 
 };
 
 import { Code2, BookOpen as BookOpenIcon, Cpu as CpuIcon, FileCode, FlaskConical, Layers as LayersIcon } from 'lucide-react';
+import { DOMAIN_RESOURCES } from './data/domainResources';
+import StudyKitSection from './components/shared/StudyKitSection';
 
 const PYTHON_MENU_GROUPS = [
   {
@@ -329,6 +428,10 @@ export default function App() {
   const [systemDesignTab, setSystemDesignTab] = useState<import('./types/systemDesign').SystemDesignTab>('dashboard');
   const [distributedSystemsTab, setDistributedSystemsTab] = useState<import('./types/distributedSystems').DistributedSystemsTab>('dashboard');
   const [algorithmsTab, setAlgorithmsTab] = useState<import('./types/algorithms').AlgorithmsTab>('dashboard');
+  const [dataTab, setDataTab] = useState<DataEngineeringTab>('dashboard');
+  const [cyberTab, setCyberTab] = useState<CybersecurityTab>('dashboard');
+  const [aimlTab, setAimlTab] = useState<AiMlTab>('dashboard');
+  const [citrixTab, setCitrixTab] = useState<CitrixTab>('dashboard');
 
   // ── Per-domain visited tabs ──────────────────────────────────────────
   const [devopsVisited, setDevopsVisited] = useState<Set<DevOpsTab>>(new Set());
@@ -338,10 +441,22 @@ export default function App() {
   const [systemDesignVisited, setSystemDesignVisited] = useState<Set<import('./types/systemDesign').SystemDesignTab>>(new Set());
   const [distributedSystemsVisited, setDistributedSystemsVisited] = useState<Set<import('./types/distributedSystems').DistributedSystemsTab>>(new Set());
   const [algorithmsVisited, setAlgorithmsVisited] = useState<Set<import('./types/algorithms').AlgorithmsTab>>(new Set());
+  const [dataVisited, setDataVisited] = useState<Set<DataEngineeringTab>>(new Set());
+  const [cyberVisited, setCyberVisited] = useState<Set<CybersecurityTab>>(new Set());
+  const [aimlVisited, setAimlVisited] = useState<Set<AiMlTab>>(new Set());
+  const [citrixVisited, setCitrixVisited] = useState<Set<CitrixTab>>(new Set());
 
   // ── AWS SAA-C03 tabs ────────────────────────────────────────────────
   const [awsTab, setAwsTab] = useState<AwsTab>('dashboard');
   const [awsVisited, setAwsVisited] = useState<Set<AwsTab>>(new Set());
+
+  // ── GCP ACE tabs ───────────────────────────────────────────────────
+  const [gcpTab, setGcpTab] = useState<GcpTab>('dashboard');
+  const [gcpVisited, setGcpVisited] = useState<Set<GcpTab>>(new Set());
+
+  // ── OCI tabs ───────────────────────────────────────────────────
+  const [ociTab, setOciTab] = useState<OciTab>('dashboard');
+  const [ociVisited, setOciVisited] = useState<Set<OciTab>>(new Set());
 
   // ── Active certification per cloud domain (Azure, AWS) ─────────────────
   // Default: null = show cert hub; else = show cert study modules
@@ -349,12 +464,17 @@ export default function App() {
 
   const [showResetModal, setShowResetModal] = useState(false);
 
+  // ── Hydration guard ──────────────────────────────────────────────────
+  const [hydrated, setHydrated] = useState(false);
+
   // ── Persist & restore ────────────────────────────────────────────────
   useEffect(() => {
     try {
       const d = localStorage.getItem(PLATFORM_STORAGE_KEYS.activeDomain) as Domain | null;
-      if (d && ['devops', 'azure', 'aws', 'networking', 'python', 'system-design', 'distributed-systems', 'algorithms'].includes(d)) setActiveDomain(d);
+      if (d && ['devops', 'azure', 'aws', 'gcp', 'oci', 'networking', 'python', 'system-design', 'distributed-systems', 'algorithms'].includes(d)) setActiveDomain(d);
+    } catch { /* ignore */ }
 
+    try {
       const dt = localStorage.getItem(STORAGE_KEYS.activeTab);
       if (dt && isDevOpsTab(dt)) setDevopsTab(dt);
       const dv = localStorage.getItem(STORAGE_KEYS.visitedTabs);
@@ -362,7 +482,9 @@ export default function App() {
         const parsed = JSON.parse(dv);
         if (Array.isArray(parsed)) setDevopsVisited(new Set(parsed.filter(isDevOpsTab)));
       }
+    } catch { /* ignore */ }
 
+    try {
       const at = localStorage.getItem(AZURE_STORAGE_KEYS.activeTab);
       if (at && isAzureTab(at)) setAzureTab(at);
       const av = localStorage.getItem(AZURE_STORAGE_KEYS.visitedTabs);
@@ -370,7 +492,9 @@ export default function App() {
         const parsed = JSON.parse(av);
         if (Array.isArray(parsed)) setAzureVisited(new Set(parsed.filter(isAzureTab)));
       }
+    } catch { /* ignore */ }
 
+    try {
       const pt = localStorage.getItem(PYTHON_STORAGE_KEYS.activeTab);
       if (pt && isPythonTab(pt)) setPythonTab(pt);
       const pv = localStorage.getItem(PYTHON_STORAGE_KEYS.visitedTabs);
@@ -378,7 +502,9 @@ export default function App() {
         const parsed = JSON.parse(pv);
         if (Array.isArray(parsed)) setPythonVisited(new Set(parsed.filter(isPythonTab)));
       }
+    } catch { /* ignore */ }
 
+    try {
       // Networking
       const nt = localStorage.getItem(NETWORKING_STORAGE_KEYS.activeTab);
       if (nt && isNetworkingTab(nt)) setNetworkingTab(nt);
@@ -387,7 +513,9 @@ export default function App() {
         const parsed = JSON.parse(nv);
         if (Array.isArray(parsed)) setNetworkingVisited(new Set(parsed.filter(isNetworkingTab)));
       }
+    } catch { /* ignore */ }
 
+    try {
       // AWS
       const awt = localStorage.getItem(AWS_STORAGE_KEYS.activeTab);
       if (awt && isAwsTab(awt)) setAwsTab(awt);
@@ -396,7 +524,31 @@ export default function App() {
         const parsed = JSON.parse(av2);
         if (Array.isArray(parsed)) setAwsVisited(new Set(parsed.filter(isAwsTab)));
       }
+    } catch { /* ignore */ }
 
+    try {
+      // GCP
+      const gcpt = localStorage.getItem(GCP_STORAGE_KEYS.activeTab);
+      if (gcpt && isGcpTab(gcpt)) setGcpTab(gcpt);
+      const gcpv = localStorage.getItem(GCP_STORAGE_KEYS.visitedTabs);
+      if (gcpv) {
+        const parsed = JSON.parse(gcpv);
+        if (Array.isArray(parsed)) setGcpVisited(new Set(parsed.filter(isGcpTab)));
+      }
+    } catch { /* ignore */ }
+
+    try {
+      // OCI
+      const ocit = localStorage.getItem(OCI_STORAGE_KEYS.activeTab);
+      if (ocit && isOciTab(ocit)) setOciTab(ocit);
+      const ociv = localStorage.getItem(OCI_STORAGE_KEYS.visitedTabs);
+      if (ociv) {
+        const parsed = JSON.parse(ociv);
+        if (Array.isArray(parsed)) setOciVisited(new Set(parsed.filter(isOciTab)));
+      }
+    } catch { /* ignore */ }
+
+    try {
       // System Design
       const sdt = localStorage.getItem(SYSTEM_DESIGN_STORAGE_KEYS.activeTab);
       if (sdt && isSystemDesignTab(sdt)) setSystemDesignTab(sdt);
@@ -405,7 +557,9 @@ export default function App() {
         const parsed = JSON.parse(sdv);
         if (Array.isArray(parsed)) setSystemDesignVisited(new Set(parsed.filter(isSystemDesignTab)));
       }
+    } catch { /* ignore */ }
 
+    try {
       // Distributed Systems
       const ddt = localStorage.getItem(DISTRIBUTED_SYSTEMS_STORAGE_KEYS.activeTab);
       if (ddt && isDistributedSystemsTab(ddt)) setDistributedSystemsTab(ddt);
@@ -414,7 +568,9 @@ export default function App() {
         const parsed = JSON.parse(ddv);
         if (Array.isArray(parsed)) setDistributedSystemsVisited(new Set(parsed.filter(isDistributedSystemsTab)));
       }
+    } catch { /* ignore */ }
 
+    try {
       // Algorithms
       const alt = localStorage.getItem(ALGORITHMS_STORAGE_KEYS.activeTab);
       if (alt && isAlgorithmsTab(alt)) setAlgorithmsTab(alt);
@@ -424,9 +580,46 @@ export default function App() {
         if (Array.isArray(parsed)) setAlgorithmsVisited(new Set(parsed.filter(isAlgorithmsTab)));
       }
     } catch { /* ignore */ }
+
+    try {
+      // Data Engineering
+      const det = localStorage.getItem(DATA_STORAGE_KEYS.activeTab);
+      if (det && isDataEngineeringTab(det)) setDataTab(det);
+      const dev2 = localStorage.getItem(DATA_STORAGE_KEYS.visitedTabs);
+      if (dev2) {
+        const parsed = JSON.parse(dev2);
+        if (Array.isArray(parsed)) setDataVisited(new Set(parsed.filter(isDataEngineeringTab)));
+      }
+    } catch { /* ignore */ }
+
+    try {
+      // Cybersecurity
+      const cst = localStorage.getItem(CYBER_STORAGE_KEYS.activeTab);
+      if (cst && isCybersecurityTab(cst)) setCyberTab(cst);
+      const csv = localStorage.getItem(CYBER_STORAGE_KEYS.visitedTabs);
+      if (csv) {
+        const parsed = JSON.parse(csv);
+        if (Array.isArray(parsed)) setCyberVisited(new Set(parsed.filter(isCybersecurityTab)));
+      }
+    } catch { /* ignore */ }
+
+    try {
+      // AI/ML
+      const aimlt = localStorage.getItem(AI_STORAGE_KEYS.activeTab);
+      if (aimlt && isAiMlTab(aimlt)) setAimlTab(aimlt);
+      const aimlv = localStorage.getItem(AI_STORAGE_KEYS.visitedTabs);
+      if (aimlv) {
+        const parsed = JSON.parse(aimlv);
+        if (Array.isArray(parsed)) setAimlVisited(new Set(parsed.filter(isAiMlTab)));
+      }
+    } catch { /* ignore */ }
+    
+    setHydrated(true);
   }, []);
 
+
   useEffect(() => {
+    if (!hydrated) return; // Prevent overwriting stored data with initial state
     try {
       if (activeDomain) localStorage.setItem(PLATFORM_STORAGE_KEYS.activeDomain, activeDomain);
       localStorage.setItem(STORAGE_KEYS.activeTab, devopsTab);
@@ -439,14 +632,24 @@ export default function App() {
       localStorage.setItem(NETWORKING_STORAGE_KEYS.visitedTabs, JSON.stringify([...networkingVisited]));
       localStorage.setItem(AWS_STORAGE_KEYS.activeTab, awsTab);
       localStorage.setItem(AWS_STORAGE_KEYS.visitedTabs, JSON.stringify([...awsVisited]));
+      localStorage.setItem(GCP_STORAGE_KEYS.activeTab, gcpTab);
+      localStorage.setItem(GCP_STORAGE_KEYS.visitedTabs, JSON.stringify([...gcpVisited]));
+      localStorage.setItem(OCI_STORAGE_KEYS.activeTab, ociTab);
+      localStorage.setItem(OCI_STORAGE_KEYS.visitedTabs, JSON.stringify([...ociVisited]));
       localStorage.setItem(SYSTEM_DESIGN_STORAGE_KEYS.activeTab, systemDesignTab);
       localStorage.setItem(SYSTEM_DESIGN_STORAGE_KEYS.visitedTabs, JSON.stringify([...systemDesignVisited]));
       localStorage.setItem(DISTRIBUTED_SYSTEMS_STORAGE_KEYS.activeTab, distributedSystemsTab);
       localStorage.setItem(DISTRIBUTED_SYSTEMS_STORAGE_KEYS.visitedTabs, JSON.stringify([...distributedSystemsVisited]));
       localStorage.setItem(ALGORITHMS_STORAGE_KEYS.activeTab, algorithmsTab);
       localStorage.setItem(ALGORITHMS_STORAGE_KEYS.visitedTabs, JSON.stringify([...algorithmsVisited]));
+      localStorage.setItem(DATA_STORAGE_KEYS.activeTab, dataTab);
+      localStorage.setItem(DATA_STORAGE_KEYS.visitedTabs, JSON.stringify([...dataVisited]));
+      localStorage.setItem(CYBER_STORAGE_KEYS.activeTab, cyberTab);
+      localStorage.setItem(CYBER_STORAGE_KEYS.visitedTabs, JSON.stringify([...cyberVisited]));
+      localStorage.setItem(AI_STORAGE_KEYS.activeTab, aimlTab);
+      localStorage.setItem(AI_STORAGE_KEYS.visitedTabs, JSON.stringify([...aimlVisited]));
     } catch { /* ignore */ }
-  }, [activeDomain, devopsTab, devopsVisited, azureTab, azureVisited, pythonTab, pythonVisited, networkingTab, networkingVisited, awsTab, awsVisited, systemDesignTab, systemDesignVisited, distributedSystemsTab, distributedSystemsVisited, algorithmsTab, algorithmsVisited]);
+  }, [hydrated, activeDomain, devopsTab, devopsVisited, azureTab, azureVisited, pythonTab, pythonVisited, networkingTab, networkingVisited, awsTab, awsVisited, gcpTab, gcpVisited, systemDesignTab, systemDesignVisited, distributedSystemsTab, distributedSystemsVisited, algorithmsTab, algorithmsVisited, ociTab, ociVisited, dataTab, dataVisited, cyberTab, cyberVisited, aimlTab, aimlVisited]);
 
   // ── Tab change handlers ──────────────────────────────────────────────
   const handleDevopsTab = (tab: DevOpsTab) => {
@@ -479,6 +682,18 @@ export default function App() {
       setAwsVisited(p => new Set([...p, tab]));
   };
 
+  const handleGcpTab = (tab: GcpTab) => {
+    setGcpTab(tab);
+    if (GCP_STUDY_TABS.includes(tab as GcpStudyTab))
+      setGcpVisited(p => new Set([...p, tab]));
+  };
+
+  const handleOciTab = (tab: OciTab) => {
+    setOciTab(tab);
+    if (OCI_STUDY_TABS.includes(tab as OciStudyTab))
+      setOciVisited(p => new Set([...p, tab]));
+  };
+
   const handleSystemDesignTab = (tab: import('./types/systemDesign').SystemDesignTab) => {
     setSystemDesignTab(tab);
     if (SYSTEM_DESIGN_STUDY_TABS.includes(tab as import('./types/systemDesign').SystemDesignStudyTab))
@@ -497,6 +712,30 @@ export default function App() {
       setAlgorithmsVisited(p => new Set([...p, tab]));
   };
 
+  const handleDataTab = (tab: DataEngineeringTab) => {
+    setDataTab(tab);
+    if (DATA_ENGINEERING_STUDY_TABS.includes(tab as DataEngineeringStudyTab))
+      setDataVisited(p => new Set([...p, tab]));
+  };
+
+  const handleCyberTab = (tab: CybersecurityTab) => {
+    setCyberTab(tab);
+    if (CYBERSECURITY_STUDY_TABS.includes(tab as CybersecurityStudyTab))
+      setCyberVisited(p => new Set([...p, tab]));
+  };
+
+  const handleAimlTab = (tab: AiMlTab) => {
+    setAimlTab(tab);
+    if (AIML_STUDY_TABS.includes(tab as AiMlStudyTab))
+      setAimlVisited(p => new Set([...p, tab]));
+  };
+
+  const handleCitrixTab = (tab: CitrixTab) => {
+    setCitrixTab(tab);
+    if (CITRIX_STUDY_TABS.includes(tab as CitrixStudyTab))
+      setCitrixVisited(p => new Set([...p, tab]));
+  };
+
   // ── Reset ────────────────────────────────────────────────────────────
   const handleReset = () => {
     if (activeDomain === 'devops') { setDevopsVisited(new Set()); setDevopsTab('dashboard'); }
@@ -504,9 +743,13 @@ export default function App() {
     if (activeDomain === 'networking') { setNetworkingVisited(new Set()); setNetworkingTab('dashboard'); }
     if (activeDomain === 'python') { setPythonVisited(new Set()); setPythonTab('dashboard'); }
     if (activeDomain === 'aws') { setAwsVisited(new Set()); setAwsTab('dashboard'); }
+    if (activeDomain === 'gcp') { setGcpVisited(new Set()); setGcpTab('dashboard'); }
     if (activeDomain === 'system-design') { setSystemDesignVisited(new Set()); setSystemDesignTab('dashboard'); }
     if (activeDomain === 'distributed-systems') { setDistributedSystemsVisited(new Set()); setDistributedSystemsTab('dashboard'); }
     if (activeDomain === 'algorithms') { setAlgorithmsVisited(new Set()); setAlgorithmsTab('dashboard'); }
+    if (activeDomain === 'data-engineering') { setDataVisited(new Set()); setDataTab('dashboard'); }
+    if (activeDomain === 'cybersecurity') { setCyberVisited(new Set()); setCyberTab('dashboard'); }
+    if (activeDomain === 'ai-ml') { setAimlVisited(new Set()); setAimlTab('dashboard'); }
     setShowResetModal(false);
   };
 
@@ -516,6 +759,7 @@ export default function App() {
   const networkingStudied = NETWORKING_STUDY_TABS.filter(t => networkingVisited.has(t)).length;
   const pythonStudied = PYTHON_STUDY_TABS.filter(t => pythonVisited.has(t)).length;
   const awsStudied = AWS_STUDY_TABS.filter(t => awsVisited.has(t)).length;
+  const gcpStudied = GCP_STUDY_TABS.filter(t => gcpVisited.has(t)).length;
   const systemDesignStudied = SYSTEM_DESIGN_STUDY_TABS.filter(t => systemDesignVisited.has(t)).length;
   const distributedSystemsStudied = DISTRIBUTED_SYSTEMS_STUDY_TABS.filter(t => distributedSystemsVisited.has(t)).length;
   const algorithmsStudied = ALGORITHMS_STUDY_TABS.filter(t => algorithmsVisited.has(t)).length;
@@ -524,16 +768,21 @@ export default function App() {
     devops: { studied: devopsStudied, total: DEVOPS_STUDY_TABS.length },
     azure: { studied: azureStudied, total: AZURE_STUDY_TABS.length },
     aws: { studied: awsStudied, total: AWS_STUDY_TABS.length },
+    gcp: { studied: gcpStudied, total: GCP_STUDY_TABS.length },
+    oci: { studied: ociVisited.size, total: OCI_STUDY_TABS.length },
     networking: { studied: networkingStudied, total: NETWORKING_STUDY_TABS.length },
     python: { studied: pythonStudied, total: PYTHON_STUDY_TABS.length },
     'system-design': { studied: systemDesignStudied, total: SYSTEM_DESIGN_STUDY_TABS.length },
     'distributed-systems': { studied: distributedSystemsStudied, total: DISTRIBUTED_SYSTEMS_STUDY_TABS.length },
     'algorithms': { studied: algorithmsStudied, total: ALGORITHMS_STUDY_TABS.length },
+    'data-engineering': { studied: dataVisited.size, total: DATA_ENGINEERING_STUDY_TABS.length },
+    'cybersecurity': { studied: cyberVisited.size, total: CYBERSECURITY_STUDY_TABS.length },
+    citrix: { studied: citrixVisited.size, total: CITRIX_STUDY_TABS.length },
   };
 
   // ── Platform-wide composite progress (coverage + consistency + engagement) ──
-  const totalStudiedAll = devopsStudied + azureStudied + networkingStudied + pythonStudied + awsStudied + systemDesignStudied + distributedSystemsStudied + algorithmsStudied;
-  const totalModulesAll = DEVOPS_STUDY_TABS.length + AZURE_STUDY_TABS.length + NETWORKING_STUDY_TABS.length + PYTHON_STUDY_TABS.length + AWS_STUDY_TABS.length + SYSTEM_DESIGN_STUDY_TABS.length + DISTRIBUTED_SYSTEMS_STUDY_TABS.length + ALGORITHMS_STUDY_TABS.length;
+  const totalStudiedAll = devopsStudied + azureStudied + networkingStudied + pythonStudied + awsStudied + gcpStudied + systemDesignStudied + distributedSystemsStudied + algorithmsStudied + dataVisited.size + cyberVisited.size + aimlVisited.size;
+  const totalModulesAll = DEVOPS_STUDY_TABS.length + AZURE_STUDY_TABS.length + NETWORKING_STUDY_TABS.length + PYTHON_STUDY_TABS.length + AWS_STUDY_TABS.length + GCP_STUDY_TABS.length + SYSTEM_DESIGN_STUDY_TABS.length + DISTRIBUTED_SYSTEMS_STUDY_TABS.length + ALGORITHMS_STUDY_TABS.length + DATA_ENGINEERING_STUDY_TABS.length + CYBERSECURITY_STUDY_TABS.length + AIML_STUDY_TABS.length;
   const progressBreakdown = computeProgress(totalStudiedAll, totalModulesAll, daily.streak, activityEntries);
 
   // ── Active domain helpers ────────────────────────────────────────────
@@ -551,14 +800,20 @@ export default function App() {
     if (activeDomain === 'system-design') return systemDesignTab === 'dashboard' ? 'Dashboard' : SYSTEM_DESIGN_TAB_META[systemDesignTab as import('./types/systemDesign').SystemDesignStudyTab]?.label ?? '';
     if (activeDomain === 'distributed-systems') return distributedSystemsTab === 'dashboard' ? 'Dashboard' : DISTRIBUTED_SYSTEMS_TAB_META[distributedSystemsTab as import('./types/distributedSystems').DistributedSystemsStudyTab]?.label ?? '';
     if (activeDomain === 'algorithms') return algorithmsTab === 'dashboard' ? 'Dashboard' : ALGORITHMS_TAB_META[algorithmsTab as import('./types/algorithms').AlgorithmsStudyTab]?.label ?? '';
+    if (activeDomain === 'data-engineering') return dataTab === 'dashboard' ? 'Dashboard' : dataTab === 'exam' ? 'Simulado Data' : DATA_ENGINEERING_TAB_META[dataTab as DataEngineeringStudyTab]?.label ?? '';
+    if (activeDomain === 'cybersecurity') return cyberTab === 'dashboard' ? 'Dashboard' : cyberTab === 'exam' ? 'Simulado Cyber' : CYBERSECURITY_TAB_META[cyberTab as CybersecurityStudyTab]?.label ?? '';
+    if (activeDomain === 'citrix') return citrixTab === 'dashboard' ? 'Dashboard' : citrixTab === 'exam' ? 'Simulado Citrix' : CITRIX_TAB_META[citrixTab as CitrixStudyTab]?.label ?? '';
     if (activeDomain === 'aws' && activeCertId === 'aws-saa-c03') return awsTab === 'dashboard' ? 'Dashboard' : awsTab === 'exam' ? 'Simulado SAA-C03' : AWS_TAB_META[awsTab as AwsStudyTab]?.label ?? '';
     if (activeDomain === 'aws') return 'Amazon Web Services';
+    if (activeDomain === 'gcp' && activeCertId === 'gcp-ace') return gcpTab === 'dashboard' ? 'Dashboard' : gcpTab === 'exam' ? 'Simulado ACE' : GCP_TAB_META[gcpTab as GcpStudyTab]?.label ?? '';
+    if (activeDomain === 'gcp') return 'Google Cloud';
+    if (activeDomain === 'oci') return 'Oracle Cloud';
     return '';
   }
 
   function getActiveSubtitle(): string {
     if (!activeDomain) return '';
-    if (activeDomain === 'devops') return devopsTab === 'exam' ? '20 questões DevOps' : devopsTab === 'terraform-exam' ? '25 questões · HashiCorp (003)' : devopsTab === 'cka-exam' ? '30 questões · CNCF' :DEVOPS_TAB_META[devopsTab as DevOpsStudyTab]?.subtitle ?? '';
+    if (activeDomain === 'devops') return devopsTab === 'exam' ? '20 questões DevOps' : devopsTab === 'terraform-exam' ? '25 questões · HashiCorp (003)' : devopsTab === 'cka-exam' ? '30 questões · CNCF' : DEVOPS_TAB_META[devopsTab as DevOpsStudyTab]?.subtitle ?? '';
     if (activeDomain === 'azure') {
       if (activeCertId === 'az-400') return azureTab === 'exam' ? 'Simulado AZ-400' : '';
       return azureTab === 'exam' ? 'Simulado AZ-104' : AZURE_TAB_META[azureTab as AzureStudyTab]?.subtitle ?? '';
@@ -568,33 +823,58 @@ export default function App() {
     if (activeDomain === 'system-design') return SYSTEM_DESIGN_TAB_META[systemDesignTab as import('./types/systemDesign').SystemDesignStudyTab]?.subtitle ?? '';
     if (activeDomain === 'distributed-systems') return DISTRIBUTED_SYSTEMS_TAB_META[distributedSystemsTab as import('./types/distributedSystems').DistributedSystemsStudyTab]?.subtitle ?? '';
     if (activeDomain === 'algorithms') return ALGORITHMS_TAB_META[algorithmsTab as import('./types/algorithms').AlgorithmsStudyTab]?.subtitle ?? '';
+    if (activeDomain === 'data-engineering') return DATA_ENGINEERING_TAB_META[dataTab as DataEngineeringStudyTab]?.subtitle ?? '';
+    if (activeDomain === 'cybersecurity') return CYBERSECURITY_TAB_META[cyberTab as CybersecurityStudyTab]?.subtitle ?? '';
+    if (activeDomain === 'citrix') return CITRIX_TAB_META[citrixTab as CitrixStudyTab]?.subtitle ?? '';
     if (activeDomain === 'aws' && activeCertId === 'aws-saa-c03') return awsTab === 'exam' ? 'Simulado SAA-C03' : AWS_TAB_META[awsTab as AwsStudyTab]?.subtitle ?? '';
     if (activeDomain === 'aws') return 'Certificações AWS';
+    if (activeDomain === 'gcp' && activeCertId === 'gcp-ace') return gcpTab === 'exam' ? 'Simulado ACE' : GCP_TAB_META[gcpTab as GcpStudyTab]?.subtitle ?? '';
+    if (activeDomain === 'gcp') return 'Certificações GCP';
     return '';
   }
 
   function getCurrentStudied() {
     if (activeDomain === 'devops') return { studied: devopsStudied, total: DEVOPS_STUDY_TABS.length };
-    if (activeDomain === 'azure') return { studied: azureStudied, total: AZURE_STUDY_TABS.length };
+    if (activeDomain === 'azure') {
+      const certTabs = getAzureMenuForCert(activeCertId).flatMap(g => g.items.map(i => i.id)).filter(id => id !== 'dashboard' && id !== 'exam');
+      const studied = certTabs.filter(id => azureVisited.has(id as AzureTab)).length;
+      return { studied, total: certTabs.length || 1 };
+    }
     if (activeDomain === 'python') return { studied: pythonStudied, total: PYTHON_STUDY_TABS.length };
     if (activeDomain === 'aws') return { studied: awsStudied, total: AWS_STUDY_TABS.length };
+    if (activeDomain === 'gcp') return { studied: gcpStudied, total: GCP_STUDY_TABS.length };
     if (activeDomain === 'system-design') return { studied: systemDesignStudied, total: SYSTEM_DESIGN_STUDY_TABS.length };
     if (activeDomain === 'distributed-systems') return { studied: distributedSystemsStudied, total: DISTRIBUTED_SYSTEMS_STUDY_TABS.length };
     if (activeDomain === 'algorithms') return { studied: algorithmsStudied, total: ALGORITHMS_STUDY_TABS.length };
+    if (activeDomain === 'data-engineering') return { studied: dataVisited.size, total: DATA_ENGINEERING_STUDY_TABS.length };
+    if (activeDomain === 'cybersecurity') return { studied: cyberVisited.size, total: CYBERSECURITY_STUDY_TABS.length };
+    if (activeDomain === 'citrix') return { studied: citrixVisited.size, total: CITRIX_STUDY_TABS.length };
     return { studied: networkingStudied, total: NETWORKING_STUDY_TABS.length };
   }
 
   function getCurrentMenuGroups(): SidebarMenuGroup[] {
     if (activeDomain === 'devops') return devopsMenuGroups as SidebarMenuGroup[];
-    if (activeDomain === 'azure') return azureMenuGroups as SidebarMenuGroup[];
+    if (activeDomain === 'azure') return getAzureMenuForCert(activeCertId) as SidebarMenuGroup[];
     if (activeDomain === 'python') return PYTHON_MENU_GROUPS as SidebarMenuGroup[];
     if (activeDomain === 'aws' && activeCertId === 'aws-saa-c03') return awsMenuGroups as SidebarMenuGroup[];
     if (activeDomain === 'aws') {
-      return [{ title: 'Certificações', items: [] }];
+      if (activeCertId === null) return [];
+      if (activeCertId === 'aws-saa-c03') return awsMenuGroups as SidebarMenuGroup[];
+      return [];
     }
+    if (activeDomain === 'gcp' && activeCertId === 'gcp-ace') return gcpMenuGroups as SidebarMenuGroup[];
+    if (activeDomain === 'gcp') {
+      if (activeCertId === null) return [];
+      if (activeCertId === 'gcp-ace') return gcpMenuGroups as SidebarMenuGroup[];
+      return [];
+    }
+    if (activeDomain === 'oci') return getOciMenuForCert(activeCertId) as SidebarMenuGroup[];
     if (activeDomain === 'system-design') return systemDesignMenuGroups as SidebarMenuGroup[];
     if (activeDomain === 'distributed-systems') return distributedSystemsMenuGroups as SidebarMenuGroup[];
     if (activeDomain === 'algorithms') return algorithmsMenuGroups as SidebarMenuGroup[];
+    if (activeDomain === 'data-engineering') return dataEngineeringMenuGroups as SidebarMenuGroup[];
+    if (activeDomain === 'cybersecurity') return cybersecurityMenuGroups as SidebarMenuGroup[];
+    if (activeDomain === 'citrix') return citrixMenuGroups as SidebarMenuGroup[];
     return NETWORKING_MENU_GROUPS as SidebarMenuGroup[];
   }
 
@@ -604,9 +884,15 @@ export default function App() {
     if (activeDomain === 'python') return pythonTab;
     if (activeDomain === 'aws' && activeCertId === 'aws-saa-c03') return awsTab;
     if (activeDomain === 'aws') return activeCertId ?? 'certs';
+    if (activeDomain === 'gcp' && activeCertId === 'gcp-ace') return gcpTab;
+    if (activeDomain === 'gcp') return activeCertId ?? 'certs';
+    if (activeDomain === 'oci') return activeCertId ?? 'certs';
     if (activeDomain === 'system-design') return systemDesignTab;
     if (activeDomain === 'distributed-systems') return distributedSystemsTab;
     if (activeDomain === 'algorithms') return algorithmsTab;
+    if (activeDomain === 'data-engineering') return dataTab;
+    if (activeDomain === 'cybersecurity') return cyberTab;
+    if (activeDomain === 'citrix') return citrixTab;
     return networkingTab;
   }
 
@@ -616,9 +902,15 @@ export default function App() {
     if (activeDomain === 'python') return pythonVisited as Set<string>;
     if (activeDomain === 'aws' && activeCertId === 'aws-saa-c03') return awsVisited as Set<string>;
     if (activeDomain === 'aws') return new Set();
+    if (activeDomain === 'gcp' && activeCertId === 'gcp-ace') return gcpVisited as Set<string>;
+    if (activeDomain === 'gcp') return new Set();
+    if (activeDomain === 'oci') return ociVisited as Set<string>;
     if (activeDomain === 'system-design') return systemDesignVisited as Set<string>;
     if (activeDomain === 'distributed-systems') return distributedSystemsVisited as Set<string>;
     if (activeDomain === 'algorithms') return algorithmsVisited as Set<string>;
+    if (activeDomain === 'data-engineering') return dataVisited as Set<string>;
+    if (activeDomain === 'cybersecurity') return cyberVisited as Set<string>;
+    if (activeDomain === 'citrix') return citrixVisited as Set<string>;
     return networkingVisited as Set<string>;
   }
 
@@ -628,9 +920,17 @@ export default function App() {
     else if (activeDomain === 'python') handlePythonTab(tab as PythonTab);
     else if (activeDomain === 'aws' && activeCertId === 'aws-saa-c03') handleAwsTab(tab as AwsTab);
     else if (activeDomain === 'aws') { /* no-op — cert-based */ }
+    else if (activeDomain === 'gcp' && activeCertId === 'gcp-ace') handleGcpTab(tab as GcpTab);
+    else if (activeDomain === 'gcp') { /* no-op — cert-based */ }
+    else if (activeDomain === 'oci' && (activeCertId === '1z0-1085' || activeCertId === '1z0-1072')) handleOciTab(tab as OciTab);
+    else if (activeDomain === 'oci') { /* no-op — cert-based */ }
     else if (activeDomain === 'system-design') handleSystemDesignTab(tab as import('./types/systemDesign').SystemDesignTab);
     else if (activeDomain === 'distributed-systems') handleDistributedSystemsTab(tab as import('./types/distributedSystems').DistributedSystemsTab);
     else if (activeDomain === 'algorithms') handleAlgorithmsTab(tab as import('./types/algorithms').AlgorithmsTab);
+    else if (activeDomain === 'data-engineering') handleDataTab(tab as DataEngineeringTab);
+    else if (activeDomain === 'cybersecurity') handleCyberTab(tab as CybersecurityTab);
+    else if (activeDomain === 'ai-ml') handleAimlTab(tab as AiMlTab);
+    else if (activeDomain === 'citrix') handleCitrixTab(tab as CitrixTab);
     else handleNetworkingTab(tab as NetworkingTab);
     if (tab !== 'dashboard' && tab !== 'exam') markStepComplete('study');
   }
@@ -673,31 +973,112 @@ export default function App() {
         );
       }
 
-      // AZ-104 uses the existing full module set (identity/rbac/storage/...)
-      if (activeCertId === 'az-104') {
+      // Render content for all supported Azure certifications
+      if (['az-900', 'az-104', 'az-305', 'az-400'].includes(activeCertId)) {
         if (azureTab === 'dashboard') {
-          const nextAzureTab = AZURE_STUDY_TABS.find(t => !azureVisited.has(t));
+          const certMenuGroups = getAzureMenuForCert(activeCertId);
+          const certTabs = certMenuGroups.flatMap(g => g.items.map(i => i.id)).filter(id => id !== 'dashboard' && id !== 'exam');
+          const nextAzureTab = certTabs.find(t => !azureVisited.has(t as AzureTab));
+          const studiedCountForCert = certTabs.filter(id => azureVisited.has(id as AzureTab)).length;
+          const totalCountForCert = certTabs.length;
+          const progressPctForCert = totalCountForCert > 0 ? Math.round((studiedCountForCert / totalCountForCert) * 100) : 0;
+          
+          let title = '';
+          let desc = '';
+          let examLbl = '';
+          if (activeCertId === 'az-900') {
+             title = "Azure Fundamentals";
+             desc = `Conceitos de cloud, arquitetura básica e governança no Azure.`;
+             examLbl = "Simulado AZ-900";
+          } else if (activeCertId === 'az-104') {
+             title = "Azure Administrator Associate";
+             desc = `Identidade, governança, storage, compute, redes e monitorização no Azure. ${totalCountForCert} módulos.`;
+             examLbl = "Simulado AZ-104";
+          } else if (activeCertId === 'az-305') {
+             title = "Azure Solutions Architect Expert";
+             desc = `Design de soluções para infra, dados, apps e segurança em escala.`;
+             examLbl = "Simulado AZ-305";
+          } else if (activeCertId === 'az-400') {
+             title = "Azure DevOps Engineer Expert";
+             desc = `Pipelines, Repositórios, Boards, Segurança, Artefatos, Ambientes.`;
+             examLbl = "Simulado AZ-400";
+          }
+
           return (
             <DomainDashboard
-              eyebrow="Dashboard AZ-104"
-              title="Azure Administrator Associate"
-              description={`Identidade, governança, storage, compute, redes e monitorização no Azure. ${AZURE_STUDY_TABS.length} módulos alinhados com o exame AZ-104.`}
-              accent="sky"
-              progressPct={Math.round((azureStudied / AZURE_STUDY_TABS.length) * 100)}
-              studiedCount={azureStudied}
-              totalCount={AZURE_STUDY_TABS.length}
-              menuGroups={azureMenuGroups as SidebarMenuGroup[]}
+              eyebrow={`Dashboard ${activeCertId.toUpperCase()}`}
+              title={title}
+              description={desc}
+              accent={activeCertId === 'az-400' ? 'amber' : 'sky'}
+              progressPct={progressPctForCert}
+              studiedCount={studiedCountForCert}
+              totalCount={totalCountForCert}
+              menuGroups={certMenuGroups as SidebarMenuGroup[]}
               visited={azureVisited as Set<string>}
               onOpenTab={(id) => handleAzureTab(id as AzureTab)}
-              nextTabId={nextAzureTab ?? 'exam'}
-              nextTabLabel={nextAzureTab ? AZURE_TAB_META[nextAzureTab]?.label : undefined}
+              nextTabId={(nextAzureTab as string) ?? 'exam'}
+              nextTabLabel={nextAzureTab ? AZURE_TAB_META[nextAzureTab as AzureStudyTab]?.label : undefined}
               examTabId="exam"
-              examLabel="Simulado AZ-104"
-              onBack={() => setActiveCertId(null)}
+              examLabel={examLbl}
+              onBack={() => setActiveCertId(null)}>
+            <StudyKitSection resources={DOMAIN_RESOURCES[activeDomain] || []} accent={DOMAIN_ACCENT[activeDomain]} />
+          </DomainDashboard>
+          );
+        }
+        
+        if (azureTab === 'exam') {
+          let title = '';
+          if (activeCertId === 'az-900') title = "Azure Fundamentals";
+          else if (activeCertId === 'az-104') title = "Azure Administrator Associate";
+          else if (activeCertId === 'az-305') title = "Azure Solutions Architect Expert";
+          else if (activeCertId === 'az-400') title = "Azure DevOps Engineer Expert";
+
+          let rawQuestions = AZURE_QUESTIONS; // Default pool
+          let topics = [
+            { id: 'identity', label: 'Identidade', icon: <Lock size={14} className="text-sky-400" /> },
+            { id: 'governance', label: 'Governança', icon: <Building2 size={14} className="text-sky-400" /> },
+            { id: 'rbac', label: 'RBAC', icon: <Lock size={14} className="text-sky-400" /> },
+            { id: 'storage', label: 'Armazenamento', icon: <Database size={14} className="text-sky-400" /> },
+            { id: 'compute', label: 'Computação', icon: <Cpu size={14} className="text-sky-400" /> },
+            { id: 'containers', label: 'Containers', icon: <Server size={14} className="text-sky-400" /> },
+            { id: 'vnet', label: 'Redes virtuais', icon: <Network size={14} className="text-sky-400" /> },
+            { id: 'monitor', label: 'Monitoramento', icon: <BarChart3 size={14} className="text-sky-400" /> },
+          ];
+
+          if (activeCertId === 'az-400') {
+             topics = [
+               { id: 'boards', label: 'Boards', icon: <BarChart3 size={14} className="text-amber-400" /> },
+               { id: 'repos', label: 'Repos', icon: <Lock size={14} className="text-amber-400" /> },
+               { id: 'pipelines', label: 'Pipelines', icon: <Server size={14} className="text-amber-400" /> },
+               { id: 'security', label: 'Segurança', icon: <Lock size={14} className="text-amber-400" /> },
+             ];
+          }
+
+          const examQuestions: ExamQuestion[] = rawQuestions.map(q => ({
+            q: q.question,
+            opts: q.options,
+            a: q.correctIndex,
+            exp: q.explanation,
+            mod: q.topicLabel,
+            diff: q.difficulty as 'easy'|'medium'|'hard',
+            topicId: q.topic
+          }));
+
+          const timeMinutes = activeCertId === 'az-900' ? 45 : 120;
+          const questionsCount = activeCertId === 'az-900' ? 40 : 50;
+
+          return (
+            <SharedExamSimulator
+              title={title}
+              subtitle={`${questionsCount} questões no exame real`}
+              accent={activeCertId === 'az-400' ? 'amber' : 'sky'}
+              questions={examQuestions}
+              topics={topics}
+              examTimeMinutes={timeMinutes}
+              passPercentage={70}
             />
           );
         }
-        if (azureTab === 'exam') return <div className="border card-glass card-glass-hover p-5 md:p-6"><AzureExamSimulator /></div>;
 
         const isStudyTab = AZURE_STUDY_TABS.includes(azureTab as AzureStudyTab);
         return (
@@ -709,46 +1090,15 @@ export default function App() {
               <KnowledgeBase
                 activeTab={azureTab}
                 data={AZURE_KNOWLEDGE_DATA}
-                accent="sky"
-                eyebrow="Dashboard AZ-104"
+                accent={activeCertId === 'az-400' ? 'amber' : 'sky'}
+                eyebrow={`Dashboard ${activeCertId.toUpperCase()}`}
               />
             )}
           </div>
         );
       }
 
-      // AZ-400 (Azure DevOps Engineer Expert)
-      if (activeCertId === 'az-400') {
-        if (azureTab === 'dashboard') {
-          return (
-            <DomainDashboard
-              eyebrow="Dashboard AZ-400"
-              title="Azure DevOps Engineer Expert"
-              description="35 questões · 6 tópicos · Pipelines, Repositórios, Boards, Segurança, Artefatos, Ambientes."
-              accent="amber"
-              progressPct={0}
-              studiedCount={0}
-              totalCount={0}
-              menuGroups={[]}
-              visited={new Set()}
-              onOpenTab={(id) => handleAzureTab(id as AzureTab)}
-              examTabId="exam"
-              examLabel="Simulado AZ-400"
-              onBack={() => setActiveCertId(null)}
-            />
-          );
-        }
-        if (azureTab === 'exam') return <div className="border card-glass card-glass-hover p-5 md:p-6"><AzureDevOpsExamSimulator /></div>;
-        return (
-          <div className="space-y-6">
-            <div className="border card-glass card-glass-hover p-5 md:p-6">
-              <p className="text-slate-300 text-sm">Tópico AZ-400: {azureTab}</p>
-            </div>
-          </div>
-        );
-      }
-
-      // Other Azure certs (AZ-305 etc) - stub for now
+      // Other Azure certs (if any)
       return (
         <ComingSoonCert
           certId={activeCertId}
@@ -793,8 +1143,9 @@ export default function App() {
               nextTabLabel={nextAwsTab ? AWS_TAB_META[nextAwsTab]?.label : undefined}
               examTabId="exam"
               examLabel="Simulado SAA-C03"
-              onBack={() => setActiveCertId(null)}
-            />
+              onBack={() => setActiveCertId(null)}>
+            <StudyKitSection resources={DOMAIN_RESOURCES[activeDomain] || []} accent={DOMAIN_ACCENT[activeDomain]} />
+          </DomainDashboard>
           );
         }
         if (awsTab === 'exam') return <div className="border card-glass card-glass-hover p-5 md:p-6"><AwsExamSimulator /></div>;
@@ -832,6 +1183,195 @@ export default function App() {
       );
     }
 
+    // ── GCP ──────────────────────────────────────────────────────────
+    if (activeDomain === 'gcp') {
+      if (activeCertId === null) {
+        return (
+          <CertHub
+            domainLabel="Google Cloud"
+            domainIcon={<Cloud size={28} className="text-rose-400" />}
+            certs={getCertsFor('gcp')}
+            activeCertId={null}
+            onSelectCert={(id) => setActiveCertId(id)}
+          />
+        );
+      }
+
+      if (activeCertId === 'gcp-ace') {
+        if (gcpTab === 'dashboard') {
+          const nextGcpTab = GCP_STUDY_TABS.find(t => !gcpVisited.has(t));
+          return (
+            <DomainDashboard
+              eyebrow="Dashboard ACE"
+              title="Associate Cloud Engineer"
+              description={`Compute, Storage, Networking e IAM no Google Cloud. ${GCP_STUDY_TABS.length} módulos alinhados com o exame ACE.`}
+              accent="rose"
+              progressPct={Math.round((gcpStudied / GCP_STUDY_TABS.length) * 100)}
+              studiedCount={gcpStudied}
+              totalCount={GCP_STUDY_TABS.length}
+              menuGroups={gcpMenuGroups as SidebarMenuGroup[]}
+              visited={gcpVisited as Set<string>}
+              onOpenTab={(id) => handleGcpTab(id as GcpTab)}
+              nextTabId={nextGcpTab ?? 'exam'}
+              nextTabLabel={nextGcpTab ? GCP_TAB_META[nextGcpTab]?.label : undefined}
+              examTabId="exam"
+              examLabel="Simulado ACE"
+              onBack={() => setActiveCertId(null)}>
+            <StudyKitSection resources={DOMAIN_RESOURCES[activeDomain] || []} accent={DOMAIN_ACCENT[activeDomain]} />
+          </DomainDashboard>
+          );
+        }
+        if (gcpTab === 'exam') {
+          const rawQuestions = GCP_ACE_QUESTIONS;
+          const examQuestions: ExamQuestion[] = rawQuestions.map(q => ({
+            q: q.question,
+            opts: q.options,
+            a: q.correctIndex,
+            exp: q.explanation,
+            mod: q.topicLabel,
+            diff: q.difficulty,
+            topicId: q.topicId
+          }));
+          
+          const topics = [
+            { id: 'iam', label: 'IAM & Segurança', icon: <Lock size={14} className="text-rose-400" /> },
+            { id: 'compute', label: 'Compute Engine', icon: <Cpu size={14} className="text-rose-400" /> },
+            { id: 'storage', label: 'Cloud Storage', icon: <Database size={14} className="text-rose-400" /> },
+            { id: 'networking', label: 'Redes (VPC)', icon: <Network size={14} className="text-rose-400" /> },
+            { id: 'billing', label: 'Faturamento', icon: <Globe size={14} className="text-rose-400" /> },
+          ];
+
+          return (
+            <SharedExamSimulator 
+              title="Google Associate Cloud Engineer (ACE)"
+              subtitle="50 questões no exame real"
+              accent="rose"
+              questions={examQuestions}
+              topics={topics}
+              examTimeMinutes={120}
+              passPercentage={70}
+            />
+          );
+        }
+        
+        const isStudyTab = GCP_STUDY_TABS.includes(gcpTab as GcpStudyTab);
+        if (isStudyTab) {
+          return (
+            <div className="border card-glass card-glass-hover p-5 md:p-6">
+              <GcpSimulator tab={gcpTab as GcpStudyTab} />
+            </div>
+          );
+        }
+        return <div className="border card-glass card-glass-hover p-5 md:p-6 text-center text-slate-400">Conteúdo ACE: {gcpTab}</div>;
+      }
+      // Other GCP certs (not yet built)
+      return (
+        <ComingSoonCert
+          certId={activeCertId}
+          domainLabel="Google Cloud"
+          domainIcon={<Cloud size={28} className="text-rose-400" />}
+          onBack={() => setActiveCertId(null)}
+        />
+      );
+    }
+
+        // ── OCI ──────────────────────────────────────────────────────────
+    if (activeDomain === 'oci') {
+      if (activeCertId === null) {
+        return (
+          <CertHub
+            domainLabel="Oracle Cloud"
+            domainIcon={<Server size={28} className="text-red-400" />}
+            certs={getCertsFor('oci')}
+            activeCertId={null}
+            onSelectCert={(id) => setActiveCertId(id)}
+          />
+        );
+      }
+
+      if (activeCertId === '1z0-1085' || activeCertId === '1z0-1072') {
+        const ociStudied = ociVisited.size;
+        if (ociTab === 'dashboard') {
+          const nextOciTab = OCI_STUDY_TABS.find(t => !ociVisited.has(t));
+          return (
+            <DomainDashboard
+              eyebrow={`Dashboard ${activeCertId.toUpperCase()}`}
+              title={activeCertId === '1z0-1072' ? 'OCI Architect Associate' : 'OCI Foundations Associate'}
+              description={activeCertId === '1z0-1072' ? `Compute, VCN, Object Storage e IAM avançado. ${OCI_STUDY_TABS.length} módulos alinhados com o exame.` : `Conceitos básicos, IAM e Compute na Oracle Cloud. ${OCI_STUDY_TABS.length} módulos alinhados com o exame.`}
+              accent="rose"
+              progressPct={Math.round((ociStudied / OCI_STUDY_TABS.length) * 100)}
+              studiedCount={ociStudied}
+              totalCount={OCI_STUDY_TABS.length}
+              menuGroups={getOciMenuForCert(activeCertId) as SidebarMenuGroup[]}
+            visited={ociVisited as Set<string>}
+            onOpenTab={(id) => handleOciTab(id as OciTab)}
+            nextTabId={nextOciTab ?? 'exam'}
+            nextTabLabel={nextOciTab ? OCI_TAB_META[nextOciTab]?.title : undefined}
+            examTabId="exam"
+            examLabel={activeCertId === '1z0-1072' ? 'Simulado 1Z0-1072' : 'Simulado 1Z0-1085'}
+            onBack={() => setActiveCertId(null)}>
+            <StudyKitSection resources={DOMAIN_RESOURCES[activeDomain] || []} accent={DOMAIN_ACCENT[activeDomain]} />
+          </DomainDashboard>
+        );
+      }
+      if (ociTab === 'exam') {
+        const isFoundations = activeCertId === '1z0-1085';
+        const rawQuestions = isFoundations ? OCI_FOUNDATIONS_QUESTIONS : OCI_ARCHITECT_QUESTIONS;
+        const examQuestions: ExamQuestion[] = rawQuestions.map(q => ({
+          q: q.question,
+          opts: q.options,
+          a: q.correctIndex,
+          exp: q.explanation,
+          mod: q.topicLabel,
+          diff: q.difficulty,
+          topicId: q.topicId
+        }));
+        
+        const topics = [
+          { id: 'cloud-concepts', label: 'Cloud Concepts', icon: <Cloud size={14} className="text-rose-400" /> },
+          { id: 'architecture', label: 'Arquitetura OCI', icon: <Server size={14} className="text-rose-400" /> },
+          { id: 'compute', label: 'Compute', icon: <Cpu size={14} className="text-rose-400" /> },
+          { id: 'networking', label: 'Redes (VCN)', icon: <Network size={14} className="text-rose-400" /> },
+          { id: 'storage', label: 'Storage', icon: <Database size={14} className="text-rose-400" /> },
+          { id: 'database', label: 'Base de Dados', icon: <Database size={14} className="text-rose-400" /> },
+          { id: 'security', label: 'IAM & Segurança', icon: <Lock size={14} className="text-rose-400" /> },
+          { id: 'pricing', label: 'Custos', icon: <Globe size={14} className="text-rose-400" /> },
+        ];
+
+        return (
+          <SharedExamSimulator 
+            title={isFoundations ? 'OCI Foundations Associate (1Z0-1085)' : 'OCI Architect Associate (1Z0-1072)'}
+            subtitle={isFoundations ? '55 questões no exame real' : '50 questões no exame real'}
+            accent="rose"
+            questions={examQuestions}
+            topics={topics}
+            examTimeMinutes={isFoundations ? 90 : 90}
+            passPercentage={isFoundations ? 68 : 65}
+          />
+        );
+      }
+      
+      const isStudyTab = OCI_STUDY_TABS.includes(ociTab as OciStudyTab);
+      if (isStudyTab) {
+        return (
+          <div className="border card-glass card-glass-hover p-5 md:p-6">
+            {OCI_CONTENT[ociTab as OciStudyTab]}
+          </div>
+        );
+      }
+        return <div className="border card-glass card-glass-hover p-5 md:p-6 text-center text-slate-400">Conteúdo OCI: {ociTab}</div>;
+      }
+      
+      return (
+        <ComingSoonCert
+          certId={activeCertId}
+          domainLabel="Oracle Cloud"
+          domainIcon={<Server size={28} className="text-red-400" />}
+          onBack={() => setActiveCertId(null)}
+        />
+      );
+    }
+
     // ── Networking ───────────────────────────────────────────────────
     if (activeDomain === 'networking') {
       if (networkingTab === 'dashboard') {
@@ -851,8 +1391,9 @@ export default function App() {
             nextTabId={nextNetworkingTab ?? 'exam'}
             nextTabLabel={nextNetworkingTab ? NETWORKING_TAB_META[nextNetworkingTab]?.label : undefined}
             examTabId="exam"
-            examLabel="Simulado Redes"
-          />
+            examLabel="Simulado Redes">
+            <StudyKitSection resources={DOMAIN_RESOURCES[activeDomain] || []} accent={DOMAIN_ACCENT[activeDomain]} />
+          </DomainDashboard>
         );
       }
       if (networkingTab === 'exam') {
@@ -884,8 +1425,9 @@ export default function App() {
             nextTabId={nextPythonTab ?? 'exam'}
             nextTabLabel={nextPythonTab ? PYTHON_TAB_META[nextPythonTab]?.label : undefined}
             examTabId="exam"
-            examLabel="Simulado Python"
-          />
+            examLabel="Simulado Python">
+            <StudyKitSection resources={DOMAIN_RESOURCES[activeDomain] || []} accent={DOMAIN_ACCENT[activeDomain]} />
+          </DomainDashboard>
         );
       }
       if (pythonTab === 'exam') return <div className="border card-glass card-glass-hover p-5 md:p-6"><PythonExamSimulator /></div>;
@@ -913,8 +1455,9 @@ export default function App() {
             visited={systemDesignVisited as Set<string>}
             onOpenTab={(id) => handleSystemDesignTab(id as import('./types/systemDesign').SystemDesignTab)}
             nextTabId={nextSystemDesignTab}
-            nextTabLabel={nextSystemDesignTab ? SYSTEM_DESIGN_TAB_META[nextSystemDesignTab]?.label : undefined}
-          />
+            nextTabLabel={nextSystemDesignTab ? SYSTEM_DESIGN_TAB_META[nextSystemDesignTab]?.label : undefined}>
+            <StudyKitSection resources={DOMAIN_RESOURCES[activeDomain] || []} accent={DOMAIN_ACCENT[activeDomain]} />
+          </DomainDashboard>
         );
       }
       return (
@@ -941,8 +1484,9 @@ export default function App() {
             visited={distributedSystemsVisited as Set<string>}
             onOpenTab={(id) => handleDistributedSystemsTab(id as import('./types/distributedSystems').DistributedSystemsTab)}
             nextTabId={nextDistributedSystemsTab}
-            nextTabLabel={nextDistributedSystemsTab ? DISTRIBUTED_SYSTEMS_TAB_META[nextDistributedSystemsTab]?.label : undefined}
-          />
+            nextTabLabel={nextDistributedSystemsTab ? DISTRIBUTED_SYSTEMS_TAB_META[nextDistributedSystemsTab]?.label : undefined}>
+            <StudyKitSection resources={DOMAIN_RESOURCES[activeDomain] || []} accent={DOMAIN_ACCENT[activeDomain]} />
+          </DomainDashboard>
         );
       }
       return (
@@ -969,8 +1513,9 @@ export default function App() {
             visited={algorithmsVisited as Set<string>}
             onOpenTab={(id) => handleAlgorithmsTab(id as import('./types/algorithms').AlgorithmsTab)}
             nextTabId={nextAlgorithmsTab}
-            nextTabLabel={nextAlgorithmsTab ? ALGORITHMS_TAB_META[nextAlgorithmsTab]?.label : undefined}
-          />
+            nextTabLabel={nextAlgorithmsTab ? ALGORITHMS_TAB_META[nextAlgorithmsTab]?.label : undefined}>
+            <StudyKitSection resources={DOMAIN_RESOURCES[activeDomain] || []} accent={DOMAIN_ACCENT[activeDomain]} />
+          </DomainDashboard>
         );
       }
       return (
@@ -978,6 +1523,224 @@ export default function App() {
           <AlgorithmsSimulator tab={algorithmsTab as import('./types/algorithms').AlgorithmsStudyTab} />
         </div>
       );
+    }
+
+    // ── Data Engineering ──────────────────────────────────────────
+    if (activeDomain === 'data-engineering') {
+      if (dataTab === 'dashboard') {
+        const nextDataTab = DATA_ENGINEERING_STUDY_TABS.find(t => !dataVisited.has(t));
+        return (
+          <DomainDashboard
+            eyebrow="Dashboard · Data Engineering"
+            title="Data Engineering"
+            description={`Pipelines, ETL, data warehouses e processamento de dados em escala. ${DATA_ENGINEERING_STUDY_TABS.length} módulos práticos.`}
+            accent="sky"
+            progressPct={Math.round((dataVisited.size / DATA_ENGINEERING_STUDY_TABS.length) * 100)}
+            studiedCount={dataVisited.size}
+            totalCount={DATA_ENGINEERING_STUDY_TABS.length}
+            menuGroups={dataEngineeringMenuGroups as SidebarMenuGroup[]}
+            visited={dataVisited as Set<string>}
+            onOpenTab={(id) => handleDataTab(id as DataEngineeringTab)}
+            nextTabId={nextDataTab}
+            nextTabLabel={nextDataTab ? DATA_ENGINEERING_TAB_META[nextDataTab]?.label : undefined}>
+            <StudyKitSection resources={DOMAIN_RESOURCES[activeDomain] || []} accent={DOMAIN_ACCENT[activeDomain]} />
+          </DomainDashboard>
+        );
+      }
+      return (
+        <div className="border card-glass card-glass-hover p-5 md:p-6 text-center text-slate-400">
+          Conteúdo Data Engineering: {dataTab} (Em breve)
+        </div>
+      );
+    }
+
+    // ── Cybersecurity ───────────────────────────────────────────
+    if (activeDomain === 'cybersecurity') {
+      if (cyberTab === 'dashboard') {
+        const nextCyberTab = CYBERSECURITY_STUDY_TABS.find(t => !cyberVisited.has(t));
+        return (
+          <DomainDashboard
+            eyebrow="Dashboard · Cybersecurity"
+            title="Cybersecurity"
+            description={`Segurança ofensiva, defensiva, criptografia e compliance. ${CYBERSECURITY_STUDY_TABS.length} módulos práticos.`}
+            accent="rose"
+            progressPct={Math.round((cyberVisited.size / CYBERSECURITY_STUDY_TABS.length) * 100)}
+            studiedCount={cyberVisited.size}
+            totalCount={CYBERSECURITY_STUDY_TABS.length}
+            menuGroups={cybersecurityMenuGroups as SidebarMenuGroup[]}
+            visited={cyberVisited as Set<string>}
+            onOpenTab={(id) => handleCyberTab(id as CybersecurityTab)}
+            nextTabId={nextCyberTab}
+            nextTabLabel={nextCyberTab ? CYBERSECURITY_TAB_META[nextCyberTab]?.label : undefined}>
+            <StudyKitSection resources={DOMAIN_RESOURCES[activeDomain] || []} accent={DOMAIN_ACCENT[activeDomain]} />
+          </DomainDashboard>
+        );
+      }
+      if (cyberTab === 'exam') {
+        const examQuestions: ExamQuestion[] = CYBER_EXAM_QUESTIONS.map(q => ({
+          q: q.question,
+          opts: q.options,
+          a: q.correctIndex,
+          exp: q.explanation,
+          mod: q.topicLabel,
+          diff: q.difficulty,
+          topicId: q.topicId,
+        }));
+
+        const topics = [
+          { id: 'soc-ops', label: 'SOC Ops & Incident Triage', icon: <Shield size={14} className="text-rose-400" /> },
+          { id: 'network-sec', label: 'Network Security & Protocols', icon: <Network size={14} className="text-rose-400" /> },
+          { id: 'edr-endpoint', label: 'EDR, Processes & Windows Logs', icon: <Terminal size={14} className="text-rose-400" /> },
+          { id: 'threat-intel', label: 'Threat Intel & MITRE ATT&CK', icon: <Target size={14} className="text-rose-400" /> },
+          { id: 'cloud-identity', label: 'Cloud Security & Identity', icon: <Lock size={14} className="text-rose-400" /> },
+          { id: 'devsecops', label: 'DevSecOps & Application Security', icon: <Rocket size={14} className="text-rose-400" /> },
+        ];
+
+        return (
+          <div className="border card-glass card-glass-hover p-5 md:p-6">
+            <SharedExamSimulator
+              title="Cybersecurity & SOC Analyst N1 / Blue Team"
+              subtitle="30 questões baseadas em NIST SP 800-61, MITRE ATT&CK, EDR, SIEM KQL/SPL & DevSecOps"
+              accent="rose"
+              questions={examQuestions}
+              topics={topics}
+              examTimeMinutes={60}
+              passPercentage={70}
+              domainId="cybersecurity"
+            />
+          </div>
+        );
+      }
+
+      const isStudyTab = CYBERSECURITY_STUDY_TABS.includes(cyberTab as CybersecurityStudyTab);
+      if (isStudyTab) {
+        return (
+          <div className="border card-glass card-glass-hover p-5 md:p-6">
+            <CybersecuritySimulator tab={cyberTab as CybersecurityStudyTab} />
+          </div>
+        );
+      }
+
+      return (
+        <div className="border card-glass card-glass-hover p-5 md:p-6 text-center text-slate-400">
+          Conteúdo Cybersecurity: {cyberTab} (Em breve)
+        </div>
+      );
+    }
+
+    // ── AI/ML ───────────────────────────────────────────────────
+    if (activeDomain === 'ai-ml') {
+      if (aimlTab === 'dashboard') {
+        const nextAimlTab = AIML_STUDY_TABS.find(t => !aimlVisited.has(t));
+        return (
+          <DomainDashboard
+            eyebrow="Dashboard · AI / Machine Learning"
+            title="AI / Machine Learning & MLOps"
+            description={`Pipelines de ML, Drift estatístico, Advanced RAG, VRAM sizing, LoRA/QLoRA, Agentes ReAct e Prompt Security. ${AIML_STUDY_TABS.length} módulos práticos.`}
+            accent="fuchsia"
+            progressPct={Math.round((aimlVisited.size / AIML_STUDY_TABS.length) * 100)}
+            studiedCount={aimlVisited.size}
+            totalCount={AIML_STUDY_TABS.length}
+            menuGroups={aimlMenuGroups as SidebarMenuGroup[]}
+            visited={aimlVisited as Set<string>}
+            onOpenTab={(id) => handleAimlTab(id as AiMlTab)}
+            nextTabId={nextAimlTab ?? 'exam'}
+            nextTabLabel={nextAimlTab ? AIML_TAB_META[nextAimlTab]?.label : undefined}
+            examTabId="exam"
+            examLabel="Simulado AI/ML">
+            <StudyKitSection resources={DOMAIN_RESOURCES[activeDomain] || []} accent={DOMAIN_ACCENT[activeDomain]} />
+          </DomainDashboard>
+        );
+      }
+      if (aimlTab === 'exam') {
+        const examQuestions: ExamQuestion[] = AIML_EXAM_QUESTIONS.map(q => ({
+          q: q.question,
+          opts: q.options,
+          a: q.correctIndex,
+          exp: q.explanation,
+          mod: q.topicLabel,
+          diff: q.difficulty,
+          topicId: q.topicId,
+        }));
+
+        const topics = [
+          { id: 'ml-ops-pipelines', label: 'ML Pipelines & MLOps Lifecycle', icon: <Rocket size={14} className="text-fuchsia-400" /> },
+          { id: 'gen-ai-rag', label: 'Generative AI, Embeddings & RAG', icon: <Database size={14} className="text-fuchsia-400" /> },
+          { id: 'llm-agents', label: 'LLM Agents & Tool Calling (ReAct)', icon: <Terminal size={14} className="text-fuchsia-400" /> },
+          { id: 'prompt-eng-security', label: 'Prompt Engineering & Defenses', icon: <Shield size={14} className="text-fuchsia-400" /> },
+          { id: 'model-optimization', label: 'Fine-Tuning, LoRA & Quantization', icon: <Cpu size={14} className="text-fuchsia-400" /> },
+          { id: 'evals-safety', label: 'Evaluation Metrics, Drift & Guardrails', icon: <Target size={14} className="text-fuchsia-400" /> },
+        ];
+
+        return (
+          <div className="border card-glass card-glass-hover p-5 md:p-6">
+            <SharedExamSimulator
+              title="AI & Machine Learning Specialist / MLOps & GenAI"
+              subtitle="30 questões sobre MLOps Lifecycle, Advanced RAG, Agents (ReAct), Prompt Security & Model Optimization"
+              accent="fuchsia"
+              questions={examQuestions}
+              topics={topics}
+              examTimeMinutes={60}
+              passPercentage={70}
+              domainId="ai-ml"
+            />
+          </div>
+        );
+      }
+
+      const isStudyTab = AIML_STUDY_TABS.includes(aimlTab as AiMlStudyTab);
+      if (isStudyTab) {
+        return (
+          <div className="border card-glass card-glass-hover p-5 md:p-6">
+            <AiMlSimulator tab={aimlTab as AiMlStudyTab} />
+          </div>
+        );
+      }
+
+      return (
+        <div className="border card-glass card-glass-hover p-5 md:p-6 text-center text-slate-400">
+          Conteúdo AI / Machine Learning: {aimlTab} (Em breve)
+        </div>
+      );
+    }
+
+    // ── Citrix VDI ────────────────────────────────────────────────
+    if (activeDomain === 'citrix') {
+      const citrixStudied = citrixVisited.size;
+      if (citrixTab === 'dashboard') {
+        const nextCitrixTab = CITRIX_STUDY_TABS.find(t => !citrixVisited.has(t));
+        return (
+          <DomainDashboard
+            eyebrow="Dashboard · Citrix VDI"
+            title="Citrix VDI como Código"
+            description={`DaaS, MCS, WEM, UPM, FSLogix, Packer e Terraform. ${CITRIX_STUDY_TABS.length} módulos práticos.`}
+            accent="violet"
+            progressPct={Math.round((citrixStudied / CITRIX_STUDY_TABS.length) * 100)}
+            studiedCount={citrixStudied}
+            totalCount={CITRIX_STUDY_TABS.length}
+            menuGroups={citrixMenuGroups as SidebarMenuGroup[]}
+            visited={citrixVisited as Set<string>}
+            onOpenTab={(id) => handleCitrixTab(id as CitrixTab)}
+            nextTabId={nextCitrixTab ?? 'exam'}
+            nextTabLabel={nextCitrixTab ? CITRIX_TAB_META[nextCitrixTab]?.label : undefined}
+            examTabId="exam"
+            examLabel="Simulado Citrix VDI">
+            <StudyKitSection resources={DOMAIN_RESOURCES[activeDomain] || []} accent={DOMAIN_ACCENT[activeDomain]} />
+          </DomainDashboard>
+        );
+      }
+      if (citrixTab === 'exam') {
+        return <div className="border card-glass card-glass-hover p-5 md:p-6"><CitrixExamSimulator /></div>;
+      }
+      const isStudyTab = CITRIX_STUDY_TABS.includes(citrixTab as CitrixStudyTab);
+      if (isStudyTab) {
+        return (
+          <div className="border card-glass card-glass-hover p-5 md:p-6">
+            <CitrixSimulator tab={citrixTab} />
+          </div>
+        );
+      }
+      return <div className="border card-glass card-glass-hover p-5 md:p-6 text-center text-slate-400">Conteúdo Citrix: {citrixTab}</div>;
     }
 
     return null;
@@ -1007,7 +1770,7 @@ export default function App() {
     obs.observe(el);
     return () => obs.disconnect();
   }, [activeDomain, devopsTab, azureTab, awsTab, pythonTab, networkingTab,
-      systemDesignTab, distributedSystemsTab, algorithmsTab]);
+      systemDesignTab, distributedSystemsTab, algorithmsTab, dataTab, cyberTab, aimlTab]);
 
   // ── Landing page ─────────────────────────────────────────────────────
   if (!activeDomain) {
@@ -1041,6 +1804,15 @@ export default function App() {
       } else if (path.domain === 'algorithms') {
         setAlgorithmsTab(node.id as import('./types/algorithms').AlgorithmsTab);
         setAlgorithmsVisited(p => new Set([...p, node.id as import('./types/algorithms').AlgorithmsTab]));
+      } else if (path.domain === 'data-engineering') {
+        setDataTab(node.id as DataEngineeringTab);
+        setDataVisited(p => new Set([...p, node.id as DataEngineeringTab]));
+      } else if (path.domain === 'cybersecurity') {
+        setCyberTab(node.id as CybersecurityTab);
+        setCyberVisited(p => new Set([...p, node.id as CybersecurityTab]));
+      } else if (path.domain === 'ai-ml') {
+        setAimlTab(node.id as AiMlTab);
+        setAimlVisited(p => new Set([...p, node.id as AiMlTab]));
       }
     };
 
@@ -1053,6 +1825,9 @@ export default function App() {
       'system-design': systemDesignVisited as Set<string>,
       'distributed-systems': distributedSystemsVisited as Set<string>,
       'algorithms': algorithmsVisited as Set<string>,
+      'data-engineering': dataVisited as Set<string>,
+      'cybersecurity': cyberVisited as Set<string>,
+      'ai-ml': aimlVisited as Set<string>,
     };
 
     return (
@@ -1280,3 +2055,4 @@ export default function App() {
     </main>
   );
 }
+

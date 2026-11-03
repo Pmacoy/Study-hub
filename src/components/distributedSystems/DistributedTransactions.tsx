@@ -64,6 +64,38 @@ const PATTERNS = [
   },
 ];
 
+const PATTERN_COLOR_STYLES: Record<string, {
+  activeBtn: string;
+  iconActive: string;
+  card: string;
+  title: string;
+}> = {
+  sky: {
+    activeBtn: 'border-sky-500/50 bg-sky-500/10',
+    iconActive: 'text-sky-400',
+    card: 'border-sky-500/20 bg-sky-500/5',
+    title: 'text-sky-300',
+  },
+  violet: {
+    activeBtn: 'border-violet-500/50 bg-violet-500/10',
+    iconActive: 'text-violet-400',
+    card: 'border-violet-500/20 bg-violet-500/5',
+    title: 'text-violet-300',
+  },
+  emerald: {
+    activeBtn: 'border-emerald-500/50 bg-emerald-500/10',
+    iconActive: 'text-emerald-400',
+    card: 'border-emerald-500/20 bg-emerald-500/5',
+    title: 'text-emerald-300',
+  },
+  amber: {
+    activeBtn: 'border-amber-500/50 bg-amber-500/10',
+    iconActive: 'text-amber-400',
+    card: 'border-amber-500/20 bg-amber-500/5',
+    title: 'text-amber-300',
+  },
+};
+
 export default function DistributedTransactions() {
   const [active, setActive] = useState(0);
   const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
@@ -87,17 +119,18 @@ export default function DistributedTransactions() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
           {PATTERNS.map((p, i) => {
             const PIcon = p.icon;
+            const style = PATTERN_COLOR_STYLES[p.color] ?? PATTERN_COLOR_STYLES.sky;
             return (
               <button
                 key={p.id}
                 onClick={() => setActive(i)}
                 className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border transition-all ${
                   active === i
-                    ? `border-${p.color}-500/50 bg-${p.color}-500/10`
+                    ? style.activeBtn
                     : 'border-slate-800 bg-slate-900/30 text-slate-500 hover:border-slate-700'
                 }`}
               >
-                <PIcon size={16} className={active === i ? `text-${p.color}-400` : 'text-slate-600'} />
+                <PIcon size={16} className={active === i ? style.iconActive : 'text-slate-600'} />
                 <span className={`text-xs font-semibold text-center ${active === i ? 'text-white' : 'text-slate-500'}`}>{p.name.split('(')[0]}</span>
               </button>
             );
@@ -105,46 +138,51 @@ export default function DistributedTransactions() {
         </div>
 
         {/* Active pattern */}
-        <div className={`rounded-xl border border-${pattern.color}-500/20 bg-${pattern.color}-500/5 p-4`}>
-          <div className="flex items-center gap-2 mb-2">
-            <PatternIcon size={16} className={`text-${pattern.color}-400`} />
-            <h3 className={`text-sm font-bold text-${pattern.color}-300`}>{pattern.name}</h3>
-          </div>
-          <p className="text-xs text-slate-400 mb-4 font-mono">{pattern.latency} · {pattern.faultTolerance}</p>
-
-          {/* Flow */}
-          <div className="mb-4 space-y-2">
-            <span className="text-2xs font-black uppercase tracking-widest text-slate-500 font-mono">Fluxo</span>
-            {pattern.phases.map((phase, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-800 text-2xs font-bold text-slate-400">{i + 1}</div>
-                <span className="text-xs text-white font-medium">{phase.name}</span>
-                <ArrowRight size={12} className="text-slate-600 shrink-0" />
-                <span className="text-2xs font-mono text-slate-400">{phase.action}</span>
-                <span className="text-xs text-slate-500">{phase.desc}</span>
+        {(() => {
+          const activeStyle = PATTERN_COLOR_STYLES[pattern.color] ?? PATTERN_COLOR_STYLES.sky;
+          return (
+            <div className={`rounded-xl border p-4 ${activeStyle.card}`}>
+              <div className="flex items-center gap-2 mb-2">
+                <PatternIcon size={16} className={activeStyle.iconActive} />
+                <h3 className={`text-sm font-bold ${activeStyle.title}`}>{pattern.name}</h3>
               </div>
-            ))}
-          </div>
+              <p className="text-xs text-slate-400 mb-4 font-mono">{pattern.latency} · {pattern.faultTolerance}</p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="rounded-lg bg-emerald-500/5 border border-emerald-500/20 p-3">
-              <span className="text-2xs font-black uppercase tracking-widest text-emerald-400 font-mono">Vantagens</span>
-              <ul className="mt-2 space-y-1">
-                {pattern.pros.map((p, i) => (
-                  <li key={i} className="text-xs text-emerald-200/70">✓ {p}</li>
+              {/* Flow */}
+              <div className="mb-4 space-y-2">
+                <span className="text-2xs font-black uppercase tracking-widest text-slate-500 font-mono">Fluxo</span>
+                {pattern.phases.map((phase, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-800 text-2xs font-bold text-slate-400">{i + 1}</div>
+                    <span className="text-xs text-white font-medium">{phase.name}</span>
+                    <ArrowRight size={12} className="text-slate-600 shrink-0" />
+                    <span className="text-2xs font-mono text-slate-400">{phase.action}</span>
+                    <span className="text-xs text-slate-500">{phase.desc}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="rounded-lg bg-emerald-500/5 border border-emerald-500/20 p-3">
+                  <span className="text-2xs font-black uppercase tracking-widest text-emerald-400 font-mono">Vantagens</span>
+                  <ul className="mt-2 space-y-1">
+                    {pattern.pros.map((p, i) => (
+                      <li key={i} className="text-xs text-emerald-200/70">✓ {p}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="rounded-lg bg-rose-500/5 border border-rose-500/20 p-3">
+                  <span className="text-2xs font-black uppercase tracking-widest text-rose-400 font-mono">Desvantagens</span>
+                  <ul className="mt-2 space-y-1">
+                    {pattern.cons.map((c, i) => (
+                      <li key={i} className="text-xs text-rose-200/70">✗ {c}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
-            <div className="rounded-lg bg-rose-500/5 border border-rose-500/20 p-3">
-              <span className="text-2xs font-black uppercase tracking-widest text-rose-400 font-mono">Desvantagens</span>
-              <ul className="mt-2 space-y-1">
-                {pattern.cons.map((c, i) => (
-                  <li key={i} className="text-xs text-rose-200/70">✗ {c}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+          );
+        })()}
       </div>
 
       {/* Comparison */}

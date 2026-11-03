@@ -13,11 +13,16 @@ interface Props {
 const OTHER_DOMAINS = [
   { id: 'azure', label: 'Azure', accent: 'sky' },
   { id: 'aws', label: 'AWS', accent: 'orange' },
+  { id: 'gcp', label: 'GCP', accent: 'rose' },
+  { id: 'oci', label: 'Oracle Cloud', accent: 'red' },
   { id: 'networking', label: 'Redes', accent: 'emerald' },
   { id: 'python', label: 'Python', accent: 'amber' },
   { id: 'system-design', label: 'System Design', accent: 'rose' },
   { id: 'distributed-systems', label: 'Sistemas Distribuídos', accent: 'teal' },
   { id: 'algorithms', label: 'Algoritmos', accent: 'cyan' },
+  { id: 'cybersecurity', label: 'Cybersecurity', accent: 'rose' },
+  { id: 'ai-ml', label: 'AI & Machine Learning', accent: 'fuchsia' },
+  { id: 'citrix', label: 'Citrix VDI como Código', accent: 'violet' },
 ] as const;
 
 // Filetes/rótulos, não fundos sólidos — cor identifica o domínio sem competir
@@ -32,6 +37,7 @@ const SECONDARY_COLORS: Record<string, string> = {
   rose: 'text-rose-300 hover:border-rose-500/40 hover:bg-rose-500/5',
   teal: 'text-teal-300 hover:border-teal-500/40 hover:bg-teal-500/5',
   cyan: 'text-cyan-300 hover:border-cyan-500/40 hover:bg-cyan-500/5',
+  red: 'text-red-300 hover:border-red-500/40 hover:bg-red-500/5',
 };
 
 export default function PlatformLanding({ progressBreakdown, onSelectDomain }: Props) {
@@ -71,37 +77,36 @@ export default function PlatformLanding({ progressBreakdown, onSelectDomain }: P
           <BadgesShowcase />
         </div>
 
-        {/* Primary CTA — única acção com peso total (tamanho + cor sólida),
-            para responder "o que faço primeiro?" antes da grelha de domínios. */}
+        {/* Primary CTA */}
         <button
           onClick={() => onSelectDomain('devops')}
-          className="mt-6 flex w-full items-center gap-4 rounded-2xl border border-violet-500/30 bg-violet-500/10 p-5 text-left transition-all hover:bg-violet-500/20 group"
+          className="mt-12 flex w-full items-center justify-between rounded-xl border border-transparent bg-violet-500/10 p-6 text-left transition-all hover:bg-violet-500/15 group"
         >
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-violet-500/30 bg-violet-500/15">
-            <Rocket size={18} className="text-violet-300" />
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-violet-500/20">
+              <Rocket size={20} className="text-violet-300" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-semibold uppercase tracking-widest text-violet-400 font-mono mb-1">
+                {isNewUser ? 'Começa por aqui' : 'Continuar estudo'}
+              </p>
+              <h2 className="text-xl font-bold text-white tracking-tight">
+                {isNewUser ? 'DevOps & Platform Engineering' : 'Continuar em DevOps'}
+              </h2>
+            </div>
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-violet-400 font-mono">
-              {isNewUser ? 'Começa por aqui' : 'Continuar estudo'}
-            </p>
-            <p className="mt-0.5 text-base font-bold text-white">
-              {isNewUser ? 'DevOps & Platform Engineering' : 'Continuar em DevOps'}
-            </p>
-          </div>
-          <ArrowRight size={16} className="shrink-0 text-violet-400 opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-1" />
+          <ArrowRight size={20} className="shrink-0 text-violet-400 opacity-0 transition-transform group-hover:opacity-100 group-hover:translate-x-1" />
         </button>
 
-        {/* Domain quick-access — secundária: cor só em texto/hover, não em
-            fundo sólido, para não competir com o CTA acima. */}
-        <p className="mt-8 mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 font-mono">
-          Ou explora outro domínio
+        <p className="mt-12 mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 font-mono">
+          Outros Domínios
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="flex flex-wrap gap-2">
           {OTHER_DOMAINS.map(({ id, label, accent }) => (
             <button
               key={id}
               onClick={() => onSelectDomain(id)}
-              className={`rounded-xl border border-slate-800 bg-slate-900/40 px-4 py-3 text-sm font-semibold transition-all ${SECONDARY_COLORS[accent] ?? SECONDARY_COLORS.violet}`}
+              className={`rounded-full px-5 py-2.5 text-sm font-medium transition-colors border border-transparent hover:border-slate-800 ${SECONDARY_COLORS[accent] ?? SECONDARY_COLORS.violet}`}
             >
               {label}
             </button>

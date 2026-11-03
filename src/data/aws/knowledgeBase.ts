@@ -28,6 +28,11 @@ export const knowledgeData: Partial<Record<AwsTab, DomainPack>> = {
         priority: 'alta',
         difficulty: 'alta',
         docLink: 'https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_identity-vs-resource.html',
+        caseStudy: {
+          title: 'A Role de Braços Abertos',
+          story: 'Criámos uma IAM Role para permitir que uma ferramenta terceira de monitorização acedesse à nossa conta. Na Trust Policy, em vez de restringir ao Account ID do parceiro, alguém meteu "Principal": { "AWS": "*" } sem adicionar uma condição de ExternalId. Pensámos que o facto do nome da role ser um hash aleatório nos protegia.',
+          lesson: 'Qualquer pessoa com uma conta AWS no mundo conseguiu assumir essa role. Descobriram o ARN via bruteforce/leak e instanciaram 100 máquinas EC2 com GPUs para minerar cripto. A fatura foi parar aos $40.000 em dois dias. Nunca uses Principal "*" numa Trust Policy sem um ExternalId rigoroso e Condition forte.',
+        },
       },
       {
         icon: 'shield-check',
@@ -113,6 +118,11 @@ export const knowledgeData: Partial<Record<AwsTab, DomainPack>> = {
         priority: 'alta',
         difficulty: 'média',
         docLink: 'https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html',
+        caseStudy: {
+          title: 'O NAT Gateway Dourado',
+          story: 'Tínhamos 20 instâncias na subnet privada a processar logs e a fazer upload diário de dezenas de Terabytes para um bucket S3. O S3 é um serviço público, então as instâncias privadas encaminhavam o tráfego pela rota default (0.0.0.0/0) para o NAT Gateway, que por sua vez comunicava com o S3.',
+          lesson: 'O NAT Gateway cobra por GB processado (cerca de $0.045/GB). Fazer upload de dezenas de TBs resultou numa fatura de $2,000 só em "NAT Gateway Data Processing". A solução que salvou a empresa foi criar um VPC Endpoint do tipo Gateway para o S3. É gratuito e encaminha o tráfego internamente sem tocar no NAT Gateway.',
+        },
       },
       {
         icon: 'lock',

@@ -21,6 +21,9 @@ const ACCENT: Record<string, { active: string; icon: string; dot: string; border
   amber:   { active: 'border-l-2 border-l-amber-500 bg-amber-500/10 text-white',   icon: 'text-amber-400',  dot: 'bg-emerald-400', border: 'border-amber-500/20', ring: 'text-amber-400' },
   orange:  { active: 'border-l-2 border-l-orange-500 bg-orange-500/10 text-white', icon: 'text-orange-400', dot: 'bg-emerald-400', border: 'border-orange-500/20', ring: 'text-orange-400' },
   rose:    { active: 'border-l-2 border-l-rose-500 bg-rose-500/10 text-white',     icon: 'text-rose-400',   dot: 'bg-emerald-400', border: 'border-rose-500/20', ring: 'text-rose-400' },
+  teal:    { active: 'border-l-2 border-l-teal-500 bg-teal-500/10 text-white',     icon: 'text-teal-400',   dot: 'bg-emerald-400', border: 'border-teal-500/20', ring: 'text-teal-400' },
+  red:     { active: 'border-l-2 border-l-red-500 bg-red-500/10 text-white',       icon: 'text-red-400',    dot: 'bg-emerald-400', border: 'border-red-500/20', ring: 'text-red-400' },
+  fuchsia: { active: 'border-l-2 border-l-fuchsia-500 bg-fuchsia-500/10 text-white', icon: 'text-fuchsia-400',dot: 'bg-emerald-400', border: 'border-fuchsia-500/20', ring: 'text-fuchsia-400' },
 };
 
 function AccentBar({ color }: { color: string }) {
@@ -31,6 +34,9 @@ function AccentBar({ color }: { color: string }) {
     amber:   'via-amber-500/50',
     orange:  'via-orange-500/50',
     rose:    'via-rose-500/50',
+    teal:    'via-teal-500/50',
+    red:     'via-red-500/50',
+    fuchsia: 'via-fuchsia-500/50',
   };
   return (
     <div className={`absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent ${cls[color] ?? cls.violet} to-transparent`} />

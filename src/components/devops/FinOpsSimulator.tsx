@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Copy, Check, PiggyBank } from 'lucide-react';
 
-type View = 'causes' | 'spot' | 'karpenter' | 'scale-zero' | 'network' | 'checklist';
+type View = 'causes' | 'spot' | 'karpenter' | 'scale-zero' | 'network' | 'checklist' | 'case-study';
 
 function Code({ code, lang = '' }: { code: string; lang?: string }) {
   const [c, setC] = useState(false);
@@ -264,6 +264,7 @@ export default function FinOpsSimulator() {
     { id: 'scale-zero', label: 'KEDA & right-sizing' },
     { id: 'network',    label: 'Rede & visibilidade' },
     { id: 'checklist',  label: 'Checklist' },
+    { id: 'case-study', label: 'O Lab de $0.32/h 😂' },
   ];
 
   return (
@@ -659,6 +660,55 @@ export default function FinOpsSimulator() {
               </p>
             </div>
           </section>
+        </div>
+      )}
+
+      {/* ── Case Study (LinkedIn) ─────────────────────────────── */}
+      {view === 'case-study' && (
+        <div className="space-y-5">
+          <div className="flex items-center gap-2">
+            <h3 className="text-[14px] font-bold text-white">Case Study: O Lab de EKS Esquecido 💸</h3>
+            <span className="inline-flex items-center px-2 py-0.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-300 text-[10px] font-black">
+              TRUE STORY
+            </span>
+          </div>
+          
+          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5 space-y-4">
+            <div className="text-[13px] text-slate-300 italic border-l-2 border-slate-700 pl-4 py-1">
+              "Eu às 8h: “Hoje vou estudar Observabilidade no Kubernetes.” 😎<br/><br/>
+              Eu às 14h: Ainda criando VPC, subnet, IAM, Security Group, EKS, Node Group...<br/>
+              Observabilidade estudada: 0%<br/>
+              AWS estudada sem querer: 100% 😂"
+            </div>
+
+            <p className="text-[12px] text-slate-400 leading-relaxed">
+              Então preparei um projeto com Terraform que sobe o ambiente EKS pronto para os labs:<br/>
+              <code className="text-emerald-300">terraform apply</code> ☕ <code className="text-emerald-300">kubectl get nodes</code> ✅
+            </p>
+
+            <div className="p-4 rounded-xl border border-slate-800 bg-slate-900">
+              <h4 className="text-[11px] font-bold text-white uppercase tracking-widest mb-3">Custo estimado em us-east-1, on-demand:</h4>
+              <ul className="space-y-2 text-[12px] text-slate-400 font-mono">
+                <li className="flex justify-between"><span>EKS control plane</span><span className="text-rose-400">US$ 0,10/h</span></li>
+                <li className="flex justify-between"><span>2 × t3.large</span><span className="text-rose-400">US$ 0,166/h</span></li>
+                <li className="flex justify-between"><span>NLB + ~1 NLCU</span><span className="text-rose-400">US$ 0,029/h</span></li>
+                <li className="flex justify-between"><span>IPv4 públicos</span><span className="text-rose-400">US$ 0,015/h</span></li>
+                <li className="flex justify-between border-b border-slate-800 pb-2"><span>EBS gp3</span><span className="text-rose-400">US$ 0,008/h</span></li>
+                <li className="flex justify-between font-bold text-white pt-1"><span>Total</span><span className="text-rose-400">aprox. US$ 0,32/h</span></li>
+              </ul>
+            </div>
+
+            <div className="rounded-xl border border-amber-500/25 bg-amber-500/5 p-4 flex flex-col gap-2">
+              <div className="text-[12px] font-bold text-amber-400">Terminou?</div>
+              <code className="text-[13px] text-amber-200">terraform destroy</code>
+              <p className="text-[11px] text-amber-100/80 mt-1">
+                Porque esquecer um EKS rodando também é uma excelente forma de começar um curso não planejado de FinOps. 😂
+              </p>
+              <a href="https://lnkd.in/dAtkjD_2" target="_blank" rel="noopener noreferrer" className="text-[11px] text-sky-400 hover:underline mt-2">
+                🔗 Ver Projeto no GitHub
+              </a>
+            </div>
+          </div>
         </div>
       )}
     </div>

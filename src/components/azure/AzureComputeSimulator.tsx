@@ -502,6 +502,31 @@ export default function AzureComputeSimulator() {
               </>
             )}
           </section>
+
+          {/* ── Case Study (True Story) ─────────────────────────────── */}
+          <section className="mt-8 rounded-3xl border border-sky-500/25 bg-sky-500/5 p-6 space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <h3 className="text-lg font-bold text-white">Case Study: O Escalonamento Fantasma 💸</h3>
+              <span className="inline-flex items-center px-2 py-0.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-300 text-[10px] font-black">
+                TRUE STORY
+              </span>
+            </div>
+            <div className="text-sm text-slate-300 italic border-l-2 border-slate-700 pl-4 py-1">
+              "Para garantir alta disponibilidade da nossa API legacy em Java, configurei um VM Scale Set para fazer scale-out quando a memória passasse dos 70%. Fui dormir tranquilo."
+            </div>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              O problema é que o Java adora reclamar memória e não a libertar imediatamente (Garbage Collection). O VMSS viu a memória a subir, criou uma nova VM. A nova VM arrancou o Java, reservou memória... o VMSS criou outra. Às 4 da manhã, tínhamos batido no limite da quota da subscrição com 50 instâncias gigantes a fazer zero pedidos HTTP.
+            </p>
+            <div className="p-4 rounded-xl border border-amber-500/25 bg-amber-500/5 mt-4">
+              <div className="text-xs font-bold text-amber-400 mb-2 uppercase tracking-widest">Lição Aprendida para o AZ-104:</div>
+              <ul className="text-sm text-amber-100/90 space-y-2 list-disc list-inside">
+                <li>Configura sempre um limite máximo estrito (<strong>Maximum Instances</strong>) no VMSS.</li>
+                <li>Geralmente, <strong>CPU ou Queue Length</strong> são métricas de escalonamento muito mais seguras e previsíveis do que Memória para scale-out.</li>
+                <li>Configura alertas no Azure Monitor Budget para seres avisado antes da fatura explodir.</li>
+              </ul>
+            </div>
+          </section>
+
         </div>
       </section>
     </div>

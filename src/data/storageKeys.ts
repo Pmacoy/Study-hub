@@ -27,6 +27,16 @@ export const AWS_STORAGE_KEYS = {
   visitedTabs: 'aws_visited_tabs',
 } as const;
 
+export const GCP_STORAGE_KEYS = {
+  activeTab: 'gcp_active_tab',
+  visitedTabs: 'gcp_visited_tabs',
+} as const;
+
+export const OCI_STORAGE_KEYS = {
+  activeTab: 'oci_active_tab',
+  visitedTabs: 'oci_visited_tabs',
+} as const;
+
 export const SYSTEM_DESIGN_STORAGE_KEYS = {
   activeTab: 'system_design_active_tab',
   visitedTabs: 'system_design_visited_tabs',
@@ -40,6 +50,26 @@ export const DISTRIBUTED_SYSTEMS_STORAGE_KEYS = {
 export const ALGORITHMS_STORAGE_KEYS = {
   activeTab: 'algorithms_active_tab',
   visitedTabs: 'algorithms_visited_tabs',
+} as const;
+
+export const DATA_STORAGE_KEYS = {
+  activeTab: 'data_engineering_active_tab',
+  visitedTabs: 'data_engineering_visited_tabs',
+} as const;
+
+export const CYBER_STORAGE_KEYS = {
+  activeTab: 'cybersecurity_active_tab',
+  visitedTabs: 'cybersecurity_visited_tabs',
+} as const;
+
+export const AI_STORAGE_KEYS = {
+  activeTab: 'ai_ml_active_tab',
+  visitedTabs: 'ai_ml_visited_tabs',
+} as const;
+
+export const CITRIX_STORAGE_KEYS = {
+  activeTab: 'citrix_active_tab',
+  visitedTabs: 'citrix_visited_tabs',
 } as const;
 
 export const DAILY_STORAGE_KEY = 'daily_state';

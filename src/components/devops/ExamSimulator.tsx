@@ -1,7 +1,8 @@
-import { RotateCcw, Trophy, Target, CheckCircle, XCircle, Clock, AlertCircle, Eye, EyeOff, BarChart3 } from 'lucide-react';
+import { RotateCcw, Zap, Trophy, Target, CheckCircle, XCircle, Clock, AlertCircle, Eye, EyeOff, BarChart3 } from 'lucide-react';
 import { useQuizEngine, type Question } from '../../hooks/useQuizEngine';
 import QuizRunner from '../shared/QuizRunner';
 import { useState, useMemo } from 'react';
+import FlashRoundWidget from '../shared/FlashRoundWidget';
 
 type DevOpsModule = 'DevOps Intro' | 'Git' | 'DevSecOps' | 'Docker' | 'Kubernetes' | 'Terraform' | 'CI/CD' | 'Monitoring' | 'Linux';
 
@@ -42,10 +43,11 @@ const DIFFICULTY_CONFIG: Record<Difficulty, { label: string; color: string; bg: 
   hard: { label: 'Difícil', color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20' },
 };
 
-type ExamMode = 'practice' | 'timed';
+type ExamMode = 'practice' | 'timed' | 'flashcards';
 type ReviewMode = 'all' | 'wrong' | null;
 
-const MODES: { id: ExamMode; label: string; desc: string; time?: number }[] = [
+const MODES: { id: ExamMode; label: string; desc: string; time?: number; icon?: React.ReactNode }[] = [
+  { id: 'flashcards', label: 'Modo Flashcards', desc: 'Revisão rápida de comandos essenciais (sprint de 60s)', icon: <Zap size={14} className="text-yellow-400" /> },
   { id: 'practice', label: 'Modo Prática', desc: 'Sem limite de tempo, revisa enquanto respondes', time: undefined },
   { id: 'timed', label: 'Modo Exame', desc: 'Tempo limitado — simula condições de exame real', time: 600 },
 ];
@@ -107,7 +109,7 @@ export default function ExamSimulator() {
         </div>
         <div className="pt-2 space-y-3">
           <div className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Escolhe o modo</div>
-          <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto">
             {MODES.map((m) => (
               <button
                 key={m.id}
@@ -119,7 +121,7 @@ export default function ExamSimulator() {
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1">
-                  {m.id === 'timed' && <Clock size={14} className="text-violet-400" />}
+                  {m.icon ? m.icon : (m.id === 'timed' && <Clock size={14} className="text-violet-400" />)}
                   <span className={`text-sm font-bold ${mode === m.id ? 'text-violet-300' : 'text-slate-300'}`}>{m.label}</span>
                 </div>
                 <div className="text-2xs text-slate-500 leading-relaxed">{m.desc}</div>
@@ -141,6 +143,22 @@ export default function ExamSimulator() {
         >
           Iniciar Simulado →
         </button>
+      </div>
+    );
+  }
+
+  // Flashcards mode
+  if (mode === 'flashcards' && state.mode === 'menu') {
+    return (
+      <div className="h-[600px] w-full relative rounded-3xl overflow-hidden border border-slate-800 bg-[#0f1015]">
+        <FlashRoundWidget 
+          onClose={() => { setMode(null); handleReset(); }} 
+          onComplete={(res) => { 
+            // In a real app we might show a summary screen, but for now just go back to menu
+            setMode(null); 
+            handleReset(); 
+          }} 
+        />
       </div>
     );
   }

@@ -4,7 +4,8 @@ export type NetworkingStudyTab =
   | 'ip-addressing'
   | 'application'
   | 'routing'
-  | 'security-net';
+  | 'security-net'
+  | 'bgp-cloud';
 
 export type NetworkingTab = 'dashboard' | 'exam' | NetworkingStudyTab;
 
@@ -15,6 +16,7 @@ export const NETWORKING_STUDY_TABS: NetworkingStudyTab[] = [
   'application',
   'routing',
   'security-net',
+  'bgp-cloud',
 ];
 
 export function isNetworkingTab(value: string): value is NetworkingTab {

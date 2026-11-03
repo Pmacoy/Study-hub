@@ -72,14 +72,14 @@ INTERVAL=30
 while true; do
   STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
   TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-  
+
   if [ "$STATUS" == "200" ]; then
     echo "[$TIMESTAMP] ✓ OK ($STATUS)"
   else
     echo "[$TIMESTAMP] ✗ FAIL ($STATUS)" >&2
     # Aqui: enviar alerta, restart serviço, etc.
   fi
-  
+
   sleep $INTERVAL
 done` },
   { title: 'Backup com Rotação', lang: 'bash', code: `#!/bin/bash
@@ -148,7 +148,18 @@ export default function LinuxSimulator() {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Cabeçalho Explicativo */}
+      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-3">
+        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+          <Terminal className="text-emerald-400" />
+          Linux & Shell Scripting em DevOps
+        </h2>
+        <p className="text-sm text-slate-300 leading-relaxed">
+          Praticamente toda a infraestrutura cloud (AWS, Azure, GCP), servidores de produção, contentores Docker e clusters Kubernetes correm sobre Linux. Dominar a linha de comandos, permissões POSIX e automação com Bash é o alicerce fundamental de qualquer engenheiro DevOps ou SRE.
+        </p>
+      </div>
+
       <div className="flex flex-wrap gap-2">
         {views.map(v => (
           <button key={v.id} onClick={() => setView(v.id)}

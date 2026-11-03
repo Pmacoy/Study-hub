@@ -63,5 +63,9 @@ coverage
 .claude
 docs/superpowers
 
-# PDFs pesados e ficheiros bloqueados
-PDF/
+# Material de estudo (PDFs, cheat sheets, diagramas) -- centenas de MB que
+# nao pertencem ao repositorio. O padrao antes era "PDF/" em maiusculas contra
+# uma pasta "pdf" minuscula: so casava porque core.ignorecase=true, config que
+# nasce no Windows e nao sobrevive a um clone em Linux.
+material/
+public/

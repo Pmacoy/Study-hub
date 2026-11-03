@@ -22,6 +22,11 @@ export interface KnowledgeItem {
   priority: KnowledgePriority;
   difficulty: KnowledgeDifficulty;
   docLink: string;
+  caseStudy?: {
+    title: string;
+    story: string;
+    lesson: string;
+  };
 }
 
 export interface DomainPack {

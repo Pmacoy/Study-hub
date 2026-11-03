@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Copy, Check, Shield, Search, Container, Scale } from 'lucide-react';
+import { Copy, Check, Shield, Search, Container, Scale, Server, ShieldCheck, Terminal, Lock } from 'lucide-react';
 
-type View = 'overview' | 'sast' | 'container' | 'opa';
+type View = 'overview' | 'sast' | 'container' | 'opa' | 'hardening';
 
 function Code({ code, lang = '' }: { code: string; lang?: string }) {
   const [c, setC] = useState(false);
@@ -109,14 +109,66 @@ sonar.coverage.exclusions=**/*.test.ts,**/*.spec.ts
 # - name: Check Quality Gate
 #   uses: sonarsource/sonarqube-quality-gate-action@master`;
 
+const HARDENING_CONFIG = `# Server Hardening & WAF (Fengarde & Sentora Architecture)
+# 1. Nginx / Apache Hardening (Remoção de assinaturas e headers de segurança)
+server_tokens off;
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-XSS-Protection "1; mode=block" always;
+add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline'" always;
+
+# 2. ModSecurity WAF (Fengarde Core Rules) — Bloqueio de SQLi e XSS
+SecRuleEngine On
+SecRequestBodyAccess On
+SecAuditEngine RelevantOnly
+SecRule REQUEST_COOKIES|ARGS "@rx (?i)(union|select|insert|update|delete|drop)" \\
+    "id:1001,phase:2,deny,status:403,msg:'SQL Injection Attack Detected by Fengarde WAF',logdata:'Matched Data: %{TX.0}'"
+
+SecRule REQUEST_URI "@rx <script>" \\
+    "id:1002,phase:2,deny,status:403,msg:'Cross-Site Scripting (XSS) Detected',logdata:'Matched Data: %{TX.0}'"
+
+# 3. Sentora / Hosting Control Panel Hardening
+# - Restrição de permissões em /etc/sentora/panel/configs/
+# - Desativação de funções perigosas do PHP em alojamentos partilhados (disable_functions = exec,passthru,shell_exec,system,proc_open)`;
+
 export default function SecuritySimulator() {
   const [view, setView] = useState<View>('overview');
+
+  // Server Hardening Interactive Lab state
+  const [hardeningAction, setHardeningAction] = useState<'ssh' | 'waf' | 'php'>('ssh');
+  const [hardeningRunning, setHardeningRunning] = useState(false);
+  const [hardeningResult, setHardeningResult] = useState('Clique num teste de hardening para simular a aplicação.');
+
+  const runHardeningSim = (action: 'ssh' | 'waf' | 'php') => {
+    setHardeningRunning(true);
+    setHardeningAction(action);
+    setTimeout(() => {
+      if (action === 'ssh') {
+        setHardeningResult(`🔒 SSH Hardening Aplicado:
+- Porta alterada para 2222 (Reduz brute-force automático)
+- Root Login desativado (PermitRootLogin no)
+- Autenticação por password desativada (Apenas chaves Ed25519)`);
+      } else if (action === 'waf') {
+        setHardeningResult(`🛡️ Fengarde / ModSecurity WAF Ativo:
+- Core Rule Set (CRS) v3.3 ativado
+- Inspeção ativa de payload HTTP contra SQLi, XSS e RCE
+- Rate-limit configurado: max 60 req/min por IP`);
+      } else {
+        setHardeningResult(`⚡ PHP & Sentora Sandbox Hardening:
+- disable_functions = exec, system, passthru, shell_exec
+- open_basedir restrito à pasta do domínio do cliente
+- Desativação de exibição de erros (display_errors = Off)`);
+      }
+      setHardeningRunning(false);
+    }, 600);
+  };
 
   const views = [
     { id: 'overview' as View, label: <><Shield size={14} className="mr-1 inline" /> Shift-Left Security</> },
     { id: 'sast' as View, label: <><Search size={14} className="mr-1 inline" /> SAST — SonarQube</> },
     { id: 'container' as View, label: <><Container size={14} className="mr-1 inline" /> Container — Trivy</> },
     { id: 'opa' as View, label: <><Scale size={14} className="mr-1 inline" /> Policy as Code — OPA</> },
+    { id: 'hardening' as View, label: <><Server size={14} className="mr-1 inline" /> Server Hardening & WAF (Fengarde)</> },
   ];
 
   return (
@@ -178,6 +230,52 @@ export default function SecuritySimulator() {
       {view === 'sast' && <Code code={SONAR_CONFIG} lang="sonar-project.properties + GitHub Actions" />}
       {view === 'container' && <Code code={TRIVY_EXAMPLES} lang="trivy — container & IaC scanning" />}
       {view === 'opa' && <Code code={OPA_POLICY} lang="policies/opa/tagging.rego — Cloud Platform Project" />}
+
+      {view === 'hardening' && (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          <div className="bg-slate-900/60 p-5 rounded-2xl border border-slate-800 space-y-4">
+            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <Server className="text-rose-400" size={20} /> Server Hardening, WAF (Fengarde) & Sentora Panel Security
+            </h3>
+            <p className="text-sm text-slate-300 leading-relaxed">
+              Proteção de servidores Linux, configuração de Web Application Firewalls (Fengarde/ModSecurity) e arquiteturas de painéis de controlo de alojamento seguro (Sentora).
+            </p>
+
+            <div className="flex flex-wrap gap-2 pt-2">
+              <button
+                onClick={() => runHardeningSim('ssh')}
+                className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${hardeningAction === 'ssh' ? 'bg-rose-500/20 border-rose-500/40 text-rose-300' : 'border-slate-800 text-slate-400'}`}
+              >
+                🔒 SSH & System Hardening
+              </button>
+              <button
+                onClick={() => runHardeningSim('waf')}
+                className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${hardeningAction === 'waf' ? 'bg-amber-500/20 border-amber-500/40 text-amber-300' : 'border-slate-800 text-slate-400'}`}
+              >
+                🛡️ Fengarde WAF Rules
+              </button>
+              <button
+                onClick={() => runHardeningSim('php')}
+                className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${hardeningAction === 'php' ? 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300' : 'border-slate-800 text-slate-400'}`}
+              >
+                ⚡ PHP & Sentora Sandbox
+              </button>
+            </div>
+
+            <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 font-mono text-xs space-y-3">
+              <div className="text-slate-500">// Simulador de Hardening de Servidor</div>
+              <div className={`p-3 rounded bg-slate-900 border border-slate-800 whitespace-pre-line ${hardeningRunning ? 'animate-pulse text-amber-400' : 'text-emerald-400'}`}>
+                {hardeningRunning ? 'A aplicar políticas de segurança e regras WAF...' : hardeningResult}
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <div className="text-xs font-bold text-slate-400 mb-2">Configurações de Hardening & WAF:</div>
+              <Code code={HARDENING_CONFIG} lang="nginx.conf + modsecurity.conf + php.ini" />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

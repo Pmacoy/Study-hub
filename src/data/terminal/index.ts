@@ -7,9 +7,15 @@ import { bashPortNotListeningSession } from './bashPortNotListening';
 import { bashDnsFailSession } from './bashDnsFail';
 import { bashHighCpuSession } from './bashHighCpu';
 import { azCliRbacSession } from './azCliRbac';
+import { dockerBuildFailSession } from './dockerBuildFail';
+import { terraformStateLockSession } from './terraformStateLock';
+import { socIamTriageSession } from './socIamTriage';
 
 export const ALL_TERMINAL_SESSIONS: TerminalSession[] = [
   kubectlCrashloopSession,
+  dockerBuildFailSession,
+  terraformStateLockSession,
+  socIamTriageSession,
   // Linux troubleshooting (do runbook DevOps.pdf — treino de incidentes reais)
   bashDiskFullSession,
   bashOomMemorySession,

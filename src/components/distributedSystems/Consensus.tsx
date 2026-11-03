@@ -82,12 +82,12 @@ export default function Consensus() {
         </p>
         <div className="mt-3 grid grid-cols-3 gap-2">
           {[
-            { label: 'Crash Faults', desc: 'Nós param de responder', color: 'sky' },
-            { label: 'Byzantine', desc: 'Nós agem maliciosamente', color: 'rose' },
-            { label: 'Quorum n/2+1', desc: 'Majoria decide', color: 'emerald' },
+            { label: 'Crash Faults', desc: 'Nós param de responder', card: 'bg-sky-500/5 border-sky-500/20', text: 'text-sky-300' },
+            { label: 'Byzantine', desc: 'Nós agem maliciosamente', card: 'bg-rose-500/5 border-rose-500/20', text: 'text-rose-300' },
+            { label: 'Quorum n/2+1', desc: 'Majoria decide', card: 'bg-emerald-500/5 border-emerald-500/20', text: 'text-emerald-300' },
           ].map((item, i) => (
-            <div key={i} className={`rounded-lg bg-${item.color}-500/5 border border-${item.color}-500/20 p-3 text-center`}>
-              <div className={`text-xs font-bold text-${item.color}-300`}>{item.label}</div>
+            <div key={i} className={`rounded-lg border p-3 text-center ${item.card}`}>
+              <div className={`text-xs font-bold ${item.text}`}>{item.label}</div>
               <div className="text-2xs text-slate-500 mt-1">{item.desc}</div>
             </div>
           ))}

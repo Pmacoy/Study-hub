@@ -95,16 +95,16 @@ export default function GitOpsSimulator() {
             <div className="text-xs font-black uppercase tracking-widest text-violet-400 mb-3">Fluxo GitOps</div>
             <div className="flex items-center justify-between text-xs font-mono">
               {[
-                { label: 'Dev push', sub: 'PR → main', color: 'violet' },
-                { label: 'Operator', sub: 'Poll Git', color: 'amber' },
-                { label: 'Git diff', sub: 'Detecta drift', color: 'emerald' },
-                { label: 'Apply', sub: 'kubectl diff', color: 'cyan' },
-                { label: 'Report', sub: 'Synced ✓', color: 'violet' },
+                { label: 'Dev push', sub: 'PR → main', box: 'bg-violet-500/10 border-violet-500/20 text-violet-300' },
+                { label: 'Operator', sub: 'Poll Git', box: 'bg-amber-500/10 border-amber-500/20 text-amber-300' },
+                { label: 'Git diff', sub: 'Detecta drift', box: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300' },
+                { label: 'Apply', sub: 'kubectl diff', box: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-300' },
+                { label: 'Report', sub: 'Synced ✓', box: 'bg-violet-500/10 border-violet-500/20 text-violet-300' },
               ].map((step, i) => (
                 <div key={i} className="flex items-center gap-1">
                   <div className="text-center">
-                    <div className={`px-2 py-1 rounded-lg bg-${step.color}-500/10 border border-${step.color}-500/20`}>
-                      <div className={`text-${step.color}-300 font-bold`}>{step.label}</div>
+                    <div className={`px-2 py-1 rounded-lg border ${step.box}`}>
+                      <div className="font-bold">{step.label}</div>
                       <div className="text-slate-500">{step.sub}</div>
                     </div>
                   </div>

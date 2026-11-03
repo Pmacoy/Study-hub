@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Copy, Check, BarChart3, Flame, TrendingUp, List, Link, Search } from 'lucide-react';
+import { Copy, Check, BarChart3, Flame, TrendingUp, List, Link, Search, ShieldAlert, Cpu } from 'lucide-react';
 
-type View = 'overview' | 'prometheus' | 'grafana' | 'elk';
+type View = 'overview' | 'prometheus' | 'grafana' | 'elk' | 'opensearch';
 
 function Code({ code, lang = '' }: { code: string; lang?: string }) {
   const [c, setC] = useState(false);
@@ -100,15 +100,81 @@ filter {
   }
 }`;
 
+const OPENSEARCH_LAB = `# OpenSearch Query DSL & Anomaly Detection Lab
+# 1. Consulta DSL para análise de logs de segurança (Brute Force SSH)
+POST /security-audit-logs/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "event.action": "ssh_login_failed" } },
+        { "range": { "@timestamp": { "gte": "now-1h" } } }
+      ]
+    }
+  },
+  "aggs": {
+    "suspicious_ips": {
+      "terms": {
+        "field": "source.ip.keyword",
+        "size": 10
+      }
+    }
+  }
+}
+
+# 2. Configuração de Detector de Anomalias (Machine Learning)
+POST /_plugins/_anomaly_detection/detectors
+{
+  "name": "SSH Brute-Force Detector",
+  "description": "Detecção de picos anómalos de tentativas de login SSH falhadas por IP",
+  "time_field": "@timestamp",
+  "indices": ["security-audit-logs*"],
+  "feature_attributes": [
+    {
+      "feature_name": "failed_logins_count",
+      "feature_enabled": true,
+      "aggregation": { "sum": { "field": "failed_attempts" } }
+    }
+  ],
+  "detection_interval": { "period": { "interval": 10, "unit": "MINUTES" } }
+}`;
+
 export default function MonitoringSimulator() {
   const [view, setView] = useState<View>('overview');
   const [activeQuery, setActiveQuery] = useState(0);
+
+  // OpenSearch Interactive Lab State
+  const [osQueryType, setOsQueryType] = useState<'brute' | 'anomaly' | 'cluster'>('brute');
+  const [osSimulating, setOsSimulating] = useState(false);
+  const [osResult, setOsResult] = useState('Resultados prontos para execução...');
+
+  const runOpenSearchQuery = (type: 'brute' | 'anomaly' | 'cluster') => {
+    setOsSimulating(true);
+    setOsQueryType(type);
+    setTimeout(() => {
+      if (type === 'brute') {
+        setOsResult(`🔍 Alerta de Segurança (OpenSearch DSL):
+- IP Malicioso Detetado: 198.51.100.42 (482 tentativas SSH em 10 min)
+- Ação Recomendada: Bloquear IP no WAF / AWS NACL imediatamente.`);
+      } else if (type === 'anomaly') {
+        setOsResult(`🤖 OpenSearch ML Anomaly Detection:
+- Anomalia Detetada às 14:22 UTC (Score: 0.94 / Alta Severidade)
+- Causa: Pico inusual de exfiltração de dados na API Gateway (/api/v2/export).`);
+      } else {
+        setOsResult(`🟢 OpenSearch Cluster Health:
+- Status: GREEN (Shards: 124 active, 0 relocating, 0 unassigned)
+- Nodes: 3 data nodes, 2 master nodes online.`);
+      }
+      setOsSimulating(false);
+    }, 600);
+  };
 
   const views = [
     { id: 'overview' as View, label: <><BarChart3 size={14} className="mr-1 inline" /> Overview</> },
     { id: 'prometheus' as View, label: <><Flame size={14} className="mr-1 inline" /> Prometheus</> },
     { id: 'grafana' as View, label: <><TrendingUp size={14} className="mr-1 inline" /> Grafana</> },
     { id: 'elk' as View, label: <><Search size={14} className="mr-1 inline" /> ELK Stack</> },
+    { id: 'opensearch' as View, label: <><ShieldAlert size={14} className="mr-1 inline" /> OpenSearch & SIEM Lab</> },
   ];
 
   return (
@@ -126,7 +192,7 @@ export default function MonitoringSimulator() {
         <div className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
-              { t: 'Logs', e: List, d: 'O quê aconteceu? ELK Stack, Loki, CloudWatch', c: 'sky' },
+              { t: 'Logs', e: List, d: 'O quê aconteceu? ELK Stack, Loki, OpenSearch', c: 'sky' },
               { t: 'Métricas', e: BarChart3, d: 'Como está o sistema? Prometheus + Grafana', c: 'amber' },
               { t: 'Traces', e: Link, d: 'Porquê demorou? Jaeger, Zipkin, Tempo', c: 'violet' },
               { t: 'Alertas', e: Flame, d: 'Quando falha? AlertManager, PagerDuty', c: 'rose' },
@@ -210,6 +276,52 @@ export default function MonitoringSimulator() {
             ))}
           </div>
           <Code code={ELK_QUERIES} lang="Elasticsearch DSL + Kibana KQL + Logstash" />
+        </div>
+      )}
+
+      {view === 'opensearch' && (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          <div className="bg-slate-900/60 p-5 rounded-2xl border border-slate-800 space-y-4">
+            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <ShieldAlert className="text-amber-400" size={20} /> OpenSearch & SIEM Security Log Analysis Lab
+            </h3>
+            <p className="text-sm text-slate-300 leading-relaxed">
+              O OpenSearch é uma suíte open-source de busca, análise e SIEM distribuída. Teste consultas DSL avançadas de segurança e configure detecção de anomalias com machine learning integrado.
+            </p>
+
+            <div className="flex flex-wrap gap-2 pt-2">
+              <button
+                onClick={() => runOpenSearchQuery('brute')}
+                className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${osQueryType === 'brute' ? 'bg-amber-500/20 border-amber-500/40 text-amber-300' : 'border-slate-800 text-slate-400'}`}
+              >
+                🔍 Query DSL: Brute Force SSH
+              </button>
+              <button
+                onClick={() => runOpenSearchQuery('anomaly')}
+                className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${osQueryType === 'anomaly' ? 'bg-violet-500/20 border-violet-500/40 text-violet-300' : 'border-slate-800 text-slate-400'}`}
+              >
+                🤖 ML Anomaly Detection
+              </button>
+              <button
+                onClick={() => runOpenSearchQuery('cluster')}
+                className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${osQueryType === 'cluster' ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300' : 'border-slate-800 text-slate-400'}`}
+              >
+                🟢 Cluster Health Check
+              </button>
+            </div>
+
+            <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 font-mono text-xs space-y-3">
+              <div className="text-slate-500">// OpenSearch REST API Response Simulator</div>
+              <div className={`p-3 rounded bg-slate-900 border border-slate-800 whitespace-pre-line ${osSimulating ? 'animate-pulse text-amber-400' : 'text-emerald-400'}`}>
+                {osSimulating ? 'A executar query DSL no motor distribuído OpenSearch...' : osResult}
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <div className="text-xs font-bold text-slate-400 mb-2">Referência de Consultas OpenSearch DSL:</div>
+              <Code code={OPENSEARCH_LAB} lang="OpenSearch Query DSL & Anomaly Detection API" />
+            </div>
+          </div>
         </div>
       )}
     </div>

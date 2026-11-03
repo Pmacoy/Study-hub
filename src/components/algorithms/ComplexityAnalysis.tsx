@@ -11,6 +11,57 @@ const COMPLEXITY_CLASSES = [
   { name: 'O(n!)', label: 'Fatorial', desc: 'Pior caso. Permutações de n elementos.', examples: 'Traveling salesman brute-force', color: 'rose' },
 ];
 
+const COMPLEXITY_COLOR_STYLES: Record<string, {
+  text: string;
+  barBg: string;
+  card: string;
+  badge: string;
+  icon: string;
+}> = {
+  emerald: {
+    text: 'text-emerald-400',
+    barBg: 'bg-emerald-500/40',
+    card: 'border-emerald-500/20 bg-emerald-500/5',
+    badge: 'text-emerald-400',
+    icon: 'text-emerald-400',
+  },
+  cyan: {
+    text: 'text-cyan-400',
+    barBg: 'bg-cyan-500/40',
+    card: 'border-cyan-500/20 bg-cyan-500/5',
+    badge: 'text-cyan-400',
+    icon: 'text-cyan-400',
+  },
+  sky: {
+    text: 'text-sky-400',
+    barBg: 'bg-sky-500/40',
+    card: 'border-sky-500/20 bg-sky-500/5',
+    badge: 'text-sky-400',
+    icon: 'text-sky-400',
+  },
+  violet: {
+    text: 'text-violet-400',
+    barBg: 'bg-violet-500/40',
+    card: 'border-violet-500/20 bg-violet-500/5',
+    badge: 'text-violet-400',
+    icon: 'text-violet-400',
+  },
+  amber: {
+    text: 'text-amber-400',
+    barBg: 'bg-amber-500/40',
+    card: 'border-amber-500/20 bg-amber-500/5',
+    badge: 'text-amber-400',
+    icon: 'text-amber-400',
+  },
+  rose: {
+    text: 'text-rose-400',
+    barBg: 'bg-rose-500/40',
+    card: 'border-rose-500/20 bg-rose-500/5',
+    badge: 'text-rose-400',
+    icon: 'text-rose-400',
+  },
+};
+
 const INPUT_SIZES = [10, 100, 1000, 10000];
 
 export default function ComplexityAnalysis() {
@@ -68,11 +119,12 @@ export default function ComplexityAnalysis() {
             {COMPLEXITY_CLASSES.map((c) => {
               const val = ops[c.name as keyof typeof ops];
               const display = val > 1e9 ? `${(val / 1e9).toFixed(1)}B` : val > 1e6 ? `${(val / 1e6).toFixed(1)}M` : val > 1e3 ? `${(val / 1e3).toFixed(1)}K` : Math.round(val).toString();
+              const style = COMPLEXITY_COLOR_STYLES[c.color] ?? COMPLEXITY_COLOR_STYLES.cyan;
               return (
                 <div key={c.name} className="flex items-center gap-3">
-                  <span className={`w-20 text-xs font-mono font-bold text-${c.color}-400`}>{c.name}</span>
+                  <span className={`w-20 text-xs font-mono font-bold ${style.text}`}>{c.name}</span>
                   <div className="flex-1 h-5 rounded bg-slate-900/60 overflow-hidden">
-                    <div className={`h-full rounded bg-${c.color}-500/40`} style={{ width: `${Math.min(100, Math.log2(val + 1) / 7 * 100)}%` }} />
+                    <div className={`h-full rounded ${style.barBg}`} style={{ width: `${Math.min(100, Math.log2(val + 1) / 7 * 100)}%` }} />
                   </div>
                   <span className="text-xs font-mono text-slate-400 w-16 text-right">{display}</span>
                 </div>
@@ -84,17 +136,20 @@ export default function ComplexityAnalysis() {
 
         {/* Complexity classes */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {COMPLEXITY_CLASSES.map((c) => (
-            <div key={c.name} className={`rounded-xl border border-${c.color}-500/20 bg-${c.color}-500/5 p-4`}>
-              <div className="flex items-center gap-2 mb-1">
-                <TrendingUp size={14} className={`text-${c.color}-400`} />
-                <span className="text-sm font-bold text-white font-mono">{c.name}</span>
-                <span className={`text-xs text-${c.color}-400 ml-auto`}>{c.label}</span>
+          {COMPLEXITY_CLASSES.map((c) => {
+            const style = COMPLEXITY_COLOR_STYLES[c.color] ?? COMPLEXITY_COLOR_STYLES.cyan;
+            return (
+              <div key={c.name} className={`rounded-xl border p-4 ${style.card}`}>
+                <div className="flex items-center gap-2 mb-1">
+                  <TrendingUp size={14} className={style.icon} />
+                  <span className="text-sm font-bold text-white font-mono">{c.name}</span>
+                  <span className={`text-xs ml-auto ${style.badge}`}>{c.label}</span>
+                </div>
+                <p className="text-2xs text-slate-500 leading-relaxed">{c.desc}</p>
+                <pre className="mt-2 text-2xs font-mono text-slate-600">{c.examples}</pre>
               </div>
-              <p className="text-2xs text-slate-500 leading-relaxed">{c.desc}</p>
-              <pre className="mt-2 text-2xs font-mono text-slate-600">{c.examples}</pre>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Notation guide */}

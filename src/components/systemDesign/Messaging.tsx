@@ -123,12 +123,12 @@ export default function Messaging() {
         <h3 className="text-sm font-black uppercase tracking-widest text-amber-400 font-mono mb-4">Delivery Guarantees</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
-            { name: 'At-most-once', desc: 'Message entregues zero ou uma vez. Perda possível.', example: 'Logs, metrics — perder um evento é aceitável', color: 'rose' },
-            { name: 'At-least-once', desc: 'Message entregue uma ou mais vezes. Duplicados possíveis.', example: 'Pedidos: idempotency key previne duplicates', color: 'amber' },
-            { name: 'Exactly-once', desc: 'Message entregue uma e só uma vez. Mais complexo.', example: 'Transações financeiras; precisa de idempotency + dedup', color: 'emerald' },
+            { name: 'At-most-once', desc: 'Message entregues zero ou uma vez. Perda possível.', example: 'Logs, metrics — perder um evento é aceitável', card: 'border-rose-500/20 bg-rose-500/5', text: 'text-rose-400' },
+            { name: 'At-least-once', desc: 'Message entregue uma ou mais vezes. Duplicados possíveis.', example: 'Pedidos: idempotency key previne duplicates', card: 'border-amber-500/20 bg-amber-500/5', text: 'text-amber-400' },
+            { name: 'Exactly-once', desc: 'Message entregue uma e só uma vez. Mais complexo.', example: 'Transações financeiras; precisa de idempotency + dedup', card: 'border-emerald-500/20 bg-emerald-500/5', text: 'text-emerald-400' },
           ].map((g) => (
-            <div key={g.name} className={`rounded-xl border border-${g.color}-500/20 bg-${g.color}-500/5 p-3`}>
-              <span className={`text-xs font-black text-${g.color}-400`}>{g.name}</span>
+            <div key={g.name} className={`rounded-xl border ${g.card} p-3`}>
+              <span className={`text-xs font-black ${g.text}`}>{g.name}</span>
               <p className="text-2xs text-slate-400 mt-1 leading-relaxed">{g.desc}</p>
               <p className="text-2xs text-slate-500 font-mono mt-2">{g.example}</p>
             </div>

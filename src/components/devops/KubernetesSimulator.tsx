@@ -1,8 +1,8 @@
 import React from 'react';
 import { useState } from 'react';
-import { Copy, Check, Package, Key, Box, Keyboard } from 'lucide-react';
+import { Copy, Check, Package, Key, Box, Keyboard, AlertTriangle } from 'lucide-react';
 
-type View = 'architecture' | 'resources' | 'commands' | 'rbac';
+type View = 'architecture' | 'resources' | 'commands' | 'rbac' | 'troubleshooting';
 
 function Code({ code, lang = '' }: { code: string; lang?: string }) {
   const [c, setC] = useState(false);
@@ -39,6 +39,9 @@ spec:
     resources:
       requests: { cpu: "100m", memory: "64Mi" }
       limits:   { cpu: "500m", memory: "256Mi" }` },
+  { name: 'StatefulSet', icon: Box, color: 'sky', desc: 'Deployments com identidade de rede e storage persistente. Ideal para bases de dados (PostgreSQL, MongoDB).', yaml: `apiVersion: apps/v1\nkind: StatefulSet\nmetadata:\n  name: web\nspec:\n  serviceName: "nginx"\n  replicas: 3\n  selector:\n    matchLabels: { app: nginx }\n  template:\n    metadata:\n      labels: { app: nginx }\n    spec:\n      containers:\n      - name: nginx\n        image: nginx:1.25\n        volumeMounts:\n        - name: www\n          mountPath: /usr/share/nginx/html\n  volumeClaimTemplates:\n  - metadata:\n      name: www\n    spec:\n      accessModes: [ "ReadWriteOnce" ]\n      resources:\n        requests:\n          storage: 1Gi` },
+  { name: 'DaemonSet', icon: Box, color: 'amber', desc: 'Garante que todos os nodes (ou um subset) correm uma cópia do Pod. Usado para logs (Fluentd), monitoring (Prometheus Node Exporter) e CNI.', yaml: `apiVersion: apps/v1\nkind: DaemonSet\nmetadata:\n  name: fluentd\n  namespace: kube-system\n  labels:\n    k8s-app: fluentd-logging\nspec:\n  selector:\n    matchLabels:\n      name: fluentd\n  template:\n    metadata:\n      labels:\n        name: fluentd\n    spec:\n      tolerations:\n      - key: node-role.kubernetes.io/master\n        effect: NoSchedule\n      containers:\n      - name: fluentd\n        image: fluent/fluentd:v1.14\n        resources:\n          limits:\n            memory: 200Mi\n          requests:\n            cpu: 100m\n            memory: 200Mi` },
+  { name: 'Job & CronJob', icon: Package, color: 'violet', desc: 'Job corre um Pod até a conclusão com sucesso. CronJob cria Jobs de forma recorrente.', yaml: `apiVersion: batch/v1\nkind: CronJob\nmetadata:\n  name: daily-backup\nspec:\n  schedule: "0 2 * * *"\n  jobTemplate:\n    spec:\n      template:\n        spec:\n          containers:\n          - name: backup\n            image: pgdump-tool:latest\n            command:\n            - /bin/sh\n            - -c\n            - backup_db.sh\n          restartPolicy: OnFailure` },
   { name: 'Deployment', icon: Package, color: 'violet', desc: 'Gere um conjunto de Pods idênticos com rolling update, rollback e autoscaling.', yaml: `apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -167,6 +170,7 @@ export default function KubernetesSimulator() {
     { id: 'resources' as View, label: <><Package size={14} className="mr-1 inline" /> Recursos & YAML</> },
     { id: 'commands' as View, label: <><Keyboard size={14} className="mr-1 inline" /> kubectl</> },
     { id: 'rbac' as View, label: '🔐 RBAC' },
+    { id: 'troubleshooting' as View, label: <><AlertTriangle size={14} className="mr-1 inline" /> Failures & Mindset</> },
   ];
 
   return (
@@ -285,6 +289,69 @@ export default function KubernetesSimulator() {
             ))}
           </div>
           <Code code={RBAC_CODE} lang="rbac.yaml" />
+        </div>
+      )}
+
+      {view === 'troubleshooting' && (
+        <div className="space-y-4 animate-in fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-5 rounded-2xl border border-rose-500/20 bg-rose-500/5 space-y-4">
+              <h3 className="text-sm font-bold text-rose-400">Kubernetes Beyond kubectl</h3>
+              <p className="text-xs text-slate-300">Em produção, as coisas vão falhar. Um Engenheiro Sénior reconhece os padrões de falha mais comuns do Kubernetes e resolve-os com calma.</p>
+              
+              <div className="space-y-3">
+                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                  <div className="text-xs font-bold text-rose-400 mb-1">CrashLoopBackOff</div>
+                  <div className="text-xs text-slate-400"><strong>Causa:</strong> O container inicia, falha e é recomeçado em loop. Erros de código, falta de configuração (variáveis de ambiente, configmaps errados) ou falha nas dependências.</div>
+                  <div className="text-xs font-mono text-emerald-300 mt-2 bg-slate-950 p-1 rounded inline-block">kubectl logs pod-xyz --previous</div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                  <div className="text-xs font-bold text-amber-400 mb-1">Pending</div>
+                  <div className="text-xs text-slate-400"><strong>Causa:</strong> O kube-scheduler não consegue encontrar um nó para o Pod. Normalmente falta de CPU/Memória, PVCs não mapeados, Taints incompatíveis ou Node Selectors incorretos.</div>
+                  <div className="text-xs font-mono text-emerald-300 mt-2 bg-slate-950 p-1 rounded inline-block">kubectl describe pod pod-xyz</div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                  <div className="text-xs font-bold text-violet-400 mb-1">OOMKilled (Out of Memory)</div>
+                  <div className="text-xs text-slate-400"><strong>Causa:</strong> O container tentou usar mais memória do que o estipulado em <code>limits.memory</code>. Se for <em>memory leak</em>, aumentar os limits adia o problema mas não o resolve.</div>
+                  <div className="text-xs font-mono text-emerald-300 mt-2 bg-slate-950 p-1 rounded inline-block">kubectl get events --sort-by=.lastTimestamp</div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                  <div className="text-xs font-bold text-sky-400 mb-1">Networking / Service Failed</div>
+                  <div className="text-xs text-slate-400"><strong>Causa:</strong> Labels desfasados entre o Service Selector e os Labels do Pod. Portas erradas (targetPort vs port) ou NetworkPolicies a bloquear tráfego.</div>
+                  <div className="text-xs font-mono text-emerald-300 mt-2 bg-slate-950 p-1 rounded inline-block">kubectl get endpoints svc-xyz</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="p-5 rounded-2xl border border-sky-500/20 bg-sky-500/5">
+                <h3 className="text-sm font-bold text-sky-400 mb-2">Senior Engineer Mindset</h3>
+                <ul className="text-sm text-slate-400 space-y-2 list-disc list-inside">
+                  <li>Define <strong>sempre</strong> Requests e Limits (Garante o QoS do pod).</li>
+                  <li>Usa <strong>Liveness e Readiness Probes</strong> reais (e.g. bater na BD), não apenas um <code>/ping</code> falso.</li>
+                  <li>Para volumes, compreende que um nó morrer significa que o PersistentVolume (EBS) demora a ser remountado.</li>
+                  <li>Assume sempre que <strong>os nós vão morrer</strong> e desenha o Deployment (e PDB - PodDisruptionBudgets) para sobreviver a isso.</li>
+                  <li>Testa e valida políticas de RBAC através de <em>least privilege</em>.</li>
+                </ul>
+              </div>
+
+              <div className="p-5 rounded-2xl border border-emerald-500/20 bg-emerald-500/5">
+                <h3 className="text-sm font-bold text-emerald-400 mb-2">Cluster Upgrades</h3>
+                <div className="text-sm text-slate-400 mb-2">Fazer upgrade ao EKS, GKE ou AKS:</div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-1 bg-emerald-500/20 text-emerald-300 text-xs rounded">Control Plane (Cloud)</span>
+                    <span className="text-emerald-500/50">→</span>
+                    <span className="px-2 py-1 bg-sky-500/20 text-sky-300 text-xs rounded">Worker Nodes</span>
+                  </div>
+                  <p className="text-2xs text-slate-400 pt-2">Verifica sempre as APIs removidas na nova versão antes do upgrade (usando ferramentas como Pluto ou kubent). Usa sempre Node Groups / Node Pools separados para migrar workloads com segurança (cordon + drain).</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

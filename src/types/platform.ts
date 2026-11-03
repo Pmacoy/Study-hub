@@ -1,4 +1,4 @@
-export type Domain = 'devops' | 'azure' | 'aws' | 'gcp' | 'networking' | 'python' | 'system-design' | 'distributed-systems' | 'algorithms';
+export type Domain = 'devops' | 'azure' | 'aws' | 'gcp' | 'oci' | 'networking' | 'python' | 'system-design' | 'distributed-systems' | 'algorithms' | 'data-engineering' | 'cybersecurity' | 'ai-ml' | 'citrix';
 
 export interface DomainMeta {
   id: Domain;
@@ -48,6 +48,15 @@ export const DOMAINS: DomainMeta[] = [
     status: 'active',
   },
   {
+    id: 'oci',
+    label: 'Oracle Cloud',
+    subtitle: 'Foundations · Architect Associate · Compute',
+    color: 'rose',
+    icon: '🔴',
+    moduleCount: 0,
+    status: 'active',
+  },
+  {
     id: 'networking',
     label: 'Redes & Cloud Networking',
     subtitle: 'OSI · TCP/IP · DNS · VPN · BGP · SDN',
@@ -65,4 +74,40 @@ export const DOMAINS: DomainMeta[] = [
     moduleCount: 6,
     status: 'active',
   },
+  {
+    id: 'data-engineering',
+    label: 'Data Engineering & Big Data',
+    subtitle: 'Data Lakes · DWH · Pipelines · Spark · dbt',
+    color: 'teal',
+    icon: '📊',
+    moduleCount: 0,
+    status: 'active',
+  },
+  {
+    id: 'cybersecurity',
+    label: 'Cybersecurity & SOC',
+    subtitle: 'SOC Triage · Threat Hunting · DevSecOps · SIEM',
+    color: 'red',
+    icon: '🛡️',
+    moduleCount: 3,
+    status: 'active',
+  },
+  {
+    id: 'ai-ml',
+    label: 'AI & Machine Learning',
+    subtitle: 'ML Pipelines · Advanced RAG · LoRA · Prompt Eng · MLOps',
+    color: 'fuchsia',
+    icon: '🧠',
+    moduleCount: 3,
+    status: 'active',
+  },
+  {
+    id: 'citrix',
+    label: 'Citrix VDI como Código',
+    subtitle: 'DaaS · MCS · WEM · UPM · FSLogix · Packer · Terraform · GitLab',
+    color: 'violet',
+    icon: '🖥️',
+    moduleCount: 7,
+    status: 'active',
+  }
 ];

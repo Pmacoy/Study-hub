@@ -4,7 +4,7 @@ import type { DomainPack, KnowledgeIcon, KnowledgeDifficulty, KnowledgePriority 
 interface KnowledgeBaseProps<T extends string> {
   activeTab: T;
   data: Partial<Record<T, DomainPack>>;
-  accent: 'sky' | 'orange';
+  accent: string;
   eyebrow: string;
 }
 
@@ -45,9 +45,13 @@ function getDifficultyLabel(d: KnowledgeDifficulty): string {
 /**
  * Mapa de accents (cores) suportadas.
  */
-const ACCENT_MAP: Record<'sky' | 'orange', { active: string; label: string }> = {
+const ACCENT_MAP: Record<string, { active: string; label: string }> = {
   sky: { active: 'border-sky-500/20 bg-sky-500/15 text-sky-300', label: 'text-sky-400' },
   orange: { active: 'border-orange-500/20 bg-orange-500/15 text-orange-300', label: 'text-orange-400' },
+  amber: { active: 'border-amber-500/20 bg-amber-500/15 text-amber-300', label: 'text-amber-400' },
+  rose: { active: 'border-rose-500/20 bg-rose-500/15 text-rose-300', label: 'text-rose-400' },
+  emerald: { active: 'border-emerald-500/20 bg-emerald-500/15 text-emerald-300', label: 'text-emerald-400' },
+  violet: { active: 'border-violet-500/20 bg-violet-500/15 text-violet-300', label: 'text-violet-400' },
 };
 
 /**
@@ -72,7 +76,7 @@ export default function KnowledgeBase<T extends string>({
   const pack = data[activeTab as T];
   if (!pack) return null;
 
-  const a = ACCENT_MAP[accent];
+  const a = ACCENT_MAP[accent] || ACCENT_MAP['sky'];
   const priorityCount = pack.items.filter((item) => item.priority === 'alta').length;
 
   return (

@@ -1,6 +1,8 @@
 import type { Question } from '../../types/exam';
+import { computeQuestions } from './questions/compute';
+import { storageQuestions } from './questions/storage';
 
-export const ALL_QUESTIONS: Question[] = [
+const BASE_QUESTIONS: Question[] = [
   // IDENTIDADE
   {
     id: 1,
@@ -505,4 +507,15 @@ export const ALL_QUESTIONS: Question[] = [
       'O Princípio do Menor Privilégio (Principle of Least Privilege) determina que se deve conceder apenas as permissões necessárias, no escopo mais restrito possível. Atribuir roles no escopo mais alto aumenta o risco.',
     difficulty: 'medium',
   },
+];
+
+/**
+ * Banco completo de AZ-104. Cada ficheiro em ./questions/ cobre uma area do
+ * exame; juntar aqui mantem o custo de acrescentar conteudo em "editar um
+ * ficheiro de dados", em vez de "mexer num componente React".
+ */
+export const ALL_QUESTIONS: Question[] = [
+  ...BASE_QUESTIONS,
+  ...computeQuestions,
+  ...storageQuestions,
 ];

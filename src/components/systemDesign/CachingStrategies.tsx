@@ -78,6 +78,38 @@ cache.set(key, value)  # cache gerencia write-through
   },
 ];
 
+const STRATEGY_COLOR_STYLES: Record<string, {
+  activeBtn: string;
+  iconActive: string;
+  card: string;
+  title: string;
+}> = {
+  violet: {
+    activeBtn: 'border-violet-500/50 bg-violet-500/10',
+    iconActive: 'text-violet-400',
+    card: 'border-violet-500/20 bg-violet-500/5',
+    title: 'text-violet-300',
+  },
+  sky: {
+    activeBtn: 'border-sky-500/50 bg-sky-500/10',
+    iconActive: 'text-sky-400',
+    card: 'border-sky-500/20 bg-sky-500/5',
+    title: 'text-sky-300',
+  },
+  emerald: {
+    activeBtn: 'border-emerald-500/50 bg-emerald-500/10',
+    iconActive: 'text-emerald-400',
+    card: 'border-emerald-500/20 bg-emerald-500/5',
+    title: 'text-emerald-300',
+  },
+  amber: {
+    activeBtn: 'border-amber-500/50 bg-amber-500/10',
+    iconActive: 'text-amber-400',
+    card: 'border-amber-500/20 bg-amber-500/5',
+    title: 'text-amber-300',
+  },
+};
+
 export default function CachingStrategies() {
   const [active, setActive] = useState(0);
   const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
@@ -102,17 +134,18 @@ export default function CachingStrategies() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-5">
           {STRATEGIES.map((s, i) => {
             const SIcon = s.icon;
+            const style = STRATEGY_COLOR_STYLES[s.color] ?? STRATEGY_COLOR_STYLES.violet;
             return (
               <button
                 key={s.id}
                 onClick={() => setActive(i)}
                 className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-left transition-all ${
                   active === i
-                    ? `border-${s.color}-500/50 bg-${s.color}-500/10`
+                    ? style.activeBtn
                     : 'border-slate-800 bg-slate-900/30 text-slate-500 hover:border-slate-700'
                 }`}
               >
-                <SIcon size={14} className={`shrink-0 ${active === i ? `text-${s.color}-400` : 'text-slate-600'}`} />
+                <SIcon size={14} className={`shrink-0 ${active === i ? style.iconActive : 'text-slate-600'}`} />
                 <span className={`text-xs font-semibold ${active === i ? 'text-white' : 'text-slate-500'}`}>
                   {s.name.split('(')[0].trim()}
                 </span>
@@ -122,46 +155,51 @@ export default function CachingStrategies() {
         </div>
 
         {/* Active strategy detail */}
-        <div className={`rounded-xl border border-${strategy.color}-500/20 bg-${strategy.color}-500/5 p-4`}>
-          <div className="flex items-center gap-2 mb-2">
-            <StrategyIcon size={16} className={`text-${strategy.color}-400`} />
-            <h3 className={`text-sm font-bold text-${strategy.color}-300`}>{strategy.name}</h3>
-          </div>
-          <p className="text-xs text-slate-300 leading-relaxed mb-4">{strategy.description}</p>
+        {(() => {
+          const activeStyle = STRATEGY_COLOR_STYLES[strategy.color] ?? STRATEGY_COLOR_STYLES.violet;
+          return (
+            <div className={`rounded-xl border p-4 ${activeStyle.card}`}>
+              <div className="flex items-center gap-2 mb-2">
+                <StrategyIcon size={16} className={activeStyle.iconActive} />
+                <h3 className={`text-sm font-bold ${activeStyle.title}`}>{strategy.name}</h3>
+              </div>
+              <p className="text-xs text-slate-300 leading-relaxed mb-4">{strategy.description}</p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-            <div className="rounded-lg bg-emerald-500/5 border border-emerald-500/20 p-3">
-              <span className="text-2xs font-black uppercase tracking-widest text-emerald-400 font-mono">Vantagens</span>
-              <ul className="mt-2 space-y-1">
-                {strategy.pros.map((p, i) => (
-                  <li key={i} className="text-xs text-emerald-200/70 flex items-start gap-1.5">
-                    <span className="text-emerald-500 mt-0.5">✓</span>{p}
-                  </li>
-                ))}
-              </ul>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                <div className="rounded-lg bg-emerald-500/5 border border-emerald-500/20 p-3">
+                  <span className="text-2xs font-black uppercase tracking-widest text-emerald-400 font-mono">Vantagens</span>
+                  <ul className="mt-2 space-y-1">
+                    {strategy.pros.map((p, i) => (
+                      <li key={i} className="text-xs text-emerald-200/70 flex items-start gap-1.5">
+                        <span className="text-emerald-500 mt-0.5">✓</span>{p}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="rounded-lg bg-rose-500/5 border border-rose-500/20 p-3">
+                  <span className="text-2xs font-black uppercase tracking-widest text-rose-400 font-mono">Desvantagens</span>
+                  <ul className="mt-2 space-y-1">
+                    {strategy.cons.map((c, i) => (
+                      <li key={i} className="text-xs text-rose-200/70 flex items-start gap-1.5">
+                        <span className="text-rose-500 mt-0.5">✗</span>{c}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div className="rounded-lg bg-slate-900/60 border border-slate-800 p-3 mb-3">
+                <span className="text-2xs font-black uppercase tracking-widest text-slate-500 font-mono">Exemplo de uso</span>
+                <pre className="mt-2 text-xs font-mono text-slate-300 leading-relaxed whitespace-pre-wrap">{strategy.code}</pre>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs text-slate-400">
+                <Zap size={12} className="text-amber-400" />
+                <span className="text-amber-200/70"><strong>Use quando:</strong> {strategy.useCase}</span>
+              </div>
             </div>
-            <div className="rounded-lg bg-rose-500/5 border border-rose-500/20 p-3">
-              <span className="text-2xs font-black uppercase tracking-widest text-rose-400 font-mono">Desvantagens</span>
-              <ul className="mt-2 space-y-1">
-                {strategy.cons.map((c, i) => (
-                  <li key={i} className="text-xs text-rose-200/70 flex items-start gap-1.5">
-                    <span className="text-rose-500 mt-0.5">✗</span>{c}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="rounded-lg bg-slate-900/60 border border-slate-800 p-3 mb-3">
-            <span className="text-2xs font-black uppercase tracking-widest text-slate-500 font-mono">Exemplo de uso</span>
-            <pre className="mt-2 text-xs font-mono text-slate-300 leading-relaxed whitespace-pre-wrap">{strategy.code}</pre>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <Zap size={12} className="text-amber-400" />
-            <span className="text-amber-200/70"><strong>Use quando:</strong> {strategy.useCase}</span>
-          </div>
-        </div>
+          );
+        })()}
       </div>
 
       {/* Decision tree */}

@@ -30,6 +30,24 @@ const GIT_AREAS = [
   { name: 'Remote Repository', color: 'emerald', desc: 'GitHub/GitLab/Bitbucket — fonte de verdade da equipa', cmd: 'git push origin main' },
 ];
 
+const STRATEGY_STYLES: Record<string, { active: string; icon: string; title: string }> = {
+  violet: {
+    active: 'bg-violet-500/15 border-violet-500/40 text-violet-300',
+    icon: 'text-violet-400',
+    title: 'text-violet-300',
+  },
+  sky: {
+    active: 'bg-sky-500/15 border-sky-500/40 text-sky-300',
+    icon: 'text-sky-400',
+    title: 'text-sky-300',
+  },
+  emerald: {
+    active: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300',
+    icon: 'text-emerald-400',
+    title: 'text-emerald-300',
+  },
+};
+
 const BRANCH_STRATEGIES = [
   { name: 'Git Flow', color: 'violet', branches: ['main (produção)', 'develop (integração)', 'feature/xxx', 'release/x.x.x', 'hotfix/xxx'], pro: 'Estrutura clara para releases planeados', con: 'Complexo para CI/CD contínuo' },
   { name: 'GitHub Flow', color: 'sky', branches: ['main (sempre deployável)', 'feature/xxx → PR → main'], pro: 'Simples, ideal para CI/CD e SaaS', con: 'Menos controlo para releases estabilizadas' },
@@ -149,22 +167,26 @@ export default function GitSimulator() {
       {view === 'branching' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="space-y-2">
-            {BRANCH_STRATEGIES.map((s, i) => (
-              <button key={i} onClick={() => setSelectedStrategy(i)}
-                className={`w-full p-4 rounded-2xl border text-left transition-all ${selectedStrategy === i ? `bg-${s.color}-500/15 border-${s.color}-500/40 text-${s.color}-300` : 'border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'}`}>
-                <div className="flex items-center gap-2">
-                  <GitBranch size={13} className={selectedStrategy === i ? `text-${s.color}-400` : 'text-slate-600'} />
-                  <span className="text-base font-semibold">{s.name}</span>
-                </div>
-              </button>
-            ))}
+            {BRANCH_STRATEGIES.map((s, i) => {
+              const style = STRATEGY_STYLES[s.color] ?? STRATEGY_STYLES.violet;
+              return (
+                <button key={i} onClick={() => setSelectedStrategy(i)}
+                  className={`w-full p-4 rounded-2xl border text-left transition-all ${selectedStrategy === i ? style.active : 'border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'}`}>
+                  <div className="flex items-center gap-2">
+                    <GitBranch size={13} className={selectedStrategy === i ? style.icon : 'text-slate-600'} />
+                    <span className="text-base font-semibold">{s.name}</span>
+                  </div>
+                </button>
+              );
+            })}
           </div>
           <div className="lg:col-span-2 p-5 rounded-2xl border border-slate-800 bg-[#181926]/70 space-y-4">
             {(() => {
               const s = BRANCH_STRATEGIES[selectedStrategy];
+              const style = STRATEGY_STYLES[s.color] ?? STRATEGY_STYLES.violet;
               return (
                 <>
-                  <div className={`text-lg font-black ${s.color === 'violet' ? 'text-violet-300' : s.color === 'sky' ? 'text-sky-300' : 'text-emerald-300'}`}>{s.name}</div>
+                  <div className={`text-lg font-black ${style.title}`}>{s.name}</div>
                   <div className="space-y-2">
                     {s.branches.map((b, i) => (
                       <div key={i} className="flex items-center gap-2 font-mono text-sm">

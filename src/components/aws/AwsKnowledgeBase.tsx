@@ -171,6 +171,24 @@ export default function AwsKnowledgeBase({ activeTab }: { activeTab: AwsTab }) {
               />
             </div>
 
+            {item.caseStudy && (
+              <div className="mt-5 rounded-2xl border border-orange-500/25 bg-orange-500/5 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h5 className="text-sm font-bold text-white">Case Study: {item.caseStudy.title} 💸</h5>
+                  <span className="inline-flex shrink-0 items-center px-2 py-0.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-300 text-[10px] font-black">
+                    TRUE STORY
+                  </span>
+                </div>
+                <div className="text-[13px] text-slate-300 italic border-l-2 border-slate-700 pl-3 py-0.5">
+                  "{item.caseStudy.story}"
+                </div>
+                <div className="text-[13px] text-orange-200/90 leading-relaxed">
+                  <span className="font-semibold text-orange-400">Lição: </span>
+                  {item.caseStudy.lesson}
+                </div>
+              </div>
+            )}
+
             <div className="mt-5 border-t border-slate-800 pt-4">
               <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
                 Palavras-chave

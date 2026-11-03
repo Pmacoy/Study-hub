@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Network, Copy, Check } from 'lucide-react';
+import { Network, Copy, Check, Play } from 'lucide-react';
+import GuidedScenarioPlayer from '../scenarios/GuidedScenarioPlayer';
+import { az305MigracaoMultiregiaoScenario } from '../../data/scenarios/az305MigracaoMultiregiao';
 
 type View = 'stack' | 'delivery' | 'identity' | 'questions';
 
@@ -91,10 +93,60 @@ const DECISION_TREE = `# Como escolher o serviço de distribuição de tráfego
 # Load balancing não é um serviço só. Escolhe pelo
 # protocolo, pela camada e pelo âmbito geográfico.`;
 
+const DELIVERY_BADGE_STYLES: Record<string, string> = {
+  sky: 'bg-sky-500/15 border-sky-500/30 text-sky-300',
+  violet: 'bg-violet-500/15 border-violet-500/30 text-violet-300',
+  amber: 'bg-amber-500/15 border-amber-500/30 text-amber-300',
+  emerald: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300',
+  rose: 'bg-rose-500/15 border-rose-500/30 text-rose-300',
+};
+
+const IDENTITY_CARD_STYLES: Record<string, { card: string; title: string }> = {
+  sky: {
+    card: 'border-sky-500/20 bg-sky-500/5',
+    title: 'text-sky-400',
+  },
+  violet: {
+    card: 'border-violet-500/20 bg-violet-500/5',
+    title: 'text-violet-400',
+  },
+  emerald: {
+    card: 'border-emerald-500/20 bg-emerald-500/5',
+    title: 'text-emerald-400',
+  },
+};
+
 const IDENTITY_TYPES = [
-  { title: 'Identidades humanas', items: ['Utilizadores', 'Grupos', 'Utilizadores convidados (guest)', 'Contas administrativas'], color: 'sky' },
-  { title: 'Identidades de workload', items: ['Service principals', 'Managed identity atribuída pelo sistema', 'Managed identity atribuída pelo utilizador'], color: 'violet' },
-  { title: 'Protecção de identidade', items: ['Autenticação multifactor (MFA)', 'Conditional Access', 'Privileged Identity Management (PIM)', 'Revisões de acesso'], color: 'emerald' },
+  {
+    title: 'Utilizadores e Grupos',
+    color: 'sky',
+    items: [
+      'Pessoas reais autenticadas via Entra ID',
+      'Atribuição de acesso recomendada via Grupos',
+      'Protegidos por MFA e Conditional Access',
+      'PIM para elevação temporária just-in-time',
+    ],
+  },
+  {
+    title: 'Service Principals',
+    color: 'violet',
+    items: [
+      'Identidades de aplicação para automação e CI/CD',
+      'Autenticação via Client Secret ou Certificado',
+      'Usados por pipelines externos (GitHub, Jenkins)',
+      'Requer rotação periódica de credenciais',
+    ],
+  },
+  {
+    title: 'Managed Identities',
+    color: 'emerald',
+    items: [
+      'Identidades geridas pelo Azure para recursos cloud',
+      'Sem credenciais ou segredos para guardar no código',
+      'System-assigned (1:1) ou User-assigned (1:N)',
+      'Acesso seguro a Key Vault, SQL, Storage, etc.',
+    ],
+  },
 ];
 
 const RBAC_FORMULA = `# A fórmula do Azure RBAC
@@ -144,6 +196,19 @@ const ARCH_QUESTIONS = [
 
 export default function AzureArchitectureModule() {
   const [view, setView] = useState<View>('stack');
+  const [playing, setPlaying] = useState(false);
+
+  if (playing) {
+    return (
+      <div className="absolute inset-0 z-50 bg-[#0f111a]">
+        <GuidedScenarioPlayer 
+          scenario={az305MigracaoMultiregiaoScenario} 
+          onExit={() => setPlaying(false)}
+          onComplete={() => setPlaying(false)}
+        />
+      </div>
+    );
+  }
 
   const tabs: { id: View; label: string }[] = [
     { id: 'stack',     label: 'A stack completa' },
@@ -154,20 +219,26 @@ export default function AzureArchitectureModule() {
 
   return (
     <div className="space-y-5">
-      <section className="rounded-3xl border border-sky-500/25 bg-sky-500/5 p-5">
-        <div className="flex items-center gap-3">
-          <Network size={22} className="text-sky-400" />
+      <div className="flex flex-col gap-6">
+        <div className="flex items-start justify-between bg-sky-500/10 border border-sky-500/20 p-6 rounded-2xl">
           <div>
-            <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest">Arquitectura</div>
-            <h2 className="text-lg font-bold text-white">Como os serviços Azure se ligam</h2>
+            <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+              <Network className="text-sky-400" />
+              Design de Arquitetura de Infraestrutura (AZ-305)
+            </h2>
+            <p className="text-sm text-sky-100 max-w-2xl leading-relaxed">
+              O exame AZ-305 avalia a capacidade de desenhar soluções cloud completas, abrangendo computação, redes, armazenamento e monitorização.
+            </p>
           </div>
+          <button 
+            onClick={() => setPlaying(true)}
+            className="shrink-0 flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-lg transition-colors"
+          >
+            <Play size={16} fill="currentColor" />
+            Iniciar Case Study
+          </button>
         </div>
-        <p className="mt-3 text-[13px] text-slate-400 leading-relaxed">
-          Os outros módulos mostram cada serviço isoladamente. Este mostra o desenho —
-          como identidade, rede, segurança, dados, monitorização e governança se combinam
-          numa solução que funciona em produção.
-        </p>
-      </section>
+      </div>
 
       <div className="flex flex-wrap gap-2">
         {tabs.map(t => (
@@ -210,22 +281,25 @@ export default function AzureArchitectureModule() {
               Distribuem tráfego em camadas e âmbitos geográficos diferentes.
             </p>
             <div className="space-y-2">
-              {DELIVERY_SERVICES.map(s => (
-                <div key={s.n} className="p-3 rounded-xl bg-slate-900">
-                  <div className="flex items-baseline gap-2 flex-wrap">
-                    <span className={`shrink-0 w-5 h-5 rounded-full bg-${s.color}-500/15 border border-${s.color}-500/30 flex items-center justify-center text-[9px] font-black text-${s.color}-300`}>
-                      {s.n}
-                    </span>
-                    <span className="text-[13px] font-bold text-white">{s.name}</span>
-                    <span className="text-[10px] font-mono text-slate-500">{s.scope}</span>
+              {DELIVERY_SERVICES.map(s => {
+                const badgeClass = DELIVERY_BADGE_STYLES[s.color] ?? DELIVERY_BADGE_STYLES.sky;
+                return (
+                  <div key={s.n} className="p-3 rounded-xl bg-slate-900">
+                    <div className="flex items-baseline gap-2 flex-wrap">
+                      <span className={`shrink-0 w-5 h-5 rounded-full border flex items-center justify-center text-[9px] font-black ${badgeClass}`}>
+                        {s.n}
+                      </span>
+                      <span className="text-[13px] font-bold text-white">{s.name}</span>
+                      <span className="text-[10px] font-mono text-slate-500">{s.scope}</span>
+                    </div>
+                    <ul className="mt-1.5 pl-7 space-y-0.5">
+                      {s.points.map(p => (
+                        <li key={p} className="text-[11px] text-slate-400">· {p}</li>
+                      ))}
+                    </ul>
                   </div>
-                  <ul className="mt-1.5 pl-7 space-y-0.5">
-                    {s.points.map(p => (
-                      <li key={p} className="text-[11px] text-slate-400">· {p}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
@@ -250,14 +324,17 @@ export default function AzureArchitectureModule() {
           <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
             <h3 className="text-[14px] font-bold text-white mb-3">Três tipos de identidade</h3>
             <div className="grid md:grid-cols-3 gap-3">
-              {IDENTITY_TYPES.map(t => (
-                <div key={t.title} className={`p-4 rounded-2xl border border-${t.color}-500/20 bg-${t.color}-500/5`}>
-                  <div className={`text-[10px] font-black text-${t.color}-400 uppercase tracking-widest mb-2`}>{t.title}</div>
-                  <ul className="space-y-1 text-[11px] text-slate-400">
-                    {t.items.map(i => <li key={i}>· {i}</li>)}
-                  </ul>
-                </div>
-              ))}
+              {IDENTITY_TYPES.map(t => {
+                const style = IDENTITY_CARD_STYLES[t.color] ?? IDENTITY_CARD_STYLES.sky;
+                return (
+                  <div key={t.title} className={`p-4 rounded-2xl border ${style.card}`}>
+                    <div className={`text-[10px] font-black uppercase tracking-widest mb-2 ${style.title}`}>{t.title}</div>
+                    <ul className="space-y-1 text-[11px] text-slate-400">
+                      {t.items.map(i => <li key={i}>· {i}</li>)}
+                    </ul>
+                  </div>
+                );
+              })}
             </div>
           </section>
 

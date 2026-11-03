@@ -14,6 +14,12 @@ export interface ProjectItem {
   whyItMatters: string;    // "Porque importa"
   difficulty: ProjectDifficulty;
   sectionId: string;
+  
+  // Detalhe Profundo do Projeto (Opcionais enquanto migramos)
+  scenario?: string;               // Cenário real corporativo
+  architectureSteps?: string[];    // Passos de implementação
+  acceptanceCriteria?: string[];   // Definition of Done / Checklist
+  bonusChallenge?: string;         // Desafio extra para advanced
 }
 
 export interface ProjectSection {

@@ -532,6 +532,31 @@ export default function AzureStorageSimulator() {
               </table>
             </div>
           </section>
+
+          {/* ── Case Study (True Story) ─────────────────────────────── */}
+          <section className="mt-8 rounded-3xl border border-amber-500/25 bg-amber-500/5 p-6 space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <h3 className="text-lg font-bold text-white">Case Study: A Chave da Porta da Frente no GitHub 💸</h3>
+              <span className="inline-flex items-center px-2 py-0.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-300 text-[10px] font-black">
+                TRUE STORY
+              </span>
+            </div>
+            <div className="text-sm text-slate-300 italic border-l-2 border-slate-700 pl-4 py-1">
+              "Precisávamos de dar acesso temporário de escrita a um cliente num blob container. Fui ao portal, gerei um SAS Token (Shared Access Signature) com todas as checkboxes ativas (Read/Write/Delete) e... esqueci-me de alterar a data de expiração, que ficou para 2099."
+            </div>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              O cliente colocou o token num script Python, e mais tarde fez push desse script para um repositório público no GitHub. Alguns dias depois, bots varreram o GitHub, apanharam o token que tinha validade quase eterna e permissões totais, e apagaram o nosso container inteiro com backups, exigindo resgate em Bitcoin.
+            </p>
+            <div className="p-4 rounded-xl border border-sky-500/25 bg-sky-500/5 mt-4">
+              <div className="text-xs font-bold text-sky-400 mb-2 uppercase tracking-widest">Lição Aprendida para o AZ-104:</div>
+              <ul className="text-sm text-sky-100/90 space-y-2 list-disc list-inside">
+                <li>Usa sempre o <strong>Princípio do Menor Privilégio</strong> (PoLP): dá apenas permissão de escrita/leitura e não de deleção se não for necessário.</li>
+                <li>Um SAS Token deve ter o <strong>tempo de vida mais curto possível</strong> (horas ou dias, nunca décadas).</li>
+                <li>No Azure, a melhor prática atual (e o que a Microsoft empurra no exame) é usar <strong>Azure AD (Entra ID) com RBAC</strong> para acesso a Storage, desativando completamente a autenticação por Shared Key ou SAS quando possível.</li>
+              </ul>
+            </div>
+          </section>
+
         </div>
       </section>
     </div>

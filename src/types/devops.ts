@@ -9,16 +9,16 @@ export type StudyTab =
   | 'cicd'
   | 'terraform'
   | 'cloudformation'
+  | 'gitops'
+  | 'service-mesh'
   | 'monitoring'
   | 'security'
   | 'idp-backstage'
   | 'golden-paths'
   | 'dora-devex'
-  | 'mlops'
-  | 'service-mesh'
-  | 'gitops'
   | 'finops'
-  | 'sre';
+  | 'sre'
+  | 'mlops';
 
 export type CertExamTab = 'terraform-exam' | 'cka-exam';
 
@@ -35,16 +35,16 @@ export const STUDY_TABS: StudyTab[] = [
   'cicd',
   'terraform',
   'cloudformation',
+  'gitops',
+  'service-mesh',
   'monitoring',
   'security',
   'idp-backstage',
   'golden-paths',
   'dora-devex',
-  'mlops',
-  'service-mesh',
-  'gitops',
   'finops',
   'sre',
+  'mlops',
 ];
 
 export function isDevOpsTab(value: string): value is DevOpsTab {

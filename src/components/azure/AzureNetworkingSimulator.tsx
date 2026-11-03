@@ -645,6 +645,31 @@ export default function AzureNetworkingSimulator() {
               </>
             )}
           </section>
+
+          {/* ── Case Study (True Story) ─────────────────────────────── */}
+          <section className="mt-8 rounded-3xl border border-teal-500/25 bg-teal-500/5 p-6 space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <h3 className="text-lg font-bold text-white">Case Study: O Bloqueio do Admin e a Fatura do Bastion 💸</h3>
+              <span className="inline-flex items-center px-2 py-0.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-300 text-[10px] font-black">
+                TRUE STORY
+              </span>
+            </div>
+            <div className="text-sm text-slate-300 italic border-l-2 border-slate-700 pl-4 py-1">
+              "Para garantir máxima segurança, apaguei as regras default dos Network Security Groups (NSGs) e bloqueei todo o tráfego de entrada. De repente, ninguém conseguia gerir as VMs, nem sequer nós os admins."
+            </div>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Tentámos resolver instalando o Azure Bastion, porque lemos que não precisava de IPs públicos nem regras de RDP no NSG das VMs. Funcionou, voltámos a ter acesso. Mas meses depois percebemos que o Azure Bastion (Basic) custa cerca de $135/mês só para existir, independentemente de ser usado ou não.
+            </p>
+            <div className="p-4 rounded-xl border border-amber-500/25 bg-amber-500/5 mt-4">
+              <div className="text-xs font-bold text-amber-400 mb-2 uppercase tracking-widest">Lição Aprendida para o AZ-104:</div>
+              <ul className="text-sm text-amber-100/90 space-y-2 list-disc list-inside">
+                <li>As regras padrão (default) dos NSGs <strong>não podem ser apagadas</strong>, mas podem ser sobrepostas (overridden) por regras com prioridade mais alta.</li>
+                <li>O Azure Bastion é excelente para segurança zero-trust, mas é um recurso <strong>pago ao mês</strong> (Compute + Data Transfer). Para laboratórios de estudo e empresas muito pequenas, ligar/desligar o IP público quando precisas de aceder pode ser a solução FinOps.</li>
+                <li>O Azure Bastion precisa <strong>sempre</strong> de uma subnet dedicada chamada estritamente <code className="text-amber-200">AzureBastionSubnet</code> com pelo menos máscara /26.</li>
+              </ul>
+            </div>
+          </section>
+
         </div>
       </section>
     </div>
